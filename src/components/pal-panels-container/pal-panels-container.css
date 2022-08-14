@@ -1,0 +1,127 @@
+.panels-container {
+  background: #333;
+  color: #eee;
+}
+
+.panels-container .content{
+  display:flex;
+  /* flex-direction:column; */
+  height:100%;
+}
+
+.panels-container-header {
+  padding: 0.3em;
+  display: flex;
+  gap: 1em;
+}
+/** **/
+
+.snaps {
+  plcace-content: center;
+  plcace-items: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+.snaps {
+  z-index: 1;
+  cursor: drag;
+  /*   pointer-events:none; */
+  display: none;
+  place-content: center;
+  place-items: center;
+  --snaps-size: 2.8em;
+  --sanps-base-color: #aaa;
+  --snaps-opacity: 0.5;
+  --sanps-hover-color: #9c3a9c;
+  position: absolute;
+  inset: 0;
+}
+
+.dragg-mode {
+  position: relative;
+  cursor:url("https://svgur.com/i/jx9.svg"), auto;
+}
+
+.dragg-mode:hover .snaps {
+  display: flex;
+}
+
+.trapeze {
+  position: absolute;
+  transform: scale(0.994);
+  box-shadow: none;
+  opacity: var(--snaps-opacity);
+  border: 0 solid var(--sanps-base-color);
+  transition: all 0.5s ease;
+}
+
+.top {
+  height: 0;
+  top: 0;
+  width: calc(100% - var(--snaps-size) * 2);
+  border-top: var(--snaps-size) solid var(--sanps-base-color);
+  border-left: var(--snaps-size) solid transparent;
+  border-right: var(--snaps-size) solid transparent;
+}
+
+.top:hover {
+  border-top-color: var(--sanps-hover-color);
+}
+
+.bottom {
+  height: 0;
+  bottom: 0;
+  width: calc(100% - var(--snaps-size) * 2);
+  border-bottom: var(--snaps-size) solid var(--sanps-base-color);
+  border-left: var(--snaps-size) solid transparent;
+  border-right: var(--snaps-size) solid transparent;
+}
+
+.bottom:hover {
+  border-bottom-color: var(--sanps-hover-color);
+}
+
+.right {
+  height: calc(100% - var(--snaps-size) * 2);
+  right: 0;
+  width: 0;
+  border-right: var(--snaps-size) solid var(--sanps-base-color);
+  border-bottom: var(--snaps-size) solid transparent;
+  border-top: var(--snaps-size) solid transparent;
+}
+
+.right:hover {
+  border-right-color: var(--sanps-hover-color);
+}
+
+.left {
+  height: calc(100% - var(--snaps-size) * 2);
+  left: 0;
+  width: 0;
+  border-left: var(--snaps-size) solid var(--sanps-base-color);
+  border-bottom: var(--snaps-size) solid transparent;
+  border-top: var(--snaps-size) solid transparent;
+}
+
+.left:hover {
+  border-left-color: var(--sanps-hover-color);
+}
+
+.squar {
+  width: calc(100% - var(--snaps-size) * 2.2);
+  height: calc(100% - var(--snaps-size) * 2.2);
+  background: var(--sanps-base-color);
+  opacity: var(--snaps-opacity);
+  transition: all 0.5s ease;
+}
+.squar:hover {
+  background: var(--sanps-hover-color);
+}
+
+.v-divider {
+  flex: 1;
+  background: transparent;
+  position: relative;
+  cursor: col-resize;
+}

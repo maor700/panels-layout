@@ -1,0 +1,50 @@
+/*
+  Global App CSS
+  ----------------------
+  Use this file for styles that should be applied to all components.
+  For example, "font-family" within the "body" selector is a CSS property
+  most apps will want applied to all components.
+
+  Any global CSS variables should also be applied here.
+*/
+
+html,
+body {
+  all: unset;
+  height: 100%;
+  width: 100%;
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+main {
+}
+
+.grid-stick-layout {
+  height:100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: 'header''main''footer';
+  overflow: auto;
+}
+
+.grid-stick-layout>.header {
+  grid-area: header;
+  position: relative;
+  z-index: 10;
+  padding-block-end: 0.5em;
+  font-weight: 100;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.grid-stick-layout>.main {
+  grid-area: main;
+  overflow: auto;
+}
+
+.grid-stick-layout>.footer {
+  grid-area: footer;
+}

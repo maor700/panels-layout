@@ -1,0 +1,24 @@
+.stack-head {
+  user-select: none;
+  border-bottom: 2px solid transparent;
+  padding: 0 0 0.4em 0em;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.2em;
+}
+.stack-head-btn {
+  display: none;
+}
+
+.stack-head .name {
+  font-size: 0.8em;
+}
+
+.stack-head.active {
+  border-bottom: 2px solid #eee;
+}
+
+.stack-head.active .stack-head-btn {
+  display: inherit;
+}

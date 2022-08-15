@@ -1,13 +1,14 @@
-import { v1 } from "uuid";
+import { v1 } from 'uuid';
+import { treesDB } from './tree/treesDB';
 
-interface Panel {
-  panelsDirection: "row" | "column";
+export interface Panel {
+  panelsDirection: 'row' | 'column';
   id: string;
   name: string;
   parentPath: string;
   hasChildren: 1 | 0;
   component: string;
-  type?: "stack" | "tabs";
+  type?: 'stack' | 'tabs';
   width?: number;
   height?: number;
   title?: string;
@@ -19,18 +20,34 @@ interface LayoutConfig {
   panels: Panel[];
 }
 
-const createPanel:(changes?:Partial<Panel>)=>Panel = (changes = {})=>({
-    name:"Untitled",
-    id: v1(),
-    panelsDirection:"column",
-    parentPath:"/",
-    hasChildren:0,
-    component: "<h2>Some Component</h2>",
-    ...changes
-})
+const createPanel: (changes?: Partial<Panel>) => Panel = (changes = {}) => ({
+  name: 'Untitled',
+  id: v1(),
+  panelsDirection: 'column',
+  parentPath: '/',
+  hasChildren: 0,
+  component: '<h2>Some Component</h2>',
+  ...changes,
+});
 
 const panels = [createPanel(), createPanel(), createPanel()];
 
 export const panelsLayout: LayoutConfig = {
-    panels
+  panels,
 };
+
+const TREE_NAME = 'main-layout';
+treesDB.on('populate', async () => {
+  treesDB.transaction('rw', 'trees', 'treesItems', async () => {
+    await treesDB.createNewTree(TREE_NAME, true, { id: TREE_NAME, treeName: 'פריסה מרכזית' }, {id:"root"});
+    const {id} = await treesDB.getRoot(TREE_NAME);
+    await treesDB.treesItems.bulkAdd([
+      { id: 'panel_1', parentPath: `${id}/`, treeId: TREE_NAME, leaf: 1, name: 'panel_1' },
+      { id: 'panel_2', parentPath: `${id}/`, treeId: TREE_NAME, leaf: 1, name: 'panel_2' },
+      { id: 'panel_3', parentPath: `${id}/`, treeId: TREE_NAME, leaf: 0, name: 'panel_3' },
+      { id: 'panel_4', parentPath: `${id}/panel_3/`, treeId: TREE_NAME, leaf: 1, name: 'panel_4' },
+      { id: 'panel_5', parentPath: `${id}/panel_3/`, treeId: TREE_NAME, leaf: 1, name: 'panel_5' },
+    ]);
+    return await treesDB.treesItems.update(id, { leaf: 0 });
+  });
+});

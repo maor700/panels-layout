@@ -9,12 +9,11 @@ export namespace Components {
     interface AppRoot {
     }
     interface PalPanel {
+        "panelId": string;
     }
     interface PalPanelStackHeader {
         "active": boolean;
-        "title": string;
-    }
-    interface PalPanelsContainer {
+        "panelTitle": string;
     }
 }
 declare global {
@@ -36,36 +35,27 @@ declare global {
         prototype: HTMLPalPanelStackHeaderElement;
         new (): HTMLPalPanelStackHeaderElement;
     };
-    interface HTMLPalPanelsContainerElement extends Components.PalPanelsContainer, HTMLStencilElement {
-    }
-    var HTMLPalPanelsContainerElement: {
-        prototype: HTMLPalPanelsContainerElement;
-        new (): HTMLPalPanelsContainerElement;
-    };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
-        "pal-panels-container": HTMLPalPanelsContainerElement;
     }
 }
 declare namespace LocalJSX {
     interface AppRoot {
     }
     interface PalPanel {
+        "panelId"?: string;
     }
     interface PalPanelStackHeader {
         "active"?: boolean;
         "onDragTab"?: (event: CustomEvent<boolean>) => void;
-        "title"?: string;
-    }
-    interface PalPanelsContainer {
+        "panelTitle"?: string;
     }
     interface IntrinsicElements {
         "app-root": AppRoot;
         "pal-panel": PalPanel;
         "pal-panel-stack-header": PalPanelStackHeader;
-        "pal-panels-container": PalPanelsContainer;
     }
 }
 export { LocalJSX as JSX };
@@ -75,7 +65,6 @@ declare module "@stencil/core" {
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
-            "pal-panels-container": LocalJSX.PalPanelsContainer & JSXBase.HTMLAttributes<HTMLPalPanelsContainerElement>;
         }
     }
 }

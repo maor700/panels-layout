@@ -134,12 +134,3 @@
 .squar:hover {
   background: var(--sanps-hover-color);
 }
-
-.v-divider {
-  background: transparent;
-  position: relative;
-  cursor: col-resize;
-  height: 100%;
-  width: 0.8em;
-  background: #222;
-}

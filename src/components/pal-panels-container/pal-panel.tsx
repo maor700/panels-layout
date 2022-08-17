@@ -12,7 +12,7 @@ export class PalPanel {
   @Prop() panelId: string;
   @State() active: string;
   @State() dragMode: boolean;
-  @State() panelData: TreeItem;
+  @State() panelData: TreeItem<{flex:number}>;
   @State() panels: TreeItem<Panel>[] = [];
   @State() isContainer: boolean;
   @State() headers: TreeItem[] = [];
@@ -63,7 +63,7 @@ export class PalPanel {
 
   render() {
     return (
-      <Host class={`panel ${this.isContainer ? 'is-container' : ''}`}>
+      <Host style={{flex:this.panelData?.data?.flex + ""}} class={`panel ${this.isContainer ? 'is-container' : ''}`}>
         <div class="grid-stick-layout">
           <div class="header panels-container-header">
             {this.panelData && (
@@ -87,7 +87,7 @@ export class PalPanel {
               class="content"
             >
               {this.isContainer ? (
-                this.panels.map((p, i) => [<pal-panel panelId={p.id} key={p.id}></pal-panel>, i !== this.panels?.length - 1 ? <div class="v-divider"></div> : null]).flat()
+                this.panels.map((p, i) => [<pal-panel panelId={p.id} key={p.id}></pal-panel>, i !== this.panels?.length - 1 ? <pal-divider/> : null]).flat()
               ) : (
                 <div class="panel-content">{this.panelData?.name}</div>
               )}

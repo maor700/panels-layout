@@ -8,6 +8,8 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface AppRoot {
     }
+    interface PalDivider {
+    }
     interface PalPanel {
         "panelId": string;
     }
@@ -23,6 +25,12 @@ declare global {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
     };
+    interface HTMLPalDividerElement extends Components.PalDivider, HTMLStencilElement {
+    }
+    var HTMLPalDividerElement: {
+        prototype: HTMLPalDividerElement;
+        new (): HTMLPalDividerElement;
+    };
     interface HTMLPalPanelElement extends Components.PalPanel, HTMLStencilElement {
     }
     var HTMLPalPanelElement: {
@@ -37,12 +45,15 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
+        "pal-divider": HTMLPalDividerElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
     }
 }
 declare namespace LocalJSX {
     interface AppRoot {
+    }
+    interface PalDivider {
     }
     interface PalPanel {
         "panelId"?: string;
@@ -54,6 +65,7 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "app-root": AppRoot;
+        "pal-divider": PalDivider;
         "pal-panel": PalPanel;
         "pal-panel-stack-header": PalPanelStackHeader;
     }
@@ -63,6 +75,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
+            "pal-divider": LocalJSX.PalDivider & JSXBase.HTMLAttributes<HTMLPalDividerElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
         }

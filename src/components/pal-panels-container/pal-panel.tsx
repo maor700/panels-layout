@@ -16,8 +16,11 @@ export class PalPanel {
   @State() panels: TreeItem<Panel>[] = [];
   @State() isContainer: boolean;
   @State() headers: TreeItem[] = [];
+  @State() flexFactor = 1;
+  @State() flexDirection: "row"|"column" = "column";
   @Element() elm: HTMLElement;
   private content: HTMLDivElement;
+  private subscriptions: Subscription[] = [];
   @Watch('panels')
   isContainerWatcher(panels) {
     const isContainer = !!panels?.length;
@@ -26,7 +29,16 @@ export class PalPanel {
     this.headers = isContainer && level === 1 ? panels : [];
     this.active = this.active ?? this.panelData?.name;
   }
-  private subscriptions: Subscription[] = [];
+  
+  @Watch('panels')
+  setupFlex() {
+    if(!this.content) return;
+    const con = this.content;
+    const flexDirection = this.flexDirection = getComputedStyle(this.content).flexDirection as "row" | "column";
+    const conAxis = flexDirection === 'column' ? 'offsetHeight' : 'offsetWidth'; 
+    const conSize = con[conAxis];
+    this.flexFactor = 100 / conSize;
+  }
 
   componentWillLoad() {
     this.subscriptions.push(
@@ -35,22 +47,6 @@ export class PalPanel {
         this.panels = panels;
       }),
     );
-  }
-
-  componentDidLoad() {
-    const con = this.content;
-    const conAxis = getComputedStyle(this.content).flexDirection === 'column' ? 'offsetHeight' : 'offsetWidth';
-    const conSize = con[conAxis];
-    const flexFactor = 100 / conSize;
-    const containerChildern: HTMLElement[] = Array.from(con.children) as any;
-    const filtered = containerChildern
-      .filter(_ => _.tagName === 'PAL-PANEL');
-      filtered.forEach((_: HTMLElement) => {
-        _.style.setProperty('flex', _[conAxis] * flexFactor + '');
-      });
-
-      console.log({filtered});
-      
   }
 
   disconnectedCallback() {
@@ -62,8 +58,11 @@ export class PalPanel {
   };
 
   render() {
+    // const conAxis = this.flexDirection === 'column' ? 'offsetHeight' : 'offsetWidth'; 
+    // const flex = this.content?.[conAxis] * this.flexFactor + '';
+
     return (
-      <Host style={{flex:this.panelData?.data?.flex + ""}} class={`panel ${this.isContainer ? 'is-container' : ''}`}>
+      <Host style={{"--flex-factor":this.flexFactor+"", flex:this.panelData?.data?.flex+""}} class={`panel ${this.isContainer ? 'is-container' : ''}`}>
         <div class="grid-stick-layout">
           <div class="header panels-container-header">
             {this.panelData && (
@@ -87,7 +86,7 @@ export class PalPanel {
               class="content"
             >
               {this.isContainer ? (
-                this.panels.map((p, i) => [<pal-panel panelId={p.id} key={p.id}></pal-panel>, i !== this.panels?.length - 1 ? <pal-divider/> : null]).flat()
+                this.panels.map((p, i) => [<pal-panel panelId={p.id} key={p.id}></pal-panel>, i !== this.panels?.length - 1 ? <pal-divider></pal-divider> : null]).flat()
               ) : (
                 <div class="panel-content">{this.panelData?.name}</div>
               )}

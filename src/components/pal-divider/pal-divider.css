@@ -1,13 +1,7 @@
-pal-divider {
-  display: block;
-  height:100%;
-}
-
 .v-divider{
   background: transparent;
   position: relative;
   cursor: col-resize;
-  height: 100%;
-  width: 0.8em;
+  flex: calc(var(--flex-factor) * 5);
   background: #222;
 }

@@ -4,6 +4,7 @@
   position: relative;
   color: #eee;
   background: #333;
+  --flex-factor: 1;
 }
 
 .panel-content{

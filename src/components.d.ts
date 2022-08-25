@@ -9,6 +9,7 @@ export namespace Components {
     interface AppRoot {
     }
     interface PalDivider {
+        "sibiling"?: string[];
     }
     interface PalPanel {
         "panelId": string;
@@ -54,6 +55,8 @@ declare namespace LocalJSX {
     interface AppRoot {
     }
     interface PalDivider {
+        "onDividerMove"?: (event: CustomEvent<{ sibiling; movementX; movementY }>) => void;
+        "sibiling"?: string[];
     }
     interface PalPanel {
         "panelId"?: string;

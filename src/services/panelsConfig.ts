@@ -50,4 +50,8 @@ treesDB.on('populate', async () => {
     ]);
     return await treesDB.treesItems.update(id, { leaf: 0 });
   });
+})
+
+treesDB.on("ready", ()=>{
+  treesDB.setAppPropVal("dragMode", "");
 });

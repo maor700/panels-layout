@@ -48,6 +48,10 @@ export class PalPanel {
         this.panelData = panel;
         this.panels = panels;
       }),
+
+      liveQuery(() => treesDB.getAppPropVal('dragMode')).subscribe((dragMode: string) => {
+        this.dragMode = !!dragMode;
+      }),
     );
   }
 
@@ -58,6 +62,12 @@ export class PalPanel {
   disconnectedCallback() {
     this.subscriptions.forEach(subscription => subscription?.unsubscribe?.());
   }
+
+  dragHandler = ({detail}) => {
+    if(!detail && this.dragMode){
+    }
+    treesDB.setAppPropVal('dragMode', detail ? this.panelId:"");
+  };
 
   setActive = (panelName: string) => {
     this.active = panelName;
@@ -82,15 +92,16 @@ export class PalPanel {
 
   render() {
     return (
-      <Host style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.data?.flex + '' }} class={`panel ${this.isContainer ? 'is-container' : ''} ${this.panelData?.data?.hideHeader?"no-padding":""}`}>
+      <Host
+        style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.data?.flex + '' }}
+        class={`panel ${this.isContainer ? 'is-container' : ''} ${this.panelData?.data?.hideHeader ? 'no-padding' : ''}`}
+      >
         <div class="grid-stick-layout">
           {this.panelData && !this.panelData?.data?.hideHeader ? (
             <div class="header panels-container-header">
               <pal-panel-stack-header
                 key={this.panelData.id}
-                onDragTab={({ detail }) => {
-                  this.dragMode = detail;
-                }}
+                onDragTab={this.dragHandler}
                 panelTitle={this.panelData.name}
                 onClick={() => this.setActive(this.panelData.name)}
                 active={this.active === this.panelData.name}
@@ -119,12 +130,20 @@ export class PalPanel {
                 <div class="panel-content">{this.panelData?.name}</div>
               )}
             </div>
-            {this.isContainer && (
+            {!this.isContainer && (
               <div class="snaps">
                 <div class="trapeze top"></div>
                 <div class="trapeze right"></div>
                 <div class="trapeze bottom"></div>
-                <div class="trapeze left"></div>
+                <div
+                  onDragOver={ev => {
+                    ev.preventDefault();
+                  }}
+                  onDrop={() => {
+                    alert('drop');
+                  }}
+                  class="trapeze left"
+                ></div>
                 <div class="squar"></div>
               </div>
             )}

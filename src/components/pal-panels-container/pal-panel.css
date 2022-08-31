@@ -5,6 +5,7 @@
   color: #eee;
   background: #333;
   --flex-factor: 1;
+  user-select:none;
 }
 
 .panel-content {

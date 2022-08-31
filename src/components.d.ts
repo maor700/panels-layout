@@ -19,6 +19,14 @@ export namespace Components {
         "panelTitle": string;
     }
 }
+export interface PalDividerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalDividerElement;
+}
+export interface PalPanelStackHeaderCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalPanelStackHeaderElement;
+}
 declare global {
     interface HTMLAppRootElement extends Components.AppRoot, HTMLStencilElement {
     }
@@ -55,7 +63,7 @@ declare namespace LocalJSX {
     interface AppRoot {
     }
     interface PalDivider {
-        "onDividerMove"?: (event: CustomEvent<{ sibiling; movementX; movementY }>) => void;
+        "onDividerMove"?: (event: PalDividerCustomEvent<{ sibiling; movementX; movementY }>) => void;
         "sibiling"?: string[];
     }
     interface PalPanel {
@@ -63,7 +71,7 @@ declare namespace LocalJSX {
     }
     interface PalPanelStackHeader {
         "active"?: boolean;
-        "onDragTab"?: (event: CustomEvent<boolean>) => void;
+        "onDragTab"?: (event: PalPanelStackHeaderCustomEvent<boolean>) => void;
         "panelTitle"?: string;
     }
     interface IntrinsicElements {

@@ -3,6 +3,9 @@ import { liveQuery, Subscription } from 'dexie';
 import { TreeItem } from '../../services/tree/TreeItem';
 import { treesDB } from '../../services/tree/treesDB';
 import '../../services/panelsConfig';
+import "../../services/dbInit";
+import "../../services/controller";
+
 console.log(treesDB);
 
 @Component({
@@ -11,7 +14,7 @@ console.log(treesDB);
 })
 export class AppRoot {
   @State() root: TreeItem;
-  private subscriptions: Subscription[] = [];
+  private subscriptions: Subscription[] = [];z
 
   componentWillLoad() {
     this.subscriptions.push(

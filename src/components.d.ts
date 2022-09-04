@@ -16,7 +16,9 @@ export namespace Components {
     }
     interface PalPanelStackHeader {
         "active": boolean;
+        "panelId": string;
         "panelTitle": string;
+        "treeId": string;
     }
 }
 export interface PalDividerCustomEvent<T> extends CustomEvent<T> {
@@ -72,7 +74,9 @@ declare namespace LocalJSX {
     interface PalPanelStackHeader {
         "active"?: boolean;
         "onDragTab"?: (event: PalPanelStackHeaderCustomEvent<boolean>) => void;
+        "panelId"?: string;
         "panelTitle"?: string;
+        "treeId"?: string;
     }
     interface IntrinsicElements {
         "app-root": AppRoot;

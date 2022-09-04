@@ -7,6 +7,8 @@ import { Component, Element, Event, EventEmitter, h, Host, Prop, State, Watch } 
 export class PalPanelStackHeader {
   @Prop() panelTitle: string;
   @Prop() active: boolean = false;
+  @Prop() panelId: string;
+  @Prop() treeId: string;
   @Element() elm: HTMLElement;
   @Event() dragTab: EventEmitter<boolean>;
   @State() dragging: boolean = false;
@@ -29,11 +31,17 @@ export class PalPanelStackHeader {
     this.dragging = false;
     document.removeEventListener('mouseover', this._mouseDownHandler);
     document.removeEventListener('mouseup', this._mouseupHandler);
-  }
+  };
 
   render() {
     return (
-      <Host>
+      <Host
+        dragStart={ev => {
+          ev.dataTransfer.setData('application/my-app', `${this.panelId}|${this.treeId}`);
+          ev.dataTransfer.effectAllowed = 'move';
+        }}
+        draggable="true"
+      >
         <div class={`${this.active ? 'active' : ''} stack-head`}>
           <div class="close stack-head-btn">
             <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">

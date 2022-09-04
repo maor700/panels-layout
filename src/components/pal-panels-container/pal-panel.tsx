@@ -11,7 +11,7 @@ import { treesDB } from '../../services/tree/treesDB';
 export class PalPanel {
   @Prop() panelId: string;
   @State() active: string;
-  @State() dragMode: boolean;
+  @State() dragProccess: DragProccess;
   @State() panelData: TreeItem<{ flex: number; direction: 'row' | 'column'; hideHeader: 1 | 0 }>;
   @State() panels: TreeItem<Panel>[] = [];
   @State() isContainer: boolean;
@@ -49,8 +49,8 @@ export class PalPanel {
         this.panels = panels;
       }),
 
-      liveQuery(() => treesDB.getAppPropVal('dragMode')).subscribe((dragMode: string) => {
-        this.dragMode = !!dragMode;
+      liveQuery(() => treesDB.getAppPropVal('dragMode')).subscribe((dragMode: DragProccess) => {
+        this.dragProccess = dragMode;
       }),
     );
   }
@@ -63,10 +63,10 @@ export class PalPanel {
     this.subscriptions.forEach(subscription => subscription?.unsubscribe?.());
   }
 
-  dragHandler = ({detail}) => {
-    if(!detail && this.dragMode){
+  dragHandler = ({ detail }) => {
+    if (!detail && this.dragProccess) {
     }
-    treesDB.setAppPropVal('dragMode', detail ? this.panelId:"");
+    treesDB.setAppPropVal('dragMode', detail ? this.panelId : '');
   };
 
   setActive = (panelName: string) => {
@@ -81,12 +81,11 @@ export class PalPanel {
     const leftWinW = sibilingL.data?.flex as number;
     const movementAxis = this.conAxis === 'offsetWidth' ? movementX : movementY;
     const leftPanelNewSize = leftWinW + movementAxis * this.flexFactor;
-    const rightPanelNewSize = rightWinW + movementAxis * this.flexFactor;
-    console.log({ leftPanelNewSize, rightPanelNewSize });
+    const rightPanelNewSize = rightWinW - movementAxis * this.flexFactor;
 
     treesDB.treesItems.bulkPut([
-      { ...sibilingL, data: { ...sibilingL?.data, flex: leftWinW + movementAxis * this.flexFactor } },
-      { ...sibilingR, data: { ...sibilingR?.data, flex: rightWinW - movementAxis * this.flexFactor } },
+      { ...sibilingL, data: { ...sibilingL?.data, flex: leftPanelNewSize } },
+      { ...sibilingR, data: { ...sibilingR?.data, flex: rightPanelNewSize } },
     ]);
   };
 
@@ -100,6 +99,8 @@ export class PalPanel {
           {this.panelData && !this.panelData?.data?.hideHeader ? (
             <div class="header panels-container-header">
               <pal-panel-stack-header
+                panelId={this.panelId}
+                treeId={this.panelData?.treeId}
                 key={this.panelData.id}
                 onDragTab={this.dragHandler}
                 panelTitle={this.panelData.name}
@@ -109,7 +110,7 @@ export class PalPanel {
               ></pal-panel-stack-header>
             </div>
           ) : null}
-          <div onDrop={console.log} class={`main ${this.dragMode ? 'dragg-mode' : ''}`}>
+          <div onDrop={console.log} class={`main ${this.dragProccess ? 'dragg-mode' : ''}`}>
             <div
               ref={element => {
                 this.content = element;
@@ -138,9 +139,16 @@ export class PalPanel {
                 <div
                   onDragOver={ev => {
                     ev.preventDefault();
+                    ev.dataTransfer.dropEffect = 'move';
                   }}
-                  onDrop={() => {
-                    alert('drop');
+                  onDrop={ev => {
+                    ev.preventDefault();
+                    const data = ev.dataTransfer.getData('application/my-app');
+                    console.log(data);
+
+                    // const [panelId, treeId] = data.split('|');
+                    // const dragProccess = { start: { panelId: panelId, treeId: treeId }, end: { panelId: this.panelId, treeId: this.panelData?.treeId } };
+                    // treesDB.setAppPropVal("dragProccess",dragProccess);
                   }}
                   class="trapeze left"
                 ></div>

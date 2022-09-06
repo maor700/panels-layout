@@ -23,7 +23,7 @@ liveQuery(() => {
   // move the new node to the parent of the target node
   const parents = targetItem?.parentPath.split('/');
   const targetItemParentId = parents?.[parents?.length - 2];
-  const containerId = await treesDB.addChildNode(targetItem.treeId, 'container', targetItemParentId, { flex:20 });
+  const containerId = await treesDB.addChildNode(targetItem.treeId, 'container', targetItemParentId, { flex:20, direction: 'column', hideHeader: 1 });
   const container = await treesDB.treesItems.get(containerId);
   // move the two nodes to be the children of the new node;
   await treesDB.moveTreeItem(ItemToTransfer, container);

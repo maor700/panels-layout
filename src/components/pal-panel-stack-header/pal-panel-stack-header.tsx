@@ -1,4 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Host, Prop, State, Watch } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
 
 @Component({
   tag: 'pal-panel-stack-header',
@@ -11,34 +11,15 @@ export class PalPanelStackHeader {
   @Prop() treeId: string;
   @Element() elm: HTMLElement;
   @Event() dragTab: EventEmitter<boolean>;
-  @State() dragging: boolean = false;
-  @Watch('dragging')
-  draggingHandlaer(newVal) {
-    this.dragTab.emit(newVal);
-  }
-
-  componentDidLoad() {
-    this.elm.addEventListener('mousedown', () => {
-      document.addEventListener('mouseover', this._mouseDownHandler);
-      document.addEventListener('mouseup', this._mouseupHandler);
-    });
-  }
-  private _mouseDownHandler = () => {
-    if (this.dragging) return;
-    this.dragging = true;
-  };
-  private _mouseupHandler = () => {
-    this.dragging = false;
-    document.removeEventListener('mouseover', this._mouseDownHandler);
-    document.removeEventListener('mouseup', this._mouseupHandler);
-  };
 
   render() {
     return (
       <Host
-        dragStart={ev => {
-          ev.dataTransfer.setData('application/my-app', `${this.panelId}|${this.treeId}`);
-          ev.dataTransfer.effectAllowed = 'move';
+        onDragStart={_ => {
+          this.dragTab.emit(true);
+        }}
+        onDragEnd={_ => {
+          this.dragTab.emit(false);
         }}
         draggable="true"
       >

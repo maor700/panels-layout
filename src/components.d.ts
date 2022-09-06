@@ -11,6 +11,11 @@ export namespace Components {
     interface PalDivider {
         "sibiling"?: string[];
     }
+    interface PalDragDropContext {
+    }
+    interface PalDragDropSnap {
+        "direction": string;
+    }
     interface PalPanel {
         "panelId": string;
     }
@@ -24,6 +29,18 @@ export namespace Components {
 export interface PalDividerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalDividerElement;
+}
+export interface PalDragDropContextCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalDragDropContextElement;
+}
+export interface PalDragDropSnapCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalDragDropSnapElement;
+}
+export interface PalPanelCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalPanelElement;
 }
 export interface PalPanelStackHeaderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -42,6 +59,18 @@ declare global {
         prototype: HTMLPalDividerElement;
         new (): HTMLPalDividerElement;
     };
+    interface HTMLPalDragDropContextElement extends Components.PalDragDropContext, HTMLStencilElement {
+    }
+    var HTMLPalDragDropContextElement: {
+        prototype: HTMLPalDragDropContextElement;
+        new (): HTMLPalDragDropContextElement;
+    };
+    interface HTMLPalDragDropSnapElement extends Components.PalDragDropSnap, HTMLStencilElement {
+    }
+    var HTMLPalDragDropSnapElement: {
+        prototype: HTMLPalDragDropSnapElement;
+        new (): HTMLPalDragDropSnapElement;
+    };
     interface HTMLPalPanelElement extends Components.PalPanel, HTMLStencilElement {
     }
     var HTMLPalPanelElement: {
@@ -57,6 +86,8 @@ declare global {
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
         "pal-divider": HTMLPalDividerElement;
+        "pal-drag-drop-context": HTMLPalDragDropContextElement;
+        "pal-drag-drop-snap": HTMLPalDragDropSnapElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
     }
@@ -68,7 +99,16 @@ declare namespace LocalJSX {
         "onDividerMove"?: (event: PalDividerCustomEvent<{ sibiling; movementX; movementY }>) => void;
         "sibiling"?: string[];
     }
+    interface PalDragDropContext {
+        "onTabDrop"?: (event: PalDragDropContextCustomEvent<DragProccess>) => void;
+    }
+    interface PalDragDropSnap {
+        "direction"?: string;
+        "onSnapDrop"?: (event: PalDragDropSnapCustomEvent<{ direction: string }>) => void;
+    }
     interface PalPanel {
+        "onTabDrag"?: (event: PalPanelCustomEvent<DragStage>) => void;
+        "onTabDrop"?: (event: PalPanelCustomEvent<DragStage>) => void;
         "panelId"?: string;
     }
     interface PalPanelStackHeader {
@@ -81,6 +121,8 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "app-root": AppRoot;
         "pal-divider": PalDivider;
+        "pal-drag-drop-context": PalDragDropContext;
+        "pal-drag-drop-snap": PalDragDropSnap;
         "pal-panel": PalPanel;
         "pal-panel-stack-header": PalPanelStackHeader;
     }
@@ -91,6 +133,8 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
             "pal-divider": LocalJSX.PalDivider & JSXBase.HTMLAttributes<HTMLPalDividerElement>;
+            "pal-drag-drop-context": LocalJSX.PalDragDropContext & JSXBase.HTMLAttributes<HTMLPalDragDropContextElement>;
+            "pal-drag-drop-snap": LocalJSX.PalDragDropSnap & JSXBase.HTMLAttributes<HTMLPalDragDropSnapElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
         }

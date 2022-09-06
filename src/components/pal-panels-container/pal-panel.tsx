@@ -1,4 +1,4 @@
-import { Component, Element, h, Host, Prop, State, Watch } from '@stencil/core';
+import { Component, Element, h, Host, Prop, State, Watch, Event, EventEmitter } from '@stencil/core';
 import { liveQuery, Subscription } from 'dexie';
 import { Panel } from '../../services/panelsConfig';
 import { TreeItem } from '../../services/tree/TreeItem';
@@ -11,18 +11,24 @@ import { treesDB } from '../../services/tree/treesDB';
 export class PalPanel {
   @Prop() panelId: string;
   @State() active: string;
-  @State() dragProccess: DragProccess;
   @State() panelData: TreeItem<{ flex: number; direction: 'row' | 'column'; hideHeader: 1 | 0 }>;
   @State() panels: TreeItem<Panel>[] = [];
   @State() isContainer: boolean;
   @State() headers: TreeItem[] = [];
   @State() flexFactor = 1;
   @State() flexDirection: 'row' | 'column';
+  @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) tabDrop: EventEmitter<DragStage>;
   @Element() elm: HTMLElement;
   private conAxis: string;
   private conSize: number;
   private content: HTMLDivElement;
   private subscriptions: Subscription[] = [];
+
+  snapDropHandler = (ev: CustomEvent<{ direction: string }>) => {
+    const { direction } = ev.detail;
+    this.tabDrop.emit({ treeId: this.panelData?.treeId, panelId: this.panelId, direction: direction as any });
+  };
 
   @Watch('panels')
   isContainerWatcher(panels) {
@@ -48,10 +54,6 @@ export class PalPanel {
         this.panelData = panel;
         this.panels = panels;
       }),
-
-      liveQuery(() => treesDB.getAppPropVal('dragMode')).subscribe((dragMode: DragProccess) => {
-        this.dragProccess = dragMode;
-      }),
     );
   }
 
@@ -63,10 +65,14 @@ export class PalPanel {
     this.subscriptions.forEach(subscription => subscription?.unsubscribe?.());
   }
 
-  dragHandler = ({ detail }) => {
-    if (!detail && this.dragProccess) {
+  dragHandler = (ev: any) => {
+    ev.preventDefault();
+    const dragActive = ev.detail;
+    if (dragActive) {
+      this.tabDrag.emit({ treeId: this.panelData?.treeId, panelId: this.panelId });
+    } else {
+      this.tabDrag.emit(null);
     }
-    treesDB.setAppPropVal('dragMode', detail ? this.panelId : '');
   };
 
   setActive = (panelName: string) => {
@@ -110,7 +116,7 @@ export class PalPanel {
               ></pal-panel-stack-header>
             </div>
           ) : null}
-          <div onDrop={console.log} class={`main ${this.dragProccess ? 'dragg-mode' : ''}`}>
+          <div class="main">
             <div
               ref={element => {
                 this.content = element;
@@ -130,31 +136,16 @@ export class PalPanel {
               ) : (
                 <div class="panel-content">{this.panelData?.name}</div>
               )}
+              {!this.isContainer && (
+                <div class="snaps">
+                  <pal-drag-drop-snap direction={'top'} onSnapDrop={this.snapDropHandler}></pal-drag-drop-snap>
+                  <pal-drag-drop-snap direction={'right'} onSnapDrop={this.snapDropHandler}></pal-drag-drop-snap>
+                  <pal-drag-drop-snap direction={'left'} onSnapDrop={this.snapDropHandler}></pal-drag-drop-snap>
+                  <pal-drag-drop-snap direction={'bottom'} onSnapDrop={this.snapDropHandler}></pal-drag-drop-snap>
+                  <pal-drag-drop-snap direction={'center'} onSnapDrop={this.snapDropHandler}></pal-drag-drop-snap>
+                </div>
+              )}
             </div>
-            {!this.isContainer && (
-              <div class="snaps">
-                <div class="trapeze top"></div>
-                <div class="trapeze right"></div>
-                <div class="trapeze bottom"></div>
-                <div
-                  onDragOver={ev => {
-                    ev.preventDefault();
-                    ev.dataTransfer.dropEffect = 'move';
-                  }}
-                  onDrop={ev => {
-                    ev.preventDefault();
-                    const data = ev.dataTransfer.getData('application/my-app');
-                    console.log(data);
-
-                    // const [panelId, treeId] = data.split('|');
-                    // const dragProccess = { start: { panelId: panelId, treeId: treeId }, end: { panelId: this.panelId, treeId: this.panelData?.treeId } };
-                    // treesDB.setAppPropVal("dragProccess",dragProccess);
-                  }}
-                  class="trapeze left"
-                ></div>
-                <div class="squar"></div>
-              </div>
-            )}
           </div>
           {/* <div class="footer">footer</div> */}
         </div>

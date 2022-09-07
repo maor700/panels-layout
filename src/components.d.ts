@@ -100,7 +100,7 @@ declare namespace LocalJSX {
         "sibiling"?: string[];
     }
     interface PalDragDropContext {
-        "onTabDrop"?: (event: PalDragDropContextCustomEvent<DragProccess>) => void;
+        "onTabDroped"?: (event: PalDragDropContextCustomEvent<DragProccess>) => void;
     }
     interface PalDragDropSnap {
         "direction"?: string;

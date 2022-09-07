@@ -36,34 +36,39 @@ export class AppRoot {
           <h3>Stencil App Starter</h3>
         </header>
         <pal-drag-drop-context
-          onTabDrop={async ({ detail }) => {
+          onTabDroped={async ({ detail }) => {
             const { start, end } = detail;
-
             if (!end && !start) return;
 
             if (!end?.panelId) return;
+            if (end?.treeId === start?.treeId && end?.panelId === start?.panelId) return;
             // get ItemToTransfer
             const [ItemToTransfer, targetItem] = await treesDB.treesItems.bulkGet([start?.panelId, end?.panelId]);
+            //if they sibilings return;
+            if (targetItem?.parentPath === ItemToTransfer?.parentPath) return;
+            
+            if (end?.treeId === start?.treeId && end?.panelId === start?.panelId) return;
             // create new node
             // move the new node to the parent of the target node
-            const parents = targetItem?.parentPath.split('/');
-            const targetItemParentId = parents?.[parents?.length - 2];
-            const targetItemGrandpaId = parents?.[parents?.length - 3];
-            const targetItemGrandGrandpaId = parents?.[parents?.length - 4];
+            const targetItemParents = targetItem?.parentPath.split('/');
+            const ItemToTransferParents = ItemToTransfer?.parentPath.split('/');
+            const targetItemParentId = targetItemParents?.[targetItemParents?.length - 2];
+            const ItemToTransferParentId = ItemToTransferParents?.[ItemToTransferParents?.length - 2];
+            const ItemToTransferGrandpaId = ItemToTransferParents?.[ItemToTransferParents?.length - 3];
             const containerId = await treesDB.addChildNode(targetItem.treeId, 'container', targetItemParentId, { flex: 20, direction: 'column', hideHeader: 1 });
             const container = await treesDB.treesItems.get(containerId);
             // move the two nodes to be the children of the new node;
             await treesDB.moveTreeItem(ItemToTransfer, container);
-            //in case the parent of the ItemToTransfer is container with just one child. move the last child to the grandpa and remove the container.
-            const [_, grandpaChildern] = await treesDB.getNodeAndChildren(targetItemGrandpaId);
-            if (grandpaChildern?.length <= 1) {
-              const [lastChild] = grandpaChildern;
-              const granGrandpa = await treesDB.treesItems.get(targetItemGrandGrandpaId);
+            const [_, baseParentChildern] = await treesDB.getNodeAndChildren(ItemToTransferParentId);
+            if (baseParentChildern?.length <= 1) {
+              const [lastChild] = baseParentChildern;
+              const granGrandpa = await treesDB.treesItems.get(ItemToTransferGrandpaId);
               if (lastChild) {
                 await treesDB.moveTreeItem(lastChild, granGrandpa);
-                targetItemGrandpaId && (await treesDB.deleteNode(targetItemGrandpaId));
+                ItemToTransferParentId && (await treesDB.deleteNode(ItemToTransferParentId));
               }
             }
+            //in case the parent of the ItemToTransfer is container with just one child. move the last child to the grandpa and remove the container.
             await treesDB.moveTreeItem(targetItem, container);
           }}
         >

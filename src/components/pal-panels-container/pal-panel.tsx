@@ -52,7 +52,7 @@ export class PalPanel {
     this.subscriptions.push(
       liveQuery(() => treesDB.getNodeAndChildren(this.panelId)).subscribe(([panel, panels]) => {
         this.panelData = panel;
-        this.panels = panels;
+        this.panels = panels.sort((a, b) => a?.order - b?.order);
       }),
     );
   }

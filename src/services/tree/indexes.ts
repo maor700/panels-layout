@@ -6,6 +6,7 @@ export const FIELDS_INDEXES: { [K in keyof TreeItem]: string } = {
     parentPath: "parentPath",
     name: "name",
     selected: "selected",
+    order: "order",
     leaf: "leaf"
 }
 

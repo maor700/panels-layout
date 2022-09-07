@@ -249,6 +249,7 @@ export class TreesDB extends Dexie {
   };
 
   moveTreeItem = async (itemToTransfer: TreeItem, tragetItem: TreeItem) => {
+    if (itemToTransfer?.id === tragetItem?.id) return;
     const oldParentPath = `${itemToTransfer.parentPath}`;
     const newParentPath = `${tragetItem.parentPath}${tragetItem.id}/`;
     return this.transaction('rw', this.treesItems, async () => {

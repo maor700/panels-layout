@@ -6,7 +6,9 @@ import { Component, h, Host, Event, EventEmitter, State, Element, Prop } from '@
 })
 export class PalDivider {
   @Prop() sibiling?: string[] = [];
+  @Prop() flexDirection:string;
   @State() focused = false;
+  @State() movements:number[] = [0,0];
   @Event() dividerMove: EventEmitter<{ sibiling; movementX; movementY }>;
   @Element() elm;
 
@@ -18,16 +20,22 @@ export class PalDivider {
 
   private mouseMoveHandler = (_: MouseEvent) => {
     const { movementX, movementY } = _;
-    this.dividerMove.emit({ sibiling: this.sibiling, movementX, movementY });
+    const [currX, currY] = this.movements;
+    this.movements = [currX+movementX, currY+movementY];
   };
   
   private mouseUpHandler = () => {
     this.focused = false;
+    const [movementX, movementY] = this.movements;
+    this.dividerMove.emit({ sibiling: this.sibiling, movementX, movementY });
+    this.movements = [0,0];
     document.removeEventListener('mousemove', this.mouseMoveHandler);
     document.removeEventListener('mouseup', this.mouseUpHandler);
   };
 
   render() {
-    return <Host onMouseDown={this.mouseDownHandler} class={`v-divider ${this.focused ? 'focused' : ''}`}></Host>;
+    const [x, y] = this.movements;
+    const style = this.flexDirection==="column"?{top:y+"px", left:"0"}:{top:"0", left:x+"px"};
+    return <Host style={style} onMouseDown={this.mouseDownHandler} class={`v-divider ${this.focused ? 'focused' : ''}`}></Host>;
   }
 }

@@ -55,21 +55,27 @@ export class AppRoot {
             const targetItemParentId = targetItemParents?.[targetItemParents?.length - 2];
             const ItemToTransferParentId = ItemToTransferParents?.[ItemToTransferParents?.length - 2];
             const ItemToTransferGrandpaId = ItemToTransferParents?.[ItemToTransferParents?.length - 3];
-            const containerId = await treesDB.addChildNode(targetItem.treeId, 'container', targetItemParentId, { flex: 20, direction: 'column', hideHeader: 1 });
-            const container = await treesDB.treesItems.get(containerId);
-            // move the two nodes to be the children of the new node;
-            await treesDB.moveTreeItem(ItemToTransfer, container);
-            const [_, baseParentChildern] = await treesDB.getNodeAndChildren(ItemToTransferParentId);
-            if (baseParentChildern?.length <= 1) {
-              const [lastChild] = baseParentChildern;
-              const granGrandpa = await treesDB.treesItems.get(ItemToTransferGrandpaId);
-              if (lastChild) {
-                await treesDB.moveTreeItem(lastChild, granGrandpa);
-                ItemToTransferParentId && (await treesDB.deleteNode(ItemToTransferParentId));
+            treesDB.transaction("rw", "trees", "treesItems", async ()=>{
+              const parentChildrenBeforeMove = (await (await treesDB.getNodeChildrenCollection(targetItemParentId)).sortBy("order"));
+              const indexTarget = parentChildrenBeforeMove.findIndex(_=>_.id === end.panelId);
+              console.log({indexTarget});
+              
+              const containerId = await treesDB.addChildNode(targetItem.treeId, 'container', targetItemParentId, { flex: 20, direction: 'column', hideHeader: 1 });
+              const container = await treesDB.treesItems.get(containerId);
+              // move the two nodes to be the children of the new node;
+              await treesDB.moveTreeItem(ItemToTransfer, container);
+              const [_, baseParentChildern] = await treesDB.getNodeAndChildren(ItemToTransferParentId);
+              if (baseParentChildern?.length <= 1) {
+                const [lastChild] = baseParentChildern;
+                const granGrandpa = await treesDB.treesItems.get(ItemToTransferGrandpaId);
+                if (lastChild) {
+                  await treesDB.moveTreeItem(lastChild, granGrandpa);
+                  ItemToTransferParentId && (await treesDB.deleteNode(ItemToTransferParentId));
+                }
               }
-            }
-            //in case the parent of the ItemToTransfer is container with just one child. move the last child to the grandpa and remove the container.
-            await treesDB.moveTreeItem(targetItem, container);
+              //in case the parent of the ItemToTransfer is container with just one child. move the last child to the grandpa and remove the container.
+              await treesDB.moveTreeItem(targetItem, container);
+            })
           }}
         >
           <main class="main">{this.root ? <pal-panel panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel> : null}</main>

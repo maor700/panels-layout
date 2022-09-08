@@ -1,6 +1,5 @@
 .v-divider {
   background: transparent;
-  position: relative;
   cursor: col-resize;
   flex: calc(var(--flex-factor) * 5);
   background: #222;
@@ -9,4 +8,5 @@
 .v-divider.focused {
   background: rgb(0, 73, 126);
   z-index: 1000;
+  position: relative;
 }

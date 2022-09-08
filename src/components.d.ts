@@ -9,6 +9,7 @@ export namespace Components {
     interface AppRoot {
     }
     interface PalDivider {
+        "flexDirection": string;
         "sibiling"?: string[];
     }
     interface PalDragDropContext {
@@ -96,6 +97,7 @@ declare namespace LocalJSX {
     interface AppRoot {
     }
     interface PalDivider {
+        "flexDirection"?: string;
         "onDividerMove"?: (event: PalDividerCustomEvent<{ sibiling; movementX; movementY }>) => void;
         "sibiling"?: string[];
     }

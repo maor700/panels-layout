@@ -129,7 +129,7 @@ export class PalPanel {
                   .map((p, i) => [
                     <pal-panel panelId={p.id} key={p.id}></pal-panel>,
                     i !== this.panels?.length - 1 ? (
-                      <pal-divider sibiling={[this.panels?.[i]?.id, this.panels?.[i + 1]?.id]} onDividerMove={this.dividerMoveHandler}></pal-divider>
+                      <pal-divider flexDirection={this.flexDirection} sibiling={[this.panels?.[i]?.id, this.panels?.[i + 1]?.id]} onDividerMove={this.dividerMoveHandler}></pal-divider>
                     ) : null,
                   ])
                   .flat()

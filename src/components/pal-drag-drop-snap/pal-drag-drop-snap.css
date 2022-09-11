@@ -20,7 +20,7 @@
   cursor: url('https://svgur.com/i/jx9.svg'), auto;
 }
 
-.drag-mode .panel:hover .snaps {
+.drag-mode .panel.mouse-hover .snaps {
   display: flex;
 }
 

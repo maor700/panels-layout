@@ -4,6 +4,7 @@
 main.main {
   background: #222;
   height: 100%;
+  display: flex;
 }
 header {
   background: #28273e;

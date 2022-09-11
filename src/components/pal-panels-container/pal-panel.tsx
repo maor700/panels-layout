@@ -14,6 +14,7 @@ export class PalPanel {
   @State() panelData: TreeItem<{ flex: number; direction: 'row' | 'column'; hideHeader: 1 | 0 }>;
   @State() panels: TreeItem<Panel>[] = [];
   @State() isContainer: boolean;
+  @State() mouseHover: boolean;
   @State() headers: TreeItem[] = [];
   @State() flexFactor = 1;
   @State() flexDirection: 'row' | 'column';
@@ -52,7 +53,7 @@ export class PalPanel {
     this.subscriptions.push(
       liveQuery(() => treesDB.getNodeAndChildren(this.panelId)).subscribe(([panel, panels]) => {
         this.panelData = panel;
-        this.panels = panels.sort((a, b) => a?.order - b?.order);
+        this.panels = panels.sort((a, b) => b?.order - a?.order);
       }),
     );
   }
@@ -99,7 +100,18 @@ export class PalPanel {
     return (
       <Host
         style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.data?.flex + '' }}
-        class={`panel ${this.isContainer ? 'is-container' : ''} ${this.panelData?.data?.hideHeader ? 'no-padding' : ''}`}
+        class={`panel ${this.isContainer ? 'is-container' : ''} ${this.panelData?.data?.hideHeader ? 'no-padding' : ''} ${this.mouseHover ? 'mouse-hover' : ''}`}
+        onDragOver={ev => {
+          ev.preventDefault();
+          ev.dataTransfer.dropEffect = 'move';
+          const isParentOfTarget = this.elm.contains(ev.target as HTMLDivElement);
+          console.log(ev.target);
+          if (!isParentOfTarget) {
+            this.mouseHover = false;
+          }else{
+            this.mouseHover = true;
+          }
+        }}
       >
         <div class="grid-stick-layout">
           {this.panelData && !this.panelData?.data?.hideHeader ? (
@@ -129,7 +141,11 @@ export class PalPanel {
                   .map((p, i) => [
                     <pal-panel panelId={p.id} key={p.id}></pal-panel>,
                     i !== this.panels?.length - 1 ? (
-                      <pal-divider flexDirection={this.flexDirection} sibiling={[this.panels?.[i]?.id, this.panels?.[i + 1]?.id]} onDividerMove={this.dividerMoveHandler}></pal-divider>
+                      <pal-divider
+                        flexDirection={this.flexDirection}
+                        sibiling={[this.panels?.[i]?.id, this.panels?.[i + 1]?.id]}
+                        onDividerMove={this.dividerMoveHandler}
+                      ></pal-divider>
                     ) : null,
                   ])
                   .flat()

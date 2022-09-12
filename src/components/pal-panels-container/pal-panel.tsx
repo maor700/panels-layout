@@ -104,12 +104,17 @@ export class PalPanel {
         onDragOver={ev => {
           ev.preventDefault();
           ev.dataTransfer.dropEffect = 'move';
+        }}
+        onDragEnter={(ev: DragEvent) => {
+          ev.preventDefault();
+          this.mouseHover = true;
+        }}
+        onDragLeave={ev => {
+          ev.preventDefault();
           const isParentOfTarget = this.elm.contains(ev.target as HTMLDivElement);
-          console.log(ev.target);
+          console.log({isParentOfTarget});
           if (!isParentOfTarget) {
             this.mouseHover = false;
-          }else{
-            this.mouseHover = true;
           }
         }}
       >

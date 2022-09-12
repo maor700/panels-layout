@@ -12,16 +12,23 @@ export class PalPanelStackHeader {
   @Element() elm: HTMLElement;
   @Event() dragTab: EventEmitter<boolean>;
 
+  moveHandler = () => {
+    !this.dragTab && this.dragTab.emit(true);
+  };
+
+  upHandler = () => {
+    this.dragTab.emit(false);
+    top.document.removeEventListener('mousemove', this.moveHandler);
+    top.document.removeEventListener('mouseup', this.upHandler);
+  };
+
   render() {
     return (
       <Host
-        onDragStart={_ => {
-          this.dragTab.emit(true);
+        onMouseDown={_ => {
+          top.document.addEventListener('mousemove', this.moveHandler);
+          top.document.addEventListener('mouseup', this.upHandler);
         }}
-        onDragEnd={_ => {
-          this.dragTab.emit(false);
-        }}
-        draggable="true"
       >
         <div class={`${this.active ? 'active' : ''} stack-head`}>
           <div class="close stack-head-btn">

@@ -101,22 +101,6 @@ export class PalPanel {
       <Host
         style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.data?.flex + '' }}
         class={`panel ${this.isContainer ? 'is-container' : ''} ${this.panelData?.data?.hideHeader ? 'no-padding' : ''} ${this.mouseHover ? 'mouse-hover' : ''}`}
-        onDragOver={ev => {
-          ev.preventDefault();
-          ev.dataTransfer.dropEffect = 'move';
-        }}
-        onDragEnter={(ev: DragEvent) => {
-          ev.preventDefault();
-          this.mouseHover = true;
-        }}
-        onDragLeave={ev => {
-          ev.preventDefault();
-          const isParentOfTarget = this.elm.contains(ev.target as HTMLDivElement);
-          console.log({isParentOfTarget});
-          if (!isParentOfTarget) {
-            this.mouseHover = false;
-          }
-        }}
       >
         <div class="grid-stick-layout">
           {this.panelData && !this.panelData?.data?.hideHeader ? (

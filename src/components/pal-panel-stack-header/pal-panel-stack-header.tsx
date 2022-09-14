@@ -13,7 +13,7 @@ export class PalPanelStackHeader {
   @Event() dragTab: EventEmitter<boolean>;
 
   moveHandler = () => {
-    !this.dragTab && this.dragTab.emit(true);
+    this.dragTab.emit(true);
   };
 
   upHandler = () => {

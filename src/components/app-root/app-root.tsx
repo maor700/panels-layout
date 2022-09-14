@@ -62,6 +62,11 @@ export class AppRoot {
               const parentChildrenBeforeMove = await (await treesDB.getNodeChildrenCollection(targetItemParentId)).sortBy('order');
               const indexTarget = parentChildrenBeforeMove.findIndex(_ => _.id === end.panelId);
               console.log({ indexTarget });
+              if (end.direction === TabDropDirections.left) {
+                const target = parentChildrenBeforeMove?.[indexTarget]?.order;
+                const childBefore = parentChildrenBeforeMove?.[indexTarget - 1]?.order ?? 0;
+                const newOrder =  childBefore
+              }
 
               const containerId = await treesDB.addChildNode(targetItem.treeId, 'container', targetItemParentId, { flex: 20, direction: 'column', hideHeader: 1 });
               const container = await treesDB.treesItems.get(containerId);
@@ -70,7 +75,7 @@ export class AppRoot {
               const [_, baseParentChildern] = await treesDB.getNodeAndChildren(ItemToTransferParentId);
               if (baseParentChildern?.length <= 1) {
                 const [lastChild] = baseParentChildern;
-                const granGrandpa = ItemToTransferGrandpaId && await treesDB.treesItems.get(ItemToTransferGrandpaId);
+                const granGrandpa = ItemToTransferGrandpaId && (await treesDB.treesItems.get(ItemToTransferGrandpaId));
                 if (lastChild && granGrandpa) {
                   await treesDB.moveTreeItem(lastChild, granGrandpa);
                   ItemToTransferParentId && (await treesDB.deleteNode(ItemToTransferParentId));
@@ -83,7 +88,7 @@ export class AppRoot {
         >
           <main class="main">
             {this.root ? <pal-panel panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel> : null}
-            <div style={{width:"5px"}} class="divider"></div>
+            <div style={{ width: '5px' }} class="divider"></div>
             {this.scondRoot ? <pal-panel panelId={this.scondRoot.id} title={this.scondRoot.name} key={this.scondRoot.id}></pal-panel> : null}
           </main>
         </pal-drag-drop-context>

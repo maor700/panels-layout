@@ -17,10 +17,13 @@
 
 .drag-mode .panel {
   position: relative;
-  cursor: url('https://svgur.com/i/jx9.svg'), auto;
 }
 
-.drag-mode .panel.mouse-hover .snaps {
+.drag-mode .trapeze{
+  cursor: url('/assets/drag_cursor.svg'), copy;
+}
+
+.drag-mode .panel:hover>.grid-stick-layout>.main>.content>.snaps {
   display: flex;
 }
 
@@ -42,7 +45,7 @@
   border-right: var(--snaps-size) solid transparent;
 }
 
-.top.drag-over {
+.top:hover {
   border-top-color: var(--sanps-hover-color);
 }
 
@@ -55,7 +58,7 @@
   border-right: var(--snaps-size) solid transparent;
 }
 
-.bottom.drag-over {
+.bottom:hover {
   border-bottom-color: var(--sanps-hover-color);
 }
 
@@ -68,7 +71,7 @@
   border-top: var(--snaps-size) solid transparent;
 }
 
-.right.drag-over {
+.right:hover {
   border-right-color: var(--sanps-hover-color);
 }
 
@@ -81,7 +84,7 @@
   border-top: var(--snaps-size) solid transparent;
 }
 
-.left.drag-over {
+.left:hover {
   border-left-color: var(--sanps-hover-color);
 }
 
@@ -92,6 +95,6 @@
   opacity: var(--snaps-opacity);
   transition: all 0.5s ease;
 }
-.center.drag-over {
+.center:hover {
   background: var(--sanps-hover-color);
 }

@@ -62,11 +62,11 @@ export class AppRoot {
               const parentChildrenBeforeMove = await (await treesDB.getNodeChildrenCollection(targetItemParentId)).sortBy('order');
               const indexTarget = parentChildrenBeforeMove.findIndex(_ => _.id === end.panelId);
               console.log({ indexTarget });
-              if (end.direction === TabDropDirections.left) {
-                const target = parentChildrenBeforeMove?.[indexTarget]?.order;
-                const childBefore = parentChildrenBeforeMove?.[indexTarget - 1]?.order ?? 0;
-                const newOrder =  childBefore
-              }
+              // if (end.direction === TabDropDirections.left) {
+              //   const target = parentChildrenBeforeMove?.[indexTarget]?.order;
+              //   const childBefore = parentChildrenBeforeMove?.[indexTarget - 1]?.order ?? 0;
+              //   const newOrder =  childBefore
+              // }
 
               const containerId = await treesDB.addChildNode(targetItem.treeId, 'container', targetItemParentId, { flex: 20, direction: 'column', hideHeader: 1 });
               const container = await treesDB.treesItems.get(containerId);

@@ -1,37 +1,15 @@
-import { v1 } from 'uuid';
+import { TreeItem } from './tree/TreeItem';
 
-export interface Panel {
-  panelsDirection: 'row' | 'column';
-  id: string;
-  name: string;
-  parentPath: string;
-  hasChildren: 1 | 0;
-  component: string;
-  type?: 'stack' | 'tabs';
-  width?: number;
-  height?: number;
-  title?: string;
-  activePanel?: string;
-  order?: number;
+enum PanelTypes {
+  row = 'row',
+  column = 'column',
+  tabs = 'tabs',
+  content = 'content',
+  float = 'float',
+  window = 'window',
 }
-
-interface LayoutConfig {
-  panels: Panel[];
+export class Panel extends TreeItem {
+  type: PanelTypes = PanelTypes.column;
+  flex: number;
+  hideHeader: 0 | 1;
 }
-
-const createPanel: (changes?: Partial<Panel>) => Panel = (changes = {}) => ({
-  name: 'Untitled',
-  id: v1(),
-  panelsDirection: 'column',
-  parentPath: '/',
-  hasChildren: 0,
-  order:1,
-  component: '<h2>Some Component</h2>',
-  ...changes,
-});
-
-const panels = [createPanel(), createPanel(), createPanel()];
-
-export const panelsLayout: LayoutConfig = {
-  panels,
-};

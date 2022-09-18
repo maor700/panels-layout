@@ -4,6 +4,7 @@ import { INDEXES, STRING_INDEXES } from './indexes';
 import { TreeClass } from './Tree';
 import { TreesStates } from './TreesStates';
 import { AppState } from './AppState';
+import { Panel } from '../panelsConfig';
 
 export const TREES_DB_NAME = 'treesDB';
 const TREES_ITEMS_TABLE_NAME = 'treesItems';
@@ -13,14 +14,14 @@ const APP_TABLE_NAME = 'app';
 
 export const MAX_TREES = 4;
 
-export class TreesDB extends Dexie {
-  treesItems!: Table<TreeItem>;
+export class TreesDB<TI extends TreeItem> extends Dexie {
+  treesItems!: Table<TI>;
   trees!: Table<TreeClass>;
-  treesStates!: Table<TreesStates>;
+  treesStates!: Table<TreesStates<TI>>;
   app!: Table<AppState>;
   treesItemesDirt!: boolean;
 
-  constructor() {
+  constructor(private treeItemClass:new() => TI) {
     super(
       TREES_DB_NAME,
       //  { addons: [dexieCloud] }
@@ -57,7 +58,7 @@ export class TreesDB extends Dexie {
     return (await this.trees.count()) < MAX_TREES;
   };
 
-  createNewTree = async (treeName = '', addRoot = true, treeInitial: Partial<TreeClass> = {}, rootInitial: Partial<TreeItem> = {}) => {
+  createNewTree = async (treeName = '', addRoot = true, treeInitial: Partial<TreeClass> = {}, rootInitial: Partial<TI> = {}) => {
     if (!(await this._canAddTree())) return;
     return await this.transaction('rw', this.trees, this.treesItems, async () => {
       const finalTree = { ...new TreeClass(), ...treeInitial, treeName };
@@ -140,7 +141,7 @@ export class TreesDB extends Dexie {
     const alreadyExist = (await this.treesItems.where(INDEXES.tp).equals([treeId, '']).count()) > 0;
     if (alreadyExist) throw 'Tree root node already exist';
     return await this.treesItems.add({
-      ...new TreeItem(),
+      ...new this.treeItemClass(),
       ...initial,
       treeId,
       parentPath: '',
@@ -153,12 +154,12 @@ export class TreesDB extends Dexie {
       if (!parent) return;
       const parentPath = parent.parentPath + parentId + '/';
       const newItemId = await this.treesItems.add({
-        ...new TreeItem(),
+        ...new this.treeItemClass(),
         treeId,
         name,
         parentPath,
-        data,
-      } as TreeItem);
+        ...data,
+      });
       await this.treesItems.update(parent.id, { leaf: 0 });
       return newItemId;
     });
@@ -287,8 +288,8 @@ export class TreesDB extends Dexie {
     this.transaction('rw', this.treesStates, this.treesItems, this.trees, async () => {
       const trees = await this.trees.toArray();
       const treesItems = await this.treesItems.toArray();
-      const newId = new TreesStates().id;
-      let stateToSave: TreesStates = {
+      const newId = new TreesStates<TI>().id;
+      let stateToSave: TreesStates<TI> = {
         id: newId,
         trees,
         treesItems,
@@ -338,4 +339,4 @@ export class TreesDB extends Dexie {
   };
 }
 
-export const treesDB = new TreesDB();
+export const treesDB = new TreesDB(Panel);

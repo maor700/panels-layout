@@ -1,7 +1,6 @@
 import { Component, Element, h, Host, Prop, State, Watch, Event, EventEmitter } from '@stencil/core';
 import { liveQuery, Subscription } from 'dexie';
-import { Panel } from '../../services/panelsConfig';
-import { TreeItem } from '../../services/tree/TreeItem';
+import { Panel, PanelTypes } from '../../services/panelsConfig';
 import { treesDB } from '../../services/tree/treesDB';
 
 @Component({
@@ -11,13 +10,13 @@ import { treesDB } from '../../services/tree/treesDB';
 export class PalPanel {
   @Prop() panelId: string;
   @State() active: string;
-  @State() panelData: TreeItem<{ flex: number; direction: 'row' | 'column'; hideHeader: 1 | 0 }>;
-  @State() panels: TreeItem<Panel>[] = [];
+  @State() panelData: Panel;
+  @State() panels: Panel[] = [];
   @State() isContainer: boolean;
   @State() mouseHover: boolean;
-  @State() headers: TreeItem[] = [];
+  @State() headers: Panel[] = [];
   @State() flexFactor = 1;
-  @State() flexDirection: 'row' | 'column';
+  @State() type: PanelTypes = PanelTypes.row;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrop: EventEmitter<DragStage>;
   @Element() elm: HTMLElement;
@@ -44,7 +43,7 @@ export class PalPanel {
   setupFlex() {
     if (!this.content) return;
     const con = this.content;
-    this.conAxis = this.flexDirection === 'column' ? 'offsetHeight' : 'offsetWidth';
+    this.conAxis = this.type === 'column' ? 'offsetHeight' : 'offsetWidth';
     this.conSize = con[this.conAxis];
     this.flexFactor = 100 / this.conSize;
   }
@@ -59,7 +58,7 @@ export class PalPanel {
   }
 
   componentDidUpdate() {
-    this.flexDirection = this.panelData?.data?.direction ?? (getComputedStyle(this.content).flexDirection as 'row' | 'column');
+    this.type = this.panelData?.type;
   }
 
   disconnectedCallback() {
@@ -84,26 +83,26 @@ export class PalPanel {
     const { sibiling, movementX, movementY } = event?.detail;
 
     const [sibilingL, sibilingR] = await treesDB.treesItems.bulkGet(sibiling);
-    const rightWinW = sibilingR.data?.flex as number;
-    const leftWinW = sibilingL.data?.flex as number;
+    const rightWinW = sibilingR?.flex as number;
+    const leftWinW = sibilingL?.flex as number;
     const movementAxis = this.conAxis === 'offsetWidth' ? movementX : movementY;
     const leftPanelNewSize = leftWinW + movementAxis * this.flexFactor;
     const rightPanelNewSize = rightWinW - movementAxis * this.flexFactor;
 
     treesDB.treesItems.bulkPut([
-      { ...sibilingL, data: { ...sibilingL?.data, flex: leftPanelNewSize } },
-      { ...sibilingR, data: { ...sibilingR?.data, flex: rightPanelNewSize } },
+      { ...sibilingL, flex: leftPanelNewSize },
+      { ...sibilingR, flex: rightPanelNewSize },
     ]);
   };
 
   render() {
     return (
       <Host
-        style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.data?.flex + '' }}
-        class={`panel ${this.isContainer ? 'is-container' : ''} ${this.panelData?.data?.hideHeader ? 'no-padding' : ''} ${this.mouseHover ? 'mouse-hover' : ''}`}
+        style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.flex + '' }}
+        class={`panel ${this.isContainer ? 'is-container' : ''} ${this.panelData?.hideHeader ? 'no-padding' : ''} ${this.mouseHover ? 'mouse-hover' : ''}`}
       >
         <div class="grid-stick-layout">
-          {this.panelData && !this.panelData?.data?.hideHeader ? (
+          {this.panelData && !this.panelData?.hideHeader ? (
             <div class="header panels-container-header">
               <pal-panel-stack-header
                 panelId={this.panelId}
@@ -122,7 +121,7 @@ export class PalPanel {
               ref={element => {
                 this.content = element;
               }}
-              style={{ flexDirection: this.flexDirection }}
+              style={{ flexDirection: this.type }}
               class="content"
             >
               {this.isContainer ? (
@@ -131,7 +130,7 @@ export class PalPanel {
                     <pal-panel panelId={p.id} key={p.id}></pal-panel>,
                     i !== this.panels?.length - 1 ? (
                       <pal-divider
-                        flexDirection={this.flexDirection}
+                        flexDirection={this.type}
                         sibiling={[this.panels?.[i]?.id, this.panels?.[i + 1]?.id]}
                         onDividerMove={this.dividerMoveHandler}
                       ></pal-divider>

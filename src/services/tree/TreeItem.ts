@@ -1,6 +1,7 @@
 import { v1 } from 'uuid';
 
 export class TreeItem<T = any> {
+  constructor(){}
   id: string = v1();
   treeId!: string;
   name!: string;

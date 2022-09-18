@@ -15,8 +15,8 @@ panel types:
 order - place the moved item on the location it has been dropped in the same oreder.
 cleanup- if the moved item left behind him a container with less than 1 children, move the last child to the grandpa and delete the empty panel.
 
-* Drop on center - create a new tabs panel (or use the exist one) and move the original + moved panel to the tabs panel; 
+* Drop on center - create a new tabs panel (or use the exist one) and move the original + moved panel to the tabs panel;
 
 * Drop on tabs header - as the same as drop on center + apply the right order;
 
-* Tree drop zone component - will contain a snaps drop to grop of panels. 
+* Tree drop zone component - will contain a snaps drop to grop of panels.

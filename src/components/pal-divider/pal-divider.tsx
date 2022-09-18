@@ -27,15 +27,15 @@ export class PalDivider {
   private mouseUpHandler = () => {
     this.focused = false;
     const [movementX, movementY] = this.movements;
-    this.dividerMove.emit({ sibiling: this.sibiling, movementX, movementY });
     this.movements = [0,0];
+    this.dividerMove.emit({ sibiling: this.sibiling, movementX, movementY });
     document.removeEventListener('mousemove', this.mouseMoveHandler);
     document.removeEventListener('mouseup', this.mouseUpHandler);
   };
 
   render() {
     const [x, y] = this.movements;
-    const style = this.flexDirection==="column"?{top:y+"px", left:"0"}:{top:"0", left:x+"px"};
+    const style = this.flexDirection=="column"?{top:y+"px", left:"0"}:{top:"0", left:x+"px"};
     return <Host style={style} onMouseDown={this.mouseDownHandler} class={`v-divider ${this.focused ? 'focused' : ''}`}></Host>;
   }
 }

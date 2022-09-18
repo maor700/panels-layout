@@ -5,6 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { Panel, PanelTypes } from "./services/panelsConfig";
 export namespace Components {
     interface AppRoot {
     }
@@ -16,6 +17,10 @@ export namespace Components {
     }
     interface PalDragDropSnap {
         "direction": string;
+    }
+    interface PalFlexContainerPanel {
+        "flexDirection": PanelTypes.column | PanelTypes.row;
+        "panels": Panel[];
     }
     interface PalPanel {
         "panelId": string;
@@ -72,6 +77,12 @@ declare global {
         prototype: HTMLPalDragDropSnapElement;
         new (): HTMLPalDragDropSnapElement;
     };
+    interface HTMLPalFlexContainerPanelElement extends Components.PalFlexContainerPanel, HTMLStencilElement {
+    }
+    var HTMLPalFlexContainerPanelElement: {
+        prototype: HTMLPalFlexContainerPanelElement;
+        new (): HTMLPalFlexContainerPanelElement;
+    };
     interface HTMLPalPanelElement extends Components.PalPanel, HTMLStencilElement {
     }
     var HTMLPalPanelElement: {
@@ -89,6 +100,7 @@ declare global {
         "pal-divider": HTMLPalDividerElement;
         "pal-drag-drop-context": HTMLPalDragDropContextElement;
         "pal-drag-drop-snap": HTMLPalDragDropSnapElement;
+        "pal-flex-container-panel": HTMLPalFlexContainerPanelElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
     }
@@ -108,6 +120,10 @@ declare namespace LocalJSX {
         "direction"?: string;
         "onSnapDrop"?: (event: PalDragDropSnapCustomEvent<{ direction: string }>) => void;
     }
+    interface PalFlexContainerPanel {
+        "flexDirection"?: PanelTypes.column | PanelTypes.row;
+        "panels"?: Panel[];
+    }
     interface PalPanel {
         "onTabDrag"?: (event: PalPanelCustomEvent<DragStage>) => void;
         "onTabDrop"?: (event: PalPanelCustomEvent<DragStage>) => void;
@@ -125,6 +141,7 @@ declare namespace LocalJSX {
         "pal-divider": PalDivider;
         "pal-drag-drop-context": PalDragDropContext;
         "pal-drag-drop-snap": PalDragDropSnap;
+        "pal-flex-container-panel": PalFlexContainerPanel;
         "pal-panel": PalPanel;
         "pal-panel-stack-header": PalPanelStackHeader;
     }
@@ -137,6 +154,7 @@ declare module "@stencil/core" {
             "pal-divider": LocalJSX.PalDivider & JSXBase.HTMLAttributes<HTMLPalDividerElement>;
             "pal-drag-drop-context": LocalJSX.PalDragDropContext & JSXBase.HTMLAttributes<HTMLPalDragDropContextElement>;
             "pal-drag-drop-snap": LocalJSX.PalDragDropSnap & JSXBase.HTMLAttributes<HTMLPalDragDropSnapElement>;
+            "pal-flex-container-panel": LocalJSX.PalFlexContainerPanel & JSXBase.HTMLAttributes<HTMLPalFlexContainerPanelElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
         }

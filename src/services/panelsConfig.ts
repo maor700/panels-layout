@@ -1,6 +1,6 @@
 import { TreeItem } from './tree/TreeItem';
 
-enum PanelTypes {
+export enum PanelTypes {
   row = 'row',
   column = 'column',
   tabs = 'tabs',
@@ -9,7 +9,8 @@ enum PanelTypes {
   window = 'window',
 }
 export class Panel extends TreeItem {
-  type: PanelTypes = PanelTypes.column;
-  flex: number;
-  hideHeader: 0 | 1;
+  type?: PanelTypes = PanelTypes.column;
+  flex?: number;
+  activeTab?: string;
+  hideHeader?: 0 | 1 = 0;
 }

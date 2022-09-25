@@ -3,7 +3,7 @@ panel types:
 1. row - container with children in flex layout with flex direction of row;
 2. column - container with children in flex layout with flex direction of column;
 3. tabs - container with children which display as tabs. only one tab is active at the same time;
-4. acordion - container displayed his children in acorion mode. direction can be horisontal or vertical;
+4. accordion - container displayed his children in acorion mode. direction can be horisontal or vertical;
 5. content - panel without children and with the actual content;
 6. float - float panel.
 7. window - opened in a new browser window;
@@ -15,8 +15,8 @@ panel types:
 order - place the moved item on the location it has been dropped in the same oreder.
 cleanup- if the moved item left behind him a container with less than 1 children, move the last child to the grandpa and delete the empty panel.
 
-* Drop on center - create a new tabs panel (or use the exist one) and move the original + moved panel to the tabs panel;
+* Drop on center - create a new tabs panel (or use the exist one) and move the original + moved panel to the tabs panel; 
 
 * Drop on tabs header - as the same as drop on center + apply the right order;
 
-* Tree drop zone component - will contain a snaps drop to grop of panels.
+* Tree drop zone component - will contain a snaps drop to grop of panels. 

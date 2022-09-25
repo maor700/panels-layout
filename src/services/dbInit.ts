@@ -7,7 +7,7 @@ treesDB.on('populate', async () => {
   await treesDB.createNewTree(TREE_NAME, true, { id: TREE_NAME, treeName: 'פריסה מרכזית' }, { id: 'root', leaf: 0, hideHeader: 1, type:PanelTypes.row });
   const { id } = await treesDB.getRoot(TREE_NAME);
 
-  await treesDB.createNewTree('second-tree', true, { id: 'second-tree', treeName: 'פריסה מרכזית' }, { id: 'second-root', leaf: 0, hideHeader: 1, type:PanelTypes.row });
+  await treesDB.createNewTree('second-tree', true, { id: 'second-tree', treeName: 'פריסה מרכזית' }, { id: 'second-root', leaf: 0, hideHeader: 1, type:PanelTypes.column });
   const { id: secondTreeId } = await treesDB.getRoot('second-tree');
 
   await treesDB.treesItems.bulkPut([

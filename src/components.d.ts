@@ -9,6 +9,10 @@ import { Panel, PanelTypes } from "./services/panelsConfig";
 export namespace Components {
     interface AppRoot {
     }
+    interface PalContentPanel {
+        "panelData": Panel;
+        "panelId": string;
+    }
     interface PalDivider {
         "flexDirection": string;
         "sibiling"?: string[];
@@ -20,9 +24,10 @@ export namespace Components {
     }
     interface PalFlexContainerPanel {
         "flexDirection": PanelTypes.column | PanelTypes.row;
-        "panels": Panel[];
+        "panelId": string;
     }
     interface PalPanel {
+        "panelData": Panel;
         "panelId": string;
     }
     interface PalPanelStackHeader {
@@ -31,6 +36,10 @@ export namespace Components {
         "panelTitle": string;
         "treeId": string;
     }
+}
+export interface PalContentPanelCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalContentPanelElement;
 }
 export interface PalDividerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -44,9 +53,9 @@ export interface PalDragDropSnapCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalDragDropSnapElement;
 }
-export interface PalPanelCustomEvent<T> extends CustomEvent<T> {
+export interface PalFlexContainerPanelCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLPalPanelElement;
+    target: HTMLPalFlexContainerPanelElement;
 }
 export interface PalPanelStackHeaderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -58,6 +67,12 @@ declare global {
     var HTMLAppRootElement: {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
+    };
+    interface HTMLPalContentPanelElement extends Components.PalContentPanel, HTMLStencilElement {
+    }
+    var HTMLPalContentPanelElement: {
+        prototype: HTMLPalContentPanelElement;
+        new (): HTMLPalContentPanelElement;
     };
     interface HTMLPalDividerElement extends Components.PalDivider, HTMLStencilElement {
     }
@@ -97,6 +112,7 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
+        "pal-content-panel": HTMLPalContentPanelElement;
         "pal-divider": HTMLPalDividerElement;
         "pal-drag-drop-context": HTMLPalDragDropContextElement;
         "pal-drag-drop-snap": HTMLPalDragDropSnapElement;
@@ -107,6 +123,12 @@ declare global {
 }
 declare namespace LocalJSX {
     interface AppRoot {
+    }
+    interface PalContentPanel {
+        "onTabDrag"?: (event: PalContentPanelCustomEvent<DragStage>) => void;
+        "onTabDrop"?: (event: PalContentPanelCustomEvent<DragStage>) => void;
+        "panelData"?: Panel;
+        "panelId"?: string;
     }
     interface PalDivider {
         "flexDirection"?: string;
@@ -122,11 +144,12 @@ declare namespace LocalJSX {
     }
     interface PalFlexContainerPanel {
         "flexDirection"?: PanelTypes.column | PanelTypes.row;
-        "panels"?: Panel[];
+        "onTabDrag"?: (event: PalFlexContainerPanelCustomEvent<DragStage>) => void;
+        "onTabDrop"?: (event: PalFlexContainerPanelCustomEvent<DragStage>) => void;
+        "panelId"?: string;
     }
     interface PalPanel {
-        "onTabDrag"?: (event: PalPanelCustomEvent<DragStage>) => void;
-        "onTabDrop"?: (event: PalPanelCustomEvent<DragStage>) => void;
+        "panelData"?: Panel;
         "panelId"?: string;
     }
     interface PalPanelStackHeader {
@@ -138,6 +161,7 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "app-root": AppRoot;
+        "pal-content-panel": PalContentPanel;
         "pal-divider": PalDivider;
         "pal-drag-drop-context": PalDragDropContext;
         "pal-drag-drop-snap": PalDragDropSnap;
@@ -151,6 +175,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
+            "pal-content-panel": LocalJSX.PalContentPanel & JSXBase.HTMLAttributes<HTMLPalContentPanelElement>;
             "pal-divider": LocalJSX.PalDivider & JSXBase.HTMLAttributes<HTMLPalDividerElement>;
             "pal-drag-drop-context": LocalJSX.PalDragDropContext & JSXBase.HTMLAttributes<HTMLPalDragDropContextElement>;
             "pal-drag-drop-snap": LocalJSX.PalDragDropSnap & JSXBase.HTMLAttributes<HTMLPalDragDropSnapElement>;

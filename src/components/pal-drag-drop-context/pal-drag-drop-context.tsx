@@ -13,10 +13,11 @@ export class PalDragDropContext {
     return (
       <Host
         onTabDrag={({ detail }) => {
-          if(this.dragMode === !!detail) return;
           this.dragMode = !!detail;
+          if(!this.dragMode) return;
           this.dragProccess = { ...this.dragProccess, start: detail };
         }}
+
         onTabDrop={({ detail }) => {
           console.log({ detail });
           this.dragProccess = { ...this.dragProccess, end: detail };

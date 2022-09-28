@@ -10,14 +10,14 @@ export class PalPanelStackHeader {
   @Prop() panelId: string;
   @Prop() treeId: string;
   @Element() elm: HTMLElement;
-  @Event() dragTab: EventEmitter<boolean>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
 
-  moveHandler = () => {
-    this.dragTab.emit(true);
+  moveHandler = _ => {
+    this.tabDrag.emit({ treeId: this.treeId, panelId: this.panelId });
   };
 
   upHandler = () => {
-    this.dragTab.emit(false);
+    this.tabDrag.emit(null);
     top.document.removeEventListener('mousemove', this.moveHandler);
     top.document.removeEventListener('mouseup', this.upHandler);
   };
@@ -26,6 +26,7 @@ export class PalPanelStackHeader {
     return (
       <Host
         onMouseDown={_ => {
+          _.preventDefault();
           top.document.addEventListener('mousemove', this.moveHandler);
           top.document.addEventListener('mouseup', this.upHandler);
         }}

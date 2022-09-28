@@ -23,7 +23,7 @@
   cursor: url('/assets/drag_cursor.svg'), copy;
 }
 
-.drag-mode .panel:hover>.grid-stick-layout>.main>.content>.snaps {
+.drag-mode .content:hover>.snaps {
   display: flex;
 }
 

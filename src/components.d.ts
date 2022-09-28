@@ -20,7 +20,9 @@ export namespace Components {
     interface PalDragDropContext {
     }
     interface PalDragDropSnap {
-        "direction": string;
+        "direction": string | TabDropDirections;
+        "panelId": string;
+        "treeId": string;
     }
     interface PalFlexContainerPanel {
         "flexDirection": PanelTypes.column | PanelTypes.row;
@@ -35,6 +37,8 @@ export namespace Components {
         "panelId": string;
         "panelTitle": string;
         "treeId": string;
+    }
+    interface PalTabsPanel {
     }
 }
 export interface PalContentPanelCustomEvent<T> extends CustomEvent<T> {
@@ -52,10 +56,6 @@ export interface PalDragDropContextCustomEvent<T> extends CustomEvent<T> {
 export interface PalDragDropSnapCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalDragDropSnapElement;
-}
-export interface PalFlexContainerPanelCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLPalFlexContainerPanelElement;
 }
 export interface PalPanelStackHeaderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -110,6 +110,12 @@ declare global {
         prototype: HTMLPalPanelStackHeaderElement;
         new (): HTMLPalPanelStackHeaderElement;
     };
+    interface HTMLPalTabsPanelElement extends Components.PalTabsPanel, HTMLStencilElement {
+    }
+    var HTMLPalTabsPanelElement: {
+        prototype: HTMLPalTabsPanelElement;
+        new (): HTMLPalTabsPanelElement;
+    };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
         "pal-content-panel": HTMLPalContentPanelElement;
@@ -119,6 +125,7 @@ declare global {
         "pal-flex-container-panel": HTMLPalFlexContainerPanelElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
+        "pal-tabs-panel": HTMLPalTabsPanelElement;
     }
 }
 declare namespace LocalJSX {
@@ -139,13 +146,13 @@ declare namespace LocalJSX {
         "onTabDroped"?: (event: PalDragDropContextCustomEvent<DragProccess>) => void;
     }
     interface PalDragDropSnap {
-        "direction"?: string;
-        "onSnapDrop"?: (event: PalDragDropSnapCustomEvent<{ direction: string }>) => void;
+        "direction"?: string | TabDropDirections;
+        "onTabDrop"?: (event: PalDragDropSnapCustomEvent<DragStage>) => void;
+        "panelId"?: string;
+        "treeId"?: string;
     }
     interface PalFlexContainerPanel {
         "flexDirection"?: PanelTypes.column | PanelTypes.row;
-        "onTabDrag"?: (event: PalFlexContainerPanelCustomEvent<DragStage>) => void;
-        "onTabDrop"?: (event: PalFlexContainerPanelCustomEvent<DragStage>) => void;
         "panelId"?: string;
     }
     interface PalPanel {
@@ -154,10 +161,12 @@ declare namespace LocalJSX {
     }
     interface PalPanelStackHeader {
         "active"?: boolean;
-        "onDragTab"?: (event: PalPanelStackHeaderCustomEvent<boolean>) => void;
+        "onTabDrag"?: (event: PalPanelStackHeaderCustomEvent<DragStage>) => void;
         "panelId"?: string;
         "panelTitle"?: string;
         "treeId"?: string;
+    }
+    interface PalTabsPanel {
     }
     interface IntrinsicElements {
         "app-root": AppRoot;
@@ -168,6 +177,7 @@ declare namespace LocalJSX {
         "pal-flex-container-panel": PalFlexContainerPanel;
         "pal-panel": PalPanel;
         "pal-panel-stack-header": PalPanelStackHeader;
+        "pal-tabs-panel": PalTabsPanel;
     }
 }
 export { LocalJSX as JSX };
@@ -182,6 +192,7 @@ declare module "@stencil/core" {
             "pal-flex-container-panel": LocalJSX.PalFlexContainerPanel & JSXBase.HTMLAttributes<HTMLPalFlexContainerPanelElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
+            "pal-tabs-panel": LocalJSX.PalTabsPanel & JSXBase.HTMLAttributes<HTMLPalTabsPanelElement>;
         }
     }
 }

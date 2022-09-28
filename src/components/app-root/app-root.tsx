@@ -5,6 +5,7 @@ import { treesDB } from '../../services/tree/treesDB';
 import '../../services/panelsConfig';
 import '../../services/dbInit';
 import '../../services/controller';
+// import { PanelTypes } from '../../services/panelsConfig';
 
 console.log(treesDB);
 
@@ -68,7 +69,13 @@ export class AppRoot {
               //   const newOrder =  childBefore
               // }
 
-              const containerId = await treesDB.addChildNode(targetItem.treeId, 'container', targetItemParentId, { flex: 20, direction: 'column', hideHeader: 1 });
+              // check if target parent have the same type, if so dont create another container panel;
+              const targetItemParent = await treesDB.treesItems.get(targetItemParentId);
+              const translatedDirections = end?.direction === 'bottom' || end?.direction === 'top' ? 'column' : 'row';
+              const containerId =
+                targetItemParent?.type === translatedDirections
+                  ? targetItemParent?.id
+                  : await treesDB.addChildNode(targetItem.treeId, 'container', targetItemParentId, { flex: 20, type: translatedDirections, hideHeader: 1 });
               const container = await treesDB.treesItems.get(containerId);
               // move the two nodes to be the children of the new node;
               await treesDB.moveTreeItem(ItemToTransfer, container);
@@ -87,9 +94,9 @@ export class AppRoot {
           }}
         >
           <main class="main">
-            {this.root ? <pal-panel panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel> : null}
+            {this.root ? <pal-panel panelData={this.root} panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel> : null}
             <div style={{ width: '5px' }} class="divider"></div>
-            {this.scondRoot ? <pal-panel panelId={this.scondRoot.id} title={this.scondRoot.name} key={this.scondRoot.id}></pal-panel> : null}
+            {this.scondRoot ? <pal-panel panelData={this.scondRoot} panelId={this.scondRoot.id} title={this.scondRoot.name} key={this.scondRoot.id}></pal-panel> : null}
           </main>
         </pal-drag-drop-context>
         <div class="footer">Footer</div>

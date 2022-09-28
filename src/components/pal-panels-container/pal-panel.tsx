@@ -1,4 +1,4 @@
-import { Component, Element, h, Host, Prop, State } from '@stencil/core';
+import { Component, Element, h, Host, Prop } from '@stencil/core';
 import { Panel, PanelTypes } from '../../services/panelsConfig';
 @Component({
   tag: 'pal-panel',
@@ -12,12 +12,14 @@ export class PalPanel {
 
   render() {
     return (
-      <Host class={`panel`} style={{flex:this.panelData?.flex+""}}>
+      <Host class={`panel`} style={{ flex: this.panelData?.flex + '' }}>
         {this.panelData?.type === PanelTypes.row || this.panelData?.type === PanelTypes.column ? (
-          <pal-flex-container-panel panelId={this.panelId} flexDirection={ this.panelData?.type}></pal-flex-container-panel>
-        ) : (
-          this.panelData?.type === PanelTypes.content ? <pal-content-panel panelData={this.panelData} panelId={this.panelId} /> : null
-        )}
+          <pal-flex-container-panel panelId={this.panelId} flexDirection={this.panelData?.type}></pal-flex-container-panel>
+        ) : this.panelData?.type === PanelTypes.content ? (
+          <pal-content-panel panelData={this.panelData} panelId={this.panelId} />
+        ) : this.panelData?.type === PanelTypes.tabs ? (
+          <pal-tabs-panel />
+        ) : null}
       </Host>
     );
   }

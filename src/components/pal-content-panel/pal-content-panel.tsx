@@ -1,7 +1,5 @@
 import { Component, Host, h, Event, EventEmitter, State, Prop } from '@stencil/core';
-import { Subscription, liveQuery } from 'dexie';
 import { Panel } from '../../services/panelsConfig';
-import { treesDB } from '../../services/tree/treesDB';
 
 @Component({
   tag: 'pal-content-panel',
@@ -40,7 +38,6 @@ export class PalContentPanel {
                 panelId={this.panelId}
                 treeId={this.panelData?.treeId}
                 key={this.panelData.id}
-                onDragTab={this.dragHandler}
                 panelTitle={this.panelData.name}
                 active={this.active}
                 title={this.panelData.name}
@@ -51,11 +48,11 @@ export class PalContentPanel {
             <div class="content">
               <div class="panel-content">demo text</div>
               <div class="snaps">
-                <pal-drag-drop-snap direction={'top'} onSnapDrop={this.snapDropHandler}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'right'} onSnapDrop={this.snapDropHandler}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'left'} onSnapDrop={this.snapDropHandler}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'bottom'} onSnapDrop={this.snapDropHandler}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'center'} onSnapDrop={this.snapDropHandler}></pal-drag-drop-snap>
+                <pal-drag-drop-snap direction={'top'} treeId={this?.panelData?.treeId} panelId={this.panelId}></pal-drag-drop-snap>
+                <pal-drag-drop-snap direction={'right'} treeId={this?.panelData?.treeId} panelId={this.panelId}></pal-drag-drop-snap>
+                <pal-drag-drop-snap direction={'left'} treeId={this?.panelData?.treeId} panelId={this.panelId}></pal-drag-drop-snap>
+                <pal-drag-drop-snap direction={'bottom'} treeId={this?.panelData?.treeId} panelId={this.panelId}></pal-drag-drop-snap>
+                <pal-drag-drop-snap direction={'center'} treeId={this?.panelData?.treeId} panelId={this.panelId}></pal-drag-drop-snap>
               </div>
             </div>
           </div>

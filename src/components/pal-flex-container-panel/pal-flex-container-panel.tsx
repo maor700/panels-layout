@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, Watch, Element, State, Event, EventEmitter } from '@stencil/core';
+import { Component, Host, h, Prop, Watch, Element, State} from '@stencil/core';
 import { Subscription, liveQuery } from 'dexie';
 import { Panel, PanelTypes } from '../../services/panelsConfig';
 import { treesDB } from '../../services/tree/treesDB';
@@ -20,8 +20,7 @@ export class PalFlexContainerPanel {
   @State() mouseHover: boolean;
   @State() headers: Panel[] = [];
   @State() type: PanelTypes = PanelTypes.row;
-  @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
-  @Event({ bubbles: true, composed: true, cancelable: true }) tabDrop: EventEmitter<DragStage>;
+
   private subscriptions: Subscription[] = [];
   private conAxis: string;
   private conSize: number;
@@ -79,16 +78,6 @@ export class PalFlexContainerPanel {
     ]);
   };
 
-  dragHandler = (ev: any) => {
-    ev.preventDefault();
-    const dragActive = ev.detail;
-    if (dragActive) {
-      this.tabDrag.emit({ treeId: this.panelData?.treeId, panelId: this.panelId });
-    } else {
-      this.tabDrag.emit(null);
-    }
-  };
-
   setActive = (panelName: string) => {
     this.active = panelName;
   };
@@ -108,7 +97,6 @@ export class PalFlexContainerPanel {
                 panelId={this.panelId}
                 treeId={this.panelData?.treeId}
                 key={this.panelData.id}
-                onDragTab={this.dragHandler}
                 panelTitle={this.panelData.name}
                 onClick={() => this.setActive(this.panelData.name)}
                 active={this.active === this.panelData.name}
@@ -117,7 +105,7 @@ export class PalFlexContainerPanel {
             </div>
           ) : null}
           <div class="main">
-            <div class="content">
+            <div class="content" style={{'flexDirection': this.flexDirection}}>
               {this.panels
                 ?.map((p, i) => [
                   <pal-panel panelData={p} panelId={p.id} key={p.id}></pal-panel>,

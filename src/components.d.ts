@@ -38,8 +38,6 @@ export namespace Components {
         "panelTitle": string;
         "treeId": string;
     }
-    interface PalTabsPanel {
-    }
 }
 export interface PalContentPanelCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -110,12 +108,6 @@ declare global {
         prototype: HTMLPalPanelStackHeaderElement;
         new (): HTMLPalPanelStackHeaderElement;
     };
-    interface HTMLPalTabsPanelElement extends Components.PalTabsPanel, HTMLStencilElement {
-    }
-    var HTMLPalTabsPanelElement: {
-        prototype: HTMLPalTabsPanelElement;
-        new (): HTMLPalTabsPanelElement;
-    };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
         "pal-content-panel": HTMLPalContentPanelElement;
@@ -125,7 +117,6 @@ declare global {
         "pal-flex-container-panel": HTMLPalFlexContainerPanelElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
-        "pal-tabs-panel": HTMLPalTabsPanelElement;
     }
 }
 declare namespace LocalJSX {
@@ -166,8 +157,6 @@ declare namespace LocalJSX {
         "panelTitle"?: string;
         "treeId"?: string;
     }
-    interface PalTabsPanel {
-    }
     interface IntrinsicElements {
         "app-root": AppRoot;
         "pal-content-panel": PalContentPanel;
@@ -177,7 +166,6 @@ declare namespace LocalJSX {
         "pal-flex-container-panel": PalFlexContainerPanel;
         "pal-panel": PalPanel;
         "pal-panel-stack-header": PalPanelStackHeader;
-        "pal-tabs-panel": PalTabsPanel;
     }
 }
 export { LocalJSX as JSX };
@@ -192,7 +180,6 @@ declare module "@stencil/core" {
             "pal-flex-container-panel": LocalJSX.PalFlexContainerPanel & JSXBase.HTMLAttributes<HTMLPalFlexContainerPanelElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
-            "pal-tabs-panel": LocalJSX.PalTabsPanel & JSXBase.HTMLAttributes<HTMLPalTabsPanelElement>;
         }
     }
 }

@@ -12,7 +12,7 @@ export class PalPanel {
 
   render() {
     return (
-      <Host class={`panel`} style={{ flex: this.panelData?.flex + '' }}>
+      <Host class={`panel`} style={{ flex: this.panelData?.flex + '', "--panel-bg":this.panelData?.color }}>
         {this.panelData?.type === PanelTypes.row || this.panelData?.type === PanelTypes.column ? (
           <pal-flex-container-panel panelId={this.panelId} flexDirection={this.panelData?.type}></pal-flex-container-panel>
         ) : this.panelData?.type === PanelTypes.content ? (

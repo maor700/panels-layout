@@ -13,4 +13,5 @@ export class Panel extends TreeItem {
   flex?: number;
   activeTab?: string;
   hideHeader?: 0 | 1 = 0;
+  color?: string;
 }

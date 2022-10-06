@@ -48,8 +48,6 @@ export class AppRoot {
             if (end?.treeId === start?.treeId && end?.panelId === start?.panelId) return;
             // get ItemToTransfer
             const [ItemToTransfer, targetItem] = await treesDB.treesItems.bulkGet([start?.panelId, end?.panelId]);
-            //if they sibilings return;
-            if (targetItem.treeId === ItemToTransfer.treeId && targetItem?.parentPath === ItemToTransfer?.parentPath) return;
 
             if (end?.treeId === start?.treeId && end?.panelId === start?.panelId) return;
             // create new node
@@ -59,19 +57,28 @@ export class AppRoot {
             const targetItemParentId = targetItemParents?.[targetItemParents?.length - 2];
             const ItemToTransferParentId = ItemToTransferParents?.[ItemToTransferParents?.length - 2];
             const ItemToTransferGrandpaId = ItemToTransferParents?.[ItemToTransferParents?.length - 3];
+            //if they sibilings and the direction is the same as parent,  return;
+            const targetItemParent = await treesDB.treesItems.get(targetItemParentId);
+            const translatedDirections = end?.direction === 'bottom' || end?.direction === 'top' ? 'column' : 'row';
+            if (targetItem.treeId === ItemToTransfer.treeId && targetItem?.parentPath === ItemToTransfer?.parentPath && targetItemParent.type === translatedDirections) return;
+
             treesDB.transaction('rw', 'trees', 'treesItems', async () => {
-              const parentChildrenBeforeMove = await (await treesDB.getNodeChildrenCollection(targetItemParentId)).sortBy('order');
+              const parentChildrenBeforeMove = await (await (await treesDB.getNodeChildrenCollection(targetItemParentId)).sortBy('order')).reverse();
+              console.log({parentChildrenBeforeMove});
+              
               const indexTarget = parentChildrenBeforeMove.findIndex(_ => _.id === end.panelId);
               console.log({ indexTarget });
-              // if (end.direction === TabDropDirections.left) {
-              //   const target = parentChildrenBeforeMove?.[indexTarget]?.order;
-              //   const childBefore = parentChildrenBeforeMove?.[indexTarget - 1]?.order ?? 0;
-              //   const newOrder =  childBefore
-              // }
+              let finalOrder = ItemToTransfer?.order ?? 0;
+              if (end.direction === 'left') {
+                const targetOrder = parentChildrenBeforeMove[indexTarget].order;
+                const childBefore = parentChildrenBeforeMove?.[indexTarget - 1]?.order ?? 0;
+                const max = Math.max(childBefore, targetOrder);
+                const min = Math.min(childBefore, targetOrder);
+                finalOrder = min + (max - min) / 2;
+              }
 
               // check if target parent have the same type, if so dont create another container panel;
-              const targetItemParent = await treesDB.treesItems.get(targetItemParentId);
-              const translatedDirections = end?.direction === 'bottom' || end?.direction === 'top' ? 'column' : 'row';
+
               const containerId =
                 targetItemParent?.type === translatedDirections
                   ? targetItemParent?.id
@@ -89,7 +96,9 @@ export class AppRoot {
                 }
               }
               //in case the parent of the ItemToTransfer is container with just one child. move the last child to the grandpa and remove the container.
-              await treesDB.moveTreeItem(targetItem, container);
+              await treesDB.moveTreeItem(ItemToTransfer, container);
+              await treesDB.treesItems.update(ItemToTransfer?.id, {order:finalOrder})
+
             });
           }}
         >

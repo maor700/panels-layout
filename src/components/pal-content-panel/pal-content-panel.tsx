@@ -8,6 +8,7 @@ import { Panel } from '../../services/panelsConfig';
 export class PalContentPanel {
   @Prop() panelId: string;
   @Prop() panelData: Panel;
+  @Prop() index: number;
   @State() active = true;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrop: EventEmitter<DragStage>;
@@ -46,7 +47,9 @@ export class PalContentPanel {
           ) : null}
           <div class="main">
             <div class="content">
-              <div class="panel-content">demo text</div>
+              <div class="panel-content">
+                <iframe src="https://moridimtv.com/" frameborder="0"></iframe>
+                </div>
               <div class="snaps">
                 <pal-drag-drop-snap direction={'top'} treeId={this?.panelData?.treeId} panelId={this.panelId}></pal-drag-drop-snap>
                 <pal-drag-drop-snap direction={'right'} treeId={this?.panelData?.treeId} panelId={this.panelId}></pal-drag-drop-snap>

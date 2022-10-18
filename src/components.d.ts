@@ -10,6 +10,7 @@ export namespace Components {
     interface AppRoot {
     }
     interface PalContentPanel {
+        "index": number;
         "panelData": Panel;
         "panelId": string;
     }
@@ -26,9 +27,11 @@ export namespace Components {
     }
     interface PalFlexContainerPanel {
         "flexDirection": PanelTypes.column | PanelTypes.row;
-        "panelId": string;
+        "panelData": Panel;
+        "panels": Panel[];
     }
     interface PalPanel {
+        "index": number;
         "panelData": Panel;
         "panelId": string;
     }
@@ -37,6 +40,12 @@ export namespace Components {
         "panelId": string;
         "panelTitle": string;
         "treeId": string;
+    }
+    interface PalTabsPanel {
+        "index": number;
+        "panelData": Panel;
+        "panelId": string;
+        "panels": Panel[];
     }
 }
 export interface PalContentPanelCustomEvent<T> extends CustomEvent<T> {
@@ -108,6 +117,12 @@ declare global {
         prototype: HTMLPalPanelStackHeaderElement;
         new (): HTMLPalPanelStackHeaderElement;
     };
+    interface HTMLPalTabsPanelElement extends Components.PalTabsPanel, HTMLStencilElement {
+    }
+    var HTMLPalTabsPanelElement: {
+        prototype: HTMLPalTabsPanelElement;
+        new (): HTMLPalTabsPanelElement;
+    };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
         "pal-content-panel": HTMLPalContentPanelElement;
@@ -117,12 +132,14 @@ declare global {
         "pal-flex-container-panel": HTMLPalFlexContainerPanelElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
+        "pal-tabs-panel": HTMLPalTabsPanelElement;
     }
 }
 declare namespace LocalJSX {
     interface AppRoot {
     }
     interface PalContentPanel {
+        "index"?: number;
         "onTabDrag"?: (event: PalContentPanelCustomEvent<DragStage>) => void;
         "onTabDrop"?: (event: PalContentPanelCustomEvent<DragStage>) => void;
         "panelData"?: Panel;
@@ -144,9 +161,11 @@ declare namespace LocalJSX {
     }
     interface PalFlexContainerPanel {
         "flexDirection"?: PanelTypes.column | PanelTypes.row;
-        "panelId"?: string;
+        "panelData"?: Panel;
+        "panels"?: Panel[];
     }
     interface PalPanel {
+        "index"?: number;
         "panelData"?: Panel;
         "panelId"?: string;
     }
@@ -157,6 +176,12 @@ declare namespace LocalJSX {
         "panelTitle"?: string;
         "treeId"?: string;
     }
+    interface PalTabsPanel {
+        "index"?: number;
+        "panelData"?: Panel;
+        "panelId"?: string;
+        "panels"?: Panel[];
+    }
     interface IntrinsicElements {
         "app-root": AppRoot;
         "pal-content-panel": PalContentPanel;
@@ -166,6 +191,7 @@ declare namespace LocalJSX {
         "pal-flex-container-panel": PalFlexContainerPanel;
         "pal-panel": PalPanel;
         "pal-panel-stack-header": PalPanelStackHeader;
+        "pal-tabs-panel": PalTabsPanel;
     }
 }
 export { LocalJSX as JSX };
@@ -180,6 +206,7 @@ declare module "@stencil/core" {
             "pal-flex-container-panel": LocalJSX.PalFlexContainerPanel & JSXBase.HTMLAttributes<HTMLPalFlexContainerPanelElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
+            "pal-tabs-panel": LocalJSX.PalTabsPanel & JSXBase.HTMLAttributes<HTMLPalTabsPanelElement>;
         }
     }
 }

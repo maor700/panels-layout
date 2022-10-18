@@ -14,4 +14,5 @@ export class Panel extends TreeItem {
   activeTab?: string;
   hideHeader?: 0 | 1 = 0;
   color?: string;
+  url?:string;
 }

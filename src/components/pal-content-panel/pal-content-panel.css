@@ -1,3 +1,8 @@
 :host {
   display: block;
 }
+
+.panel-content iframe {
+  height: 100%;
+  width: 100%;
+}

@@ -1,5 +1,7 @@
-import { Component, Element, h, Host, Prop } from '@stencil/core';
+import { Component, Element, h, Host, Prop, State } from '@stencil/core';
+import { liveQuery, Subscription } from 'dexie';
 import { Panel, PanelTypes } from '../../services/panelsConfig';
+import { treesDB } from '../../services/tree/treesDB';
 @Component({
   tag: 'pal-panel',
   styleUrl: 'pal-panel.css',
@@ -7,18 +9,34 @@ import { Panel, PanelTypes } from '../../services/panelsConfig';
 export class PalPanel {
   @Prop() panelId: string;
   @Prop() panelData: Panel;
-
+  @Prop() index: number;
+  @State() panels:Panel[]=[];
   @Element() elm: HTMLElement;
+  private subscriptions: Subscription[] = [];
+  
+  componentWillLoad() {
+    this.subscriptions.push(
+      liveQuery(() => treesDB.getNodeAndChildren(this.panelId)).subscribe(([panel, panels]) => {
+        this.panelData = panel;
+        this.panels = panels.sort((a, b) => a?.order - b?.order);
+      }),
+    );
+  }
+
+  disconnectedCallback() {
+    this.subscriptions.forEach(subscription => subscription?.unsubscribe?.());
+  }
+
 
   render() {
     return (
       <Host class={`panel`} style={{ flex: this.panelData?.flex + '', "--panel-bg":this.panelData?.color }}>
         {this.panelData?.type === PanelTypes.row || this.panelData?.type === PanelTypes.column ? (
-          <pal-flex-container-panel panelId={this.panelId} flexDirection={this.panelData?.type}></pal-flex-container-panel>
+          <pal-flex-container-panel panels={this.panels} flexDirection={this.panelData?.type}></pal-flex-container-panel>
         ) : this.panelData?.type === PanelTypes.content ? (
-          <pal-content-panel panelData={this.panelData} panelId={this.panelId} />
+          <pal-content-panel  panelData={this.panelData} panelId={this.panelId} index={this.index} />
         ) : this.panelData?.type === PanelTypes.tabs ? (
-          <pal-tabs-panel />
+          <pal-tabs-panel panels={this.panels} panelData={this.panelData} panelId={this.panelId} index={this.index} />
         ) : null}
       </Host>
     );

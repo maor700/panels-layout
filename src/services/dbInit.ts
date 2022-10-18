@@ -6,10 +6,10 @@ const TREE_NAME = 'main-layout';
 treesDB.on('ready', async () => {
   await treesDB.treesItems.clear();
   await treesDB.trees.clear();
-  await treesDB.createNewTree(TREE_NAME, true, { id: TREE_NAME, treeName: 'פריסה מרכזית' }, { id: 'root', leaf: 0, hideHeader: 1, type:PanelTypes.row });
+  await treesDB.createNewTree(TREE_NAME, true, { id: TREE_NAME, treeName: 'פריסה מרכזית' }, { id: 'root', leaf: 0, hideHeader: 1, type:PanelTypes.row, order: 100 });
   const { id } = await treesDB.getRoot(TREE_NAME);
 
-  await treesDB.createNewTree('second-tree', true, { id: 'second-tree', treeName: 'פריסה מרכזית' }, { id: 'second-root', leaf: 0, hideHeader: 1, type:PanelTypes.column });
+  await treesDB.createNewTree('second-tree', true, { id: 'second-tree', treeName: 'פריסה מרכזית' }, { id: 'second-root', leaf: 0, hideHeader: 1, type:PanelTypes.column , order: 100,});
   const { id: secondTreeId } = await treesDB.getRoot('second-tree');
 
   await treesDB.treesItems.bulkPut([

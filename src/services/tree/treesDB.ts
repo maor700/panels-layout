@@ -21,7 +21,7 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
   app!: Table<AppState>;
   treesItemesDirt!: boolean;
 
-  constructor(private treeItemClass:new() => TI) {
+  constructor(private treeItemClass: new () => TI) {
     super(
       TREES_DB_NAME,
       //  { addons: [dexieCloud] }
@@ -262,6 +262,20 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
       await this.treesItems.update(itemToTransfer.id, { treeId: tragetItem.treeId, parentPath: newParentPath });
     });
   };
+
+  async getParents(node: TI) {
+    const parentsIds = node?.parentPath.split('/').reverse();
+    parentsIds.shift();
+    const parents = await this.treesItems.bulkGet(parentsIds);
+    return parents;
+  }
+
+  async getParent(node: TI) {
+    const parents = await this.getParents(node);
+    const parent = parents?.[0];
+
+    return parent;
+  }
 
   // app table utils
 

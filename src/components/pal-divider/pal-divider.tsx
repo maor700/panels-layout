@@ -29,7 +29,6 @@ export class PalDivider {
   private mouseUpHandler = () => {
     this.focused = false;
     const [movementX, movementY] = this.movements;
-    console.log([movementX, movementY]);
     
     this.movements = [0, 0];
     this.dividerMove.emit({ sibiling: this.sibiling, movementX, movementY });

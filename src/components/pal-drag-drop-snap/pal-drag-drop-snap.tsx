@@ -8,10 +8,11 @@ export class PalDragDropSnap {
   @Prop() direction: string | TabDropDirections;
   @Prop() panelId:string;
   @Prop() treeId:string;
+  @Prop() logicContainer:string;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrop: EventEmitter<DragStage>;
   mouseUpHandler = (ev: DragEvent) => {
     ev.preventDefault();
-    this.tabDrop.emit({ treeId: this.treeId, panelId: this.panelId, direction:this.direction as TabDropDirections });
+    this.tabDrop.emit({ treeId: this.treeId, panelId: this.panelId, direction:this.direction as TabDropDirections, logicContainer:this.logicContainer });
   };
 
   render() {

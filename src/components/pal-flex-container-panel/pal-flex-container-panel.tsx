@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, Watch, Element, State} from '@stencil/core';
+import { Component, Host, h, Prop, Watch, Element, State } from '@stencil/core';
 import { Panel, PanelTypes } from '../../services/panelsConfig';
 import { treesDB } from '../../services/tree/treesDB';
 
@@ -10,12 +10,10 @@ export class PalFlexContainerPanel {
   @Prop() flexDirection: PanelTypes.column | PanelTypes.row;
   @Prop() panels: Panel[] = [];
   @Prop() panelData: Panel;
+  @State() logicContainer: string;
   @State() isContainer: boolean;
   @State() flexFactor = 1;
   @State() active: string;
-  @State() headers: Panel[] = [];
-  @State() type: PanelTypes = PanelTypes.row;
-  @State() resizeMode = false;
   @Element() elm: HTMLElement;
 
   private conAxis: string;
@@ -25,8 +23,9 @@ export class PalFlexContainerPanel {
   isContainerWatcher(panels) {
     const isContainer = !!panels?.length;
     this.isContainer = isContainer;
-    const level = this.panelData?.parentPath.split('/')?.length;
-    this.headers = isContainer && level === 1 ? panels : [];
+    if (isContainer) {
+      this.logicContainer = this.panelData?.id;
+    }
     this.active = this.active ?? this.panelData?.name;
   }
 
@@ -40,13 +39,6 @@ export class PalFlexContainerPanel {
     this.conSize = con[this.conAxis];
     this.flexFactor = 100 / this.conSize;
   }
-
-  
-
-  componentDidUpdate() {
-    this.type = this.panelData?.type;
-  }
-
 
   dividerMoveHandler = async (event: CustomEvent<{ sibiling: string[]; movementX: number; movementY: number }>) => {
     const { sibiling, movementX, movementY } = event?.detail;
@@ -69,8 +61,6 @@ export class PalFlexContainerPanel {
   };
 
   render() {
-    console.log(this.panels);
-
     return (
       <Host
         style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.flex + '' }}
@@ -91,10 +81,10 @@ export class PalFlexContainerPanel {
             </div>
           ) : null}
           <div class="main">
-            <div class="content" style={{'flexDirection': this.flexDirection}}>
+            <div class="content" style={{ flexDirection: this.flexDirection }}>
               {this.panels
                 ?.map((p, i) => [
-                  <pal-panel index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>,
+                  <pal-panel logicContainer={this.logicContainer} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>,
                   i !== this.panels?.length - 1 ? (
                     <pal-divider
                       flexDirection={this.flexDirection}

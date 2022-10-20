@@ -11,6 +11,7 @@ export namespace Components {
     }
     interface PalContentPanel {
         "index": number;
+        "logicContainer": string;
         "panelData": Panel;
         "panelId": string;
     }
@@ -22,6 +23,7 @@ export namespace Components {
     }
     interface PalDragDropSnap {
         "direction": string | TabDropDirections;
+        "logicContainer": string;
         "panelId": string;
         "treeId": string;
     }
@@ -32,6 +34,7 @@ export namespace Components {
     }
     interface PalPanel {
         "index": number;
+        "logicContainer": string;
         "panelData": Panel;
         "panelId": string;
     }
@@ -43,14 +46,11 @@ export namespace Components {
     }
     interface PalTabsPanel {
         "index": number;
+        "logicContainer": string;
         "panelData": Panel;
         "panelId": string;
         "panels": Panel[];
     }
-}
-export interface PalContentPanelCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLPalContentPanelElement;
 }
 export interface PalDividerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -140,8 +140,7 @@ declare namespace LocalJSX {
     }
     interface PalContentPanel {
         "index"?: number;
-        "onTabDrag"?: (event: PalContentPanelCustomEvent<DragStage>) => void;
-        "onTabDrop"?: (event: PalContentPanelCustomEvent<DragStage>) => void;
+        "logicContainer"?: string;
         "panelData"?: Panel;
         "panelId"?: string;
     }
@@ -155,6 +154,7 @@ declare namespace LocalJSX {
     }
     interface PalDragDropSnap {
         "direction"?: string | TabDropDirections;
+        "logicContainer"?: string;
         "onTabDrop"?: (event: PalDragDropSnapCustomEvent<DragStage>) => void;
         "panelId"?: string;
         "treeId"?: string;
@@ -166,6 +166,7 @@ declare namespace LocalJSX {
     }
     interface PalPanel {
         "index"?: number;
+        "logicContainer"?: string;
         "panelData"?: Panel;
         "panelId"?: string;
     }
@@ -178,6 +179,7 @@ declare namespace LocalJSX {
     }
     interface PalTabsPanel {
         "index"?: number;
+        "logicContainer"?: string;
         "panelData"?: Panel;
         "panelId"?: string;
         "panels"?: Panel[];

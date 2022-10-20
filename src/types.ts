@@ -5,5 +5,5 @@ enum TabDropDirections {
   right = 'right',
   center = 'center',
 }
-type DragStage = { treeId: string; panelId: string; direction?: TabDropDirections };
+type DragStage = { treeId: string; panelId: string; direction?: TabDropDirections, logicContainer?:string };
 type DragProccess = { start: DragStage; end: DragStage };

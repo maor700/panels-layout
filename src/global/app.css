@@ -40,20 +40,15 @@ main {
   margin: 0;
 }
 
-.tabs .panel .grid-stick-layout>.header{
+/* .tabs .panel .grid-stick-layout>.header{
   display: none;
 }
 
-.tabs .panel .content .snaps .trapeze:not(.center){
+.tabs .panel .content .snaps .trapeze{
   /* opacity: 0; */
-  display: none;
+  /* display: none; */
   /* pointer-events: none; */
-}
-
-.tabs .panel .content .snaps .trapeze.center{
-  width: calc(100% - 2em);
-  height: calc(100% - 2em);
-}
+/* }  */
 
 .grid-stick-layout>.main {
   grid-area: main;

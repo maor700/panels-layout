@@ -19,7 +19,6 @@ export class PalDragDropContext {
         }}
 
         onTabDrop={({ detail }) => {
-          console.log({ detail });
           this.dragProccess = { ...this.dragProccess, end: detail };
           this.dragMode = false;
           this.tabDroped.emit(this.dragProccess);

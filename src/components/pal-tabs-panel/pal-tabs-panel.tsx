@@ -9,6 +9,7 @@ import { treesDB } from '../../services/tree/treesDB';
 export class PalTabsPanel {
   @Prop() panelId: string;
   @Prop() panelData: Panel;
+  @Prop() logicContainer: string;
   @Prop() index: number;
   @Prop() panels: Panel[] = [];
 
@@ -21,8 +22,6 @@ export class PalTabsPanel {
       this.panels?.find(({ id }) => {
         return this.panelData?.activeTab === id;
       }) ?? this.panels?.[0];
-
-    console.log(this.panelData?.activeTab);
 
     return (
       <Host class={`panel ${this.panelData.type} `}>
@@ -43,7 +42,7 @@ export class PalTabsPanel {
             })}
           </div>
           <div class="main">
-            <div class="content">{activeTab ? <pal-panel panelData={activeTab} panelId={activeTab?.id} /> : null}</div>
+            <div class="content">{activeTab ? <pal-panel logicContainer={this.logicContainer} panelData={activeTab} panelId={activeTab?.id} /> : null}</div>
           </div>
         </div>
       </Host>

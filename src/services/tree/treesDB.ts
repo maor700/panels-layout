@@ -228,7 +228,7 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
     return this.getNodeAndChildren(root.id);
   };
 
-  getNodeAndChildren = async (nodeId: string): Promise<[TreeItem | null, TreeItem[]]> => {
+  getNodeAndChildren = async (nodeId: string): Promise<[TI | null, TI[]]> => {
     const node = (await this.treesItems.get(nodeId)) ?? null;
     if (!node) return [null, []];
     const children = (await (await this.getNodeChildrenCollection(nodeId))?.toArray()) ?? [];
@@ -259,7 +259,7 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
         const treeId = tragetItem.treeId;
         ref.value = { ...item, treeId, parentPath };
       });
-      await this.treesItems.update(itemToTransfer.id, { treeId: tragetItem.treeId, parentPath: newParentPath });
+      await this.treesItems.update(itemToTransfer.id, { ...itemToTransfer,treeId: tragetItem.treeId, parentPath: newParentPath });
     });
   };
 

@@ -10,7 +10,6 @@ export class PalFlexContainerPanel {
   @Prop() flexDirection: PanelTypes.column | PanelTypes.row;
   @Prop() panels: Panel[] = [];
   @Prop() panelData: Panel;
-  @State() logicContainer: string;
   @State() isContainer: boolean;
   @State() flexFactor = 1;
   @State() active: string;
@@ -18,16 +17,6 @@ export class PalFlexContainerPanel {
 
   private conAxis: string;
   private conSize: number;
-
-  @Watch('panels')
-  isContainerWatcher(panels) {
-    const isContainer = !!panels?.length;
-    this.isContainer = isContainer;
-    if (isContainer) {
-      this.logicContainer = this.panelData?.id;
-    }
-    this.active = this.active ?? this.panelData?.name;
-  }
 
   @Watch('panels')
   setupFlex(panels) {
@@ -70,6 +59,7 @@ export class PalFlexContainerPanel {
           {this.panelData && !this.panelData?.hideHeader ? (
             <div class="header panels-container-header">
               <pal-panel-stack-header
+                logicContainer={this.panelData?.id}
                 panelId={this.panelData?.id}
                 treeId={this.panelData?.treeId}
                 key={this.panelData.id}
@@ -84,7 +74,7 @@ export class PalFlexContainerPanel {
             <div class="content" style={{ flexDirection: this.flexDirection }}>
               {this.panels
                 ?.map((p, i) => [
-                  <pal-panel logicContainer={this.logicContainer} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>,
+                  <pal-panel logicContainer={this.panelData?.id} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>,
                   i !== this.panels?.length - 1 ? (
                     <pal-divider
                       flexDirection={this.flexDirection}

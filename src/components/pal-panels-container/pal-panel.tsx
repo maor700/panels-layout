@@ -32,7 +32,7 @@ export class PalPanel {
     return (
       <Host class={`panel`} style={{ flex: this.panelData?.flex + '', "--panel-bg":this.panelData?.color }}>
         {this.panelData?.type === PanelTypes.row || this.panelData?.type === PanelTypes.column ? (
-          <pal-flex-container-panel panels={this.panels} flexDirection={this.panelData?.type}></pal-flex-container-panel>
+          <pal-flex-container-panel panelData={this.panelData} panels={this.panels} flexDirection={this.panelData?.type}></pal-flex-container-panel>
         ) : this.panelData?.type === PanelTypes.content ? (
           <pal-content-panel logicContainer={this.logicContainer}  panelData={this.panelData} panelId={this.panelId} index={this.index} />
         ) : this.panelData?.type === PanelTypes.tabs ? (

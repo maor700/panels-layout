@@ -8,12 +8,13 @@ export class PalPanelStackHeader {
   @Prop() panelTitle: string;
   @Prop() active: boolean = false;
   @Prop() panelId: string;
+  @Prop() logicContainer: string;
   @Prop() treeId: string;
   @Element() elm: HTMLElement;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
 
   moveHandler = _ => {
-    this.tabDrag.emit({ treeId: this.treeId, panelId: this.panelId });
+    this.tabDrag.emit({ treeId: this.treeId, panelId: this.panelId, logicContainer:this.logicContainer });
   };
 
   upHandler = () => {

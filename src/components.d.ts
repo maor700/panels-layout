@@ -40,13 +40,13 @@ export namespace Components {
     }
     interface PalPanelStackHeader {
         "active": boolean;
+        "logicContainer": string;
         "panelId": string;
         "panelTitle": string;
         "treeId": string;
     }
     interface PalTabsPanel {
         "index": number;
-        "logicContainer": string;
         "panelData": Panel;
         "panelId": string;
         "panels": Panel[];
@@ -172,6 +172,7 @@ declare namespace LocalJSX {
     }
     interface PalPanelStackHeader {
         "active"?: boolean;
+        "logicContainer"?: string;
         "onTabDrag"?: (event: PalPanelStackHeaderCustomEvent<DragStage>) => void;
         "panelId"?: string;
         "panelTitle"?: string;
@@ -179,7 +180,6 @@ declare namespace LocalJSX {
     }
     interface PalTabsPanel {
         "index"?: number;
-        "logicContainer"?: string;
         "panelData"?: Panel;
         "panelId"?: string;
         "panels"?: Panel[];

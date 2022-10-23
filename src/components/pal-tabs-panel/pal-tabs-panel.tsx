@@ -9,7 +9,6 @@ import { treesDB } from '../../services/tree/treesDB';
 export class PalTabsPanel {
   @Prop() panelId: string;
   @Prop() panelData: Panel;
-  @Prop() logicContainer: string;
   @Prop() index: number;
   @Prop() panels: Panel[] = [];
 
@@ -30,6 +29,7 @@ export class PalTabsPanel {
             {this.panels.map(p => {
               return (
                 <pal-panel-stack-header
+                  logicContainer={this.panelData?.id}
                   panelId={p.id}
                   treeId={p?.treeId}
                   key={p.id}
@@ -42,7 +42,7 @@ export class PalTabsPanel {
             })}
           </div>
           <div class="main">
-            <div class="content">{activeTab ? <pal-panel logicContainer={this.logicContainer} panelData={activeTab} panelId={activeTab?.id} /> : null}</div>
+            <div class="content">{activeTab ? <pal-panel logicContainer={this.panelData?.id} panelData={activeTab} panelId={activeTab?.id} /> : null}</div>
           </div>
         </div>
       </Host>

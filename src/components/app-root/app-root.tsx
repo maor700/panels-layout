@@ -20,8 +20,8 @@ export class AppRoot {
   private subscriptions: Subscription[] = [];
   onDropHandler = async (ev: PalDragDropContextCustomEvent<DragProccess>) => {
     const { start, end } = ev?.detail;
-    console.log({start, end});
-    
+    console.log({ start, end });
+
     if (!end && !start) return;
 
     if (!end?.panelId) return;
@@ -67,23 +67,31 @@ export class AppRoot {
 // Drop on center - create a new tabs panel (or use the exist one) and move the original + moved panel to the tabs panel;
 const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProccess>) => {
   const { start, end } = detail;
+  const translatedType = end?.direction === 'center' ? 'tabs' : end?.direction === 'bottom' || end?.direction === 'top' ? 'column' : 'row';
 
   // get ItemToTransfer
-  let [ItemToTransfer, targetItem] = await treesDB.treesItems.bulkGet([start?.panelId, end?.panelId]);
+  let [ItemToTransfer, targetItem, toTransferLogicContainer, targetLogicContainer] = await treesDB.treesItems.bulkGet([
+    start?.panelId,
+    end?.panelId,
+    start.logicContainer,
+    end.logicContainer,
+  ]);
 
+  // if (targetLogicContainer.type === 'tabs' && end?.direction !== 'center') {
+  //   targetLogicContainer = await treesDB.getParent(targetLogicContainer);
+  // }
+
+  const ItemToTransferGrandpa = await treesDB.getParent(toTransferLogicContainer);
   // move the new node to the parent of the target node
-  const [targetItemParent] = await treesDB.getParents(targetItem);
-  const [ItemToTransferParent, ItemToTransferGrandpa] = await treesDB.getParents(ItemToTransfer);
-  const translatedDirections = targetItem.type === 'tabs' ? 'tabs' : end?.direction === 'bottom' || end?.direction === 'top' ? 'column' : 'row';
 
   treesDB.transaction('rw', 'trees', 'treesItems', async () => {
-    const parentChildrenBeforeMove = await (await treesDB.getNodeChildrenCollection(targetItemParent?.id)).sortBy('order');
+    const parentChildrenBeforeMove = await (await treesDB.getNodeChildrenCollection(targetLogicContainer?.id)).sortBy('order');
     const indexTarget = parentChildrenBeforeMove.findIndex(_ => _.id === end.panelId);
     const isLast = indexTarget === parentChildrenBeforeMove?.length - 1;
     const isfirst = indexTarget === 0;
     let finalOrder = ItemToTransfer?.order ?? 0;
     const orderFactor = end.direction === 'left' || end.direction === 'top' ? -1 : 1;
-    const targetOrder = parentChildrenBeforeMove[indexTarget].order;
+    const targetOrder = parentChildrenBeforeMove[indexTarget]?.order;
     const childBefore = parentChildrenBeforeMove?.[indexTarget + 1 * orderFactor]?.order ?? (isLast !== isfirst ? targetOrder + 10 * orderFactor : 0);
     const max = Math.max(childBefore, targetOrder);
     const min = Math.min(childBefore, targetOrder);
@@ -92,19 +100,16 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
     // if direction is center use exist tabs container or create new one
     // else if the parent type is tabs use the parent as target item;
 
-    let  sameType = targetItemParent?.type === translatedDirections;
-    if(end.direction == "center" && targetItem.type === "tabs"){
-      
-    }
     let container;
-    if (sameType) {
-      container = targetItemParent;
-    } else {
-      const id = await treesDB.addChildNode(targetItem.treeId, 'container', targetItemParent.id, {
-        flex: 20,
-        order: targetItem.order,
-        type: translatedDirections,
-        hideHeader: 0,
+    container = targetLogicContainer;
+    const sameType = targetLogicContainer?.type === translatedType;
+
+    if (!sameType) {
+      const id = await treesDB.addChildNode(targetItem.treeId, 'container', targetLogicContainer.id, {
+        flex: targetItem.flex,
+        order: targetItem?.order,
+        type: translatedType,
+        hideHeader: 1,
       });
       container = await treesDB.treesItems.get(id);
     }
@@ -115,12 +120,13 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
     await treesDB.treesItems.update(container?.id, { activeTab: ItemToTransfer?.id });
 
     //in case the parent of the ItemToTransfer is container with just one child. move the last child to the grandpa and remove the container.
-    const [_, baseParentChildern] = await treesDB.getNodeAndChildren(ItemToTransferParent.id);
+    const [_, baseParentChildern] = await treesDB.getNodeAndChildren(toTransferLogicContainer.id);
     if (baseParentChildern?.length <= 1) {
       const [lastChild] = baseParentChildern;
       if (lastChild && ItemToTransferGrandpa) {
-        await treesDB.moveTreeItem(lastChild, ItemToTransferGrandpa);
-        ItemToTransferParent?.id && (await treesDB.deleteNode(ItemToTransferParent.id));
+        const order = toTransferLogicContainer?.order;
+        await treesDB.moveTreeItem({ ...lastChild, order }, ItemToTransferGrandpa);
+        toTransferLogicContainer?.id && (await treesDB.deleteNode(toTransferLogicContainer.id));
       }
     }
   });

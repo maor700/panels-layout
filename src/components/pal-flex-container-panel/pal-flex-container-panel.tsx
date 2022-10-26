@@ -50,6 +50,8 @@ export class PalFlexContainerPanel {
   };
 
   render() {
+    console.log({logic:this.panelData?.id});
+    
     return (
       <Host
         style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.flex + '' }}

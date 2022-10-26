@@ -32,6 +32,14 @@ export namespace Components {
         "panelData": Panel;
         "panels": Panel[];
     }
+    interface PalFloatPanel {
+        "index": number;
+        "panelData": Panel;
+        "panelId": string;
+        "panels": Panel[];
+    }
+    interface PalFloatable {
+    }
     interface PalPanel {
         "index": number;
         "logicContainer": string;
@@ -105,6 +113,18 @@ declare global {
         prototype: HTMLPalFlexContainerPanelElement;
         new (): HTMLPalFlexContainerPanelElement;
     };
+    interface HTMLPalFloatPanelElement extends Components.PalFloatPanel, HTMLStencilElement {
+    }
+    var HTMLPalFloatPanelElement: {
+        prototype: HTMLPalFloatPanelElement;
+        new (): HTMLPalFloatPanelElement;
+    };
+    interface HTMLPalFloatableElement extends Components.PalFloatable, HTMLStencilElement {
+    }
+    var HTMLPalFloatableElement: {
+        prototype: HTMLPalFloatableElement;
+        new (): HTMLPalFloatableElement;
+    };
     interface HTMLPalPanelElement extends Components.PalPanel, HTMLStencilElement {
     }
     var HTMLPalPanelElement: {
@@ -130,6 +150,8 @@ declare global {
         "pal-drag-drop-context": HTMLPalDragDropContextElement;
         "pal-drag-drop-snap": HTMLPalDragDropSnapElement;
         "pal-flex-container-panel": HTMLPalFlexContainerPanelElement;
+        "pal-float-panel": HTMLPalFloatPanelElement;
+        "pal-floatable": HTMLPalFloatableElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
         "pal-tabs-panel": HTMLPalTabsPanelElement;
@@ -164,6 +186,14 @@ declare namespace LocalJSX {
         "panelData"?: Panel;
         "panels"?: Panel[];
     }
+    interface PalFloatPanel {
+        "index"?: number;
+        "panelData"?: Panel;
+        "panelId"?: string;
+        "panels"?: Panel[];
+    }
+    interface PalFloatable {
+    }
     interface PalPanel {
         "index"?: number;
         "logicContainer"?: string;
@@ -191,6 +221,8 @@ declare namespace LocalJSX {
         "pal-drag-drop-context": PalDragDropContext;
         "pal-drag-drop-snap": PalDragDropSnap;
         "pal-flex-container-panel": PalFlexContainerPanel;
+        "pal-float-panel": PalFloatPanel;
+        "pal-floatable": PalFloatable;
         "pal-panel": PalPanel;
         "pal-panel-stack-header": PalPanelStackHeader;
         "pal-tabs-panel": PalTabsPanel;
@@ -206,6 +238,8 @@ declare module "@stencil/core" {
             "pal-drag-drop-context": LocalJSX.PalDragDropContext & JSXBase.HTMLAttributes<HTMLPalDragDropContextElement>;
             "pal-drag-drop-snap": LocalJSX.PalDragDropSnap & JSXBase.HTMLAttributes<HTMLPalDragDropSnapElement>;
             "pal-flex-container-panel": LocalJSX.PalFlexContainerPanel & JSXBase.HTMLAttributes<HTMLPalFlexContainerPanelElement>;
+            "pal-float-panel": LocalJSX.PalFloatPanel & JSXBase.HTMLAttributes<HTMLPalFloatPanelElement>;
+            "pal-floatable": LocalJSX.PalFloatable & JSXBase.HTMLAttributes<HTMLPalFloatableElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
             "pal-tabs-panel": LocalJSX.PalTabsPanel & JSXBase.HTMLAttributes<HTMLPalTabsPanelElement>;

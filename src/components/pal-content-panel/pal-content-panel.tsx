@@ -1,6 +1,5 @@
 import { Component, Host, h, State, Prop } from '@stencil/core';
 import { Panel } from '../../services/panelsConfig';
-import { treesDB } from '../../services/tree/treesDB';
 
 @Component({
   tag: 'pal-content-panel',
@@ -11,13 +10,8 @@ export class PalContentPanel {
   @Prop() panelData: Panel;
   @Prop() logicContainer: string;
   @Prop() index: number;
-  @State() logicContainerParent: string;
   @State() active = true;
 
-  async componentWillLoad() {
-    const container = await treesDB.treesItems.get(this.logicContainer);
-    this.logicContainerParent = (await treesDB.getParent(container))?.id;
-  }
 
   render() {
     return (
@@ -38,12 +32,20 @@ export class PalContentPanel {
           ) : null}
           <div class="main">
             <div class="content">
-              <div class="panel-content">{/* <iframe src="https://moridimtv.com/" frameborder="0"></iframe> */}</div>
+              <div class="panel-content">
+                <h2>{this.panelId}</h2>
+                {/* <iframe src="https://moridimtv.com/" frameborder="0"></iframe> */}
+                </div>
               <div class="snaps">
-                <pal-drag-drop-snap direction={'top'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainerParent}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'right'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainerParent}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'left'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainerParent}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'bottom'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainerParent}></pal-drag-drop-snap>
+                    <pal-drag-drop-snap direction={'top'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>
+                    <pal-drag-drop-snap direction={'right'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>
+                    <pal-drag-drop-snap direction={'left'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>
+                    <pal-drag-drop-snap
+                      direction={'bottom'}
+                      treeId={this?.panelData?.treeId}
+                      panelId={this.panelId}
+                      logicContainer={this.logicContainer}
+                    ></pal-drag-drop-snap>
                 <pal-drag-drop-snap direction={'center'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>
               </div>
             </div>

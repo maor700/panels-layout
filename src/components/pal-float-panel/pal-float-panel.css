@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.panel.float > .grid-stick-layout  .header {
+  display: none;
+}
+
+.content.float {
+  position: relative;
+}
+
+.content.float > .panel {
+  position: absolute;
+}

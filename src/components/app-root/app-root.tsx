@@ -51,10 +51,6 @@ export class AppRoot {
         <header class="header">
           <h3>Stencil App Starter</h3>
         </header>
-        {/* <pal-floatable>
-          <h2 slot='draggable-header'>My Window</h2>
-          <h2>My Content</h2>
-        </pal-floatable> */}
         <pal-drag-drop-context onTabDroped={this.onDropHandler}>
           <main class="main">
             {this.root ? <pal-panel panelData={this.root} panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel> : null}

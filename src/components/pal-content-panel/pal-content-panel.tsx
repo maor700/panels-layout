@@ -34,6 +34,8 @@ export class PalContentPanel {
             <div class="content">
               <div class="panel-content">
                 <h2>{this.panelId}</h2>
+                <h2>{this.panelId}</h2>
+                <h2>{this.panelId}</h2>
                 {/* <iframe src="https://moridimtv.com/" frameborder="0"></iframe> */}
                 </div>
               <div class="snaps">

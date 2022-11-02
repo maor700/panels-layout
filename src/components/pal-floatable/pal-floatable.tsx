@@ -17,6 +17,9 @@ export class PalFloatable {
   };
 
   private mouseMoveHandler = (_: MouseEvent) => {
+    if ((_ as MouseEvent).ctrlKey) {
+      return;
+    }
     const { movementX, movementY } = _;
     const [currX, currY] = this.movements;
     this.movements = [currX + movementX, currY + movementY];
@@ -38,7 +41,7 @@ export class PalFloatable {
           <slot name="draggable-header">Window</slot>
           <span class="dot" style={{ background: '#ED594A' }}></span>
         </div>
-        <slot>Content</slot>
+        <slot name='content'>Content</slot>
       </Host>
     );
   }

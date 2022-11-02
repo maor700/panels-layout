@@ -53,6 +53,8 @@ export namespace Components {
         "panelTitle": string;
         "treeId": string;
     }
+    interface PalResizable {
+    }
     interface PalTabsPanel {
         "index": number;
         "panelData": Panel;
@@ -137,6 +139,12 @@ declare global {
         prototype: HTMLPalPanelStackHeaderElement;
         new (): HTMLPalPanelStackHeaderElement;
     };
+    interface HTMLPalResizableElement extends Components.PalResizable, HTMLStencilElement {
+    }
+    var HTMLPalResizableElement: {
+        prototype: HTMLPalResizableElement;
+        new (): HTMLPalResizableElement;
+    };
     interface HTMLPalTabsPanelElement extends Components.PalTabsPanel, HTMLStencilElement {
     }
     var HTMLPalTabsPanelElement: {
@@ -154,6 +162,7 @@ declare global {
         "pal-floatable": HTMLPalFloatableElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
+        "pal-resizable": HTMLPalResizableElement;
         "pal-tabs-panel": HTMLPalTabsPanelElement;
     }
 }
@@ -208,6 +217,8 @@ declare namespace LocalJSX {
         "panelTitle"?: string;
         "treeId"?: string;
     }
+    interface PalResizable {
+    }
     interface PalTabsPanel {
         "index"?: number;
         "panelData"?: Panel;
@@ -225,6 +236,7 @@ declare namespace LocalJSX {
         "pal-floatable": PalFloatable;
         "pal-panel": PalPanel;
         "pal-panel-stack-header": PalPanelStackHeader;
+        "pal-resizable": PalResizable;
         "pal-tabs-panel": PalTabsPanel;
     }
 }
@@ -242,6 +254,7 @@ declare module "@stencil/core" {
             "pal-floatable": LocalJSX.PalFloatable & JSXBase.HTMLAttributes<HTMLPalFloatableElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
+            "pal-resizable": LocalJSX.PalResizable & JSXBase.HTMLAttributes<HTMLPalResizableElement>;
             "pal-tabs-panel": LocalJSX.PalTabsPanel & JSXBase.HTMLAttributes<HTMLPalTabsPanelElement>;
         }
     }

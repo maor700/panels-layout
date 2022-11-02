@@ -1,7 +1,7 @@
 import { Component, Host, h, Prop } from '@stencil/core';
 import { Panel } from '../../services/panelsConfig';
 import { treesDB } from '../../services/tree/treesDB';
-import "@deckdeckgo/drag-resize-rotate";
+import '@deckdeckgo/drag-resize-rotate';
 
 @Component({
   tag: 'pal-float-panel',
@@ -29,19 +29,31 @@ export class PalFloatPanel {
           <div class="main">
             <div class={`content ${this.panelData.type}`}>
               {this.panels?.map((p, i) => (
-                <deckgo-drr rotation={false} style={{"--width":"40%", "--height":"60%", "--deckgo-drr-anchor-background":"transparent"}}>
-                  <pal-panel-stack-header
-                  logicContainer={this.panelData?.id}
-                  panelId={p.id}
-                  treeId={p?.treeId}
-                  key={p.id}
-                  panelTitle={p.name}
-                  title={p.name}
-                  active={p.id === activeTab.id}
-                  onClick={() => this.setActive(p)}
-                ></pal-panel-stack-header>
-                  <pal-panel style={{width:"40%", height:"60%"}} logicContainer={this.panelData?.id} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>
-                </deckgo-drr>
+                <div style={{ position: 'realative' }}>
+                  <pal-floatable>
+                    <pal-panel-stack-header
+                      slot="draggable-header"
+                      logicContainer={this.panelData?.id}
+                      panelId={p.id}
+                      treeId={p?.treeId}
+                      key={p.id}
+                      panelTitle={p.name}
+                      title={p.name}
+                      active={p.id === activeTab.id}
+                      onClick={() => this.setActive(p)}
+                    />
+                    <pal-resizable style={{ display: 'block' }} slot="content">
+                      <pal-panel
+                        style={{ width: '40%', height: '60%' }}
+                        logicContainer={this.panelData?.id}
+                        index={i}
+                        panelData={p}
+                        panelId={p.id}
+                        key={p.id}
+                      ></pal-panel>
+                    </pal-resizable>
+                  </pal-floatable>
+                </div>
               ))}
             </div>
           </div>

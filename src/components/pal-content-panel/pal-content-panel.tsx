@@ -33,10 +33,8 @@ export class PalContentPanel {
           <div class="main">
             <div class="content">
               <div class="panel-content">
-                <h2>{this.panelId}</h2>
-                <h2>{this.panelId}</h2>
-                <h2>{this.panelId}</h2>
-                {/* <iframe src="https://moridimtv.com/" frameborder="0"></iframe> */}
+                <h1>TEST</h1>
+                {/* <iframe src="http://127.0.0.1:5173/" frameborder="0"></iframe> */}
                 </div>
               <div class="snaps">
                     <pal-drag-drop-snap direction={'top'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>

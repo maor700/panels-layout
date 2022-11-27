@@ -1,4 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';
 
 @Component({
   tag: 'pal-panel-stack-header',
@@ -10,17 +10,27 @@ export class PalPanelStackHeader {
   @Prop() panelId: string;
   @Prop() logicContainer: string;
   @Prop() treeId: string;
+  @State() showMenu = true;
   @Element() elm: HTMLElement;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) tabClose: EventEmitter<string>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode: EventEmitter<DisplayModeChange>;
 
   moveHandler = _ => {
-    this.tabDrag.emit({ treeId: this.treeId, panelId: this.panelId, logicContainer:this.logicContainer });
+    this.tabDrag.emit({ treeId: this.treeId, panelId: this.panelId, logicContainer: this.logicContainer });
   };
 
   upHandler = () => {
     this.tabDrag.emit(null);
     top.document.removeEventListener('mousemove', this.moveHandler);
     top.document.removeEventListener('mouseup', this.upHandler);
+  };
+
+  menuToggle = (_: MouseEvent) => {
+    this.showMenu = !this.showMenu;
+  };
+  changeDisplayMode = (displayMode:DisplayModes) => {
+    this.changePanelDisplayMode.emit({panelId:this.panelId, treeId:this.treeId, displayMode})
   };
 
   render() {
@@ -33,20 +43,41 @@ export class PalPanelStackHeader {
         }}
       >
         <div class={`${this.active ? 'active' : ''} stack-head`}>
-          <div class="close stack-head-btn">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-              <path fill="none" d="M0 0h24v24H0z"></path>
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
-            </svg>
+          <pal-ui5-icon
+            hoverStyle
+            onClick={() => {
+              this.tabClose.emit(this.panelId);
+            }}
+            class="close stack-head-btn"
+            lib="sap"
+            icon="decline"
+            title="סגור"
+          />
+          <div class="name" title="גרור כדי למקם מחדש">
+            {this.panelTitle}
           </div>
-          <div class="name">{this.panelTitle}</div>
-          <div class="stack-head-btn">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-              <path
-                fill-rule="evenodd"
-                d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
-              ></path>
-            </svg>
+          <pal-ui5-icon onClick={this.menuToggle} icon="menu2" lib="sap" title="תפריט פעולות" hoverStyle class="stack-head-btn" />
+          <div class="menu-con">
+            {this.showMenu && (
+              <ul class="menu">
+                <div onClick={()=>this.changeDisplayMode("minimize")} class="menu-item option">
+                  <pal-ui5-icon icon="minimize" lib="sap" title="מזער" class="stack-head-btn" />
+                  מזער
+                </div>
+                <div class="menu-item option">
+                  <pal-ui5-icon onClick={this.menuToggle} icon="border" lib="sap" title="הגדל" class="stack-head-btn" />
+                  הגדל
+                </div>
+                <div class="menu-item option">
+                  <pal-ui5-icon onClick={this.menuToggle} icon="dimension" lib="sap" title="נתק" class="stack-head-btn" />
+                  נתק
+                </div>
+                <div class="menu-item option">
+                  <pal-ui5-icon onClick={this.menuToggle} icon="decline" lib="sap" title="סגור" class="stack-head-btn" />
+                  סגור
+                </div>
+              </ul>
+            )}
           </div>
         </div>
       </Host>

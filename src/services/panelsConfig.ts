@@ -15,4 +15,5 @@ export class Panel extends TreeItem {
   hideHeader?: 0 | 1 = 0;
   color?: string;
   url?:string;
+  originalData?:Panel
 }

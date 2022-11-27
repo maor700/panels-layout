@@ -8,6 +8,8 @@ export class PalDragDropContext {
   @State() dragProccess: DragProccess = DRAG_PROCCESS_DEFAULT;
   @State() dragMode = false;
   @Event() tabDroped: EventEmitter<DragProccess>;
+  @Event() changePanelDisplayMode: EventEmitter<DisplayModeChange>;
+  @Event() tabClose: EventEmitter<string>;
 
   render() {
     return (

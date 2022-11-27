@@ -19,4 +19,8 @@ cleanup- if the moved item left behind him a container with less than 1 children
 
 * Drop on tabs header - as the same as drop on center + apply the right order;
 
-* Tree drop zone component - will contain a snaps drop to group of panels. 
+* Tree drop zone component - will contain a snaps drop to group of panels.
+
+* float panel - panels positioned in absolute x/y coordinates, they can be one on top of other.
+resizeable and moveable. and they fullfiled all other featurs of ther children. for example
+if float panel contain flex panel the flex panel behave exacly the same as before.

@@ -61,6 +61,11 @@ export namespace Components {
         "panelId": string;
         "panels": Panel[];
     }
+    interface PalUi5Icon {
+        "hoverStyle": boolean;
+        "icon": string;
+        "lib": 'sap' | 'tnt' | 'suite';
+    }
 }
 export interface PalDividerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -151,6 +156,12 @@ declare global {
         prototype: HTMLPalTabsPanelElement;
         new (): HTMLPalTabsPanelElement;
     };
+    interface HTMLPalUi5IconElement extends Components.PalUi5Icon, HTMLStencilElement {
+    }
+    var HTMLPalUi5IconElement: {
+        prototype: HTMLPalUi5IconElement;
+        new (): HTMLPalUi5IconElement;
+    };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
         "pal-content-panel": HTMLPalContentPanelElement;
@@ -164,6 +175,7 @@ declare global {
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
         "pal-resizable": HTMLPalResizableElement;
         "pal-tabs-panel": HTMLPalTabsPanelElement;
+        "pal-ui5-icon": HTMLPalUi5IconElement;
     }
 }
 declare namespace LocalJSX {
@@ -181,6 +193,8 @@ declare namespace LocalJSX {
         "sibiling"?: string[];
     }
     interface PalDragDropContext {
+        "onChangePanelDisplayMode"?: (event: PalDragDropContextCustomEvent<DisplayModeChange>) => void;
+        "onTabClose"?: (event: PalDragDropContextCustomEvent<string>) => void;
         "onTabDroped"?: (event: PalDragDropContextCustomEvent<DragProccess>) => void;
     }
     interface PalDragDropSnap {
@@ -212,6 +226,8 @@ declare namespace LocalJSX {
     interface PalPanelStackHeader {
         "active"?: boolean;
         "logicContainer"?: string;
+        "onChangePanelDisplayMode"?: (event: PalPanelStackHeaderCustomEvent<DisplayModeChange>) => void;
+        "onTabClose"?: (event: PalPanelStackHeaderCustomEvent<string>) => void;
         "onTabDrag"?: (event: PalPanelStackHeaderCustomEvent<DragStage>) => void;
         "panelId"?: string;
         "panelTitle"?: string;
@@ -224,6 +240,11 @@ declare namespace LocalJSX {
         "panelData"?: Panel;
         "panelId"?: string;
         "panels"?: Panel[];
+    }
+    interface PalUi5Icon {
+        "hoverStyle"?: boolean;
+        "icon"?: string;
+        "lib"?: 'sap' | 'tnt' | 'suite';
     }
     interface IntrinsicElements {
         "app-root": AppRoot;
@@ -238,6 +259,7 @@ declare namespace LocalJSX {
         "pal-panel-stack-header": PalPanelStackHeader;
         "pal-resizable": PalResizable;
         "pal-tabs-panel": PalTabsPanel;
+        "pal-ui5-icon": PalUi5Icon;
     }
 }
 export { LocalJSX as JSX };
@@ -256,6 +278,7 @@ declare module "@stencil/core" {
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
             "pal-resizable": LocalJSX.PalResizable & JSXBase.HTMLAttributes<HTMLPalResizableElement>;
             "pal-tabs-panel": LocalJSX.PalTabsPanel & JSXBase.HTMLAttributes<HTMLPalTabsPanelElement>;
+            "pal-ui5-icon": LocalJSX.PalUi5Icon & JSXBase.HTMLAttributes<HTMLPalUi5IconElement>;
         }
     }
 }

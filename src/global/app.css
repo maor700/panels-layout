@@ -8,6 +8,21 @@
   Any global CSS variables should also be applied here.
 */
 
+@font-face {
+  font-family: ui5-icons;
+  src: url("/assets/fonts/sap-icons.ttf");
+}
+
+@font-face {
+  font-family: ui5-tnt-icons;
+  src: url("/assets/fonts/sap-icons-tnt.ttf");
+}
+
+@font-face {
+  font-family: ui5-suite-icons;
+  src: url("/assets/fonts/sap-icons-suite.ttf");
+}
+
 html,
 body {
   all: unset;

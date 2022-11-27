@@ -6,6 +6,7 @@ import '../../services/panelsConfig';
 import '../../services/dbInit';
 import '../../services/controller';
 import { PalDragDropContextCustomEvent } from '../../components';
+import { Panel } from '../../services/panelsConfig';
 // import { PanelTypes } from '../../services/panelsConfig';
 
 console.log(treesDB);
@@ -17,6 +18,8 @@ console.log(treesDB);
 export class AppRoot {
   @State() root: TreeItem;
   @State() scondRoot: TreeItem;
+  @State() floatedRoot: TreeItem;
+  @State() minimizedPanels: TreeItem[];
   private subscriptions: Subscription[] = [];
   onDropHandler = async (ev: PalDragDropContextCustomEvent<DragProccess>) => {
     const { start, end } = ev?.detail;
@@ -30,6 +33,13 @@ export class AppRoot {
     return dropHandler(ev);
   };
 
+  moveToOriginal = async ({ originalData }: Panel) => {
+    await treesDB.transaction('rw', treesDB.treesItems, async () => {
+      const originalContainer = await treesDB.getParent(originalData);
+      return treesDB.moveTreeItem(originalData, originalContainer);
+    });
+  };
+
   componentWillLoad() {
     this.subscriptions.push(
       liveQuery(() => treesDB.getRoot('main-layout')).subscribe(root => {
@@ -37,6 +47,15 @@ export class AppRoot {
       }),
       liveQuery(() => treesDB.getRoot('second-tree')).subscribe(scondRoot => {
         this.scondRoot = scondRoot;
+      }),
+      liveQuery(() => treesDB.getRoot('floated-tree')).subscribe(floatedRoot => {
+        this.floatedRoot = floatedRoot;
+      }),
+      liveQuery(async () => {
+        const root = await treesDB.getRoot('minimized-tree');
+        return (await treesDB.getNodeChildrenCollection(root?.id)).toArray();
+      }).subscribe(items => {
+        this.minimizedPanels = items;
       }),
     );
   }
@@ -51,14 +70,51 @@ export class AppRoot {
         <header class="header">
           <h3>Stencil App Starter</h3>
         </header>
-        <pal-drag-drop-context onTabDroped={this.onDropHandler}>
+        <pal-drag-drop-context
+          onChangePanelDisplayMode={async ({ detail }) => {
+            console.log(detail);
+
+            if (detail?.displayMode == 'minimize') {
+              await treesDB.transaction('rw', treesDB.treesItems, async () => {
+                const { panelId } = detail;
+                let itemToTransfer = await treesDB.treesItems.get(panelId);
+                itemToTransfer = { ...itemToTransfer, originalData: itemToTransfer };
+                const target = await treesDB.getRoot('minimized-tree');
+                return treesDB.moveTreeItem(itemToTransfer, target);
+              });
+            }
+          }}
+          onTabClose={({ detail }) => {
+            treesDB.treesItems.delete(detail);
+          }}
+          onTabDroped={this.onDropHandler}
+        >
           <main class="main">
             {this.root ? <pal-panel panelData={this.root} panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel> : null}
             <div style={{ width: '5px' }} class="divider"></div>
             {this.scondRoot ? <pal-panel panelData={this.scondRoot} panelId={this.scondRoot.id} title={this.scondRoot.name} key={this.scondRoot.id}></pal-panel> : null}
+            <div class="floated-tree">
+              {this.floatedRoot ? <pal-panel panelData={this.floatedRoot} panelId={this.floatedRoot.id} title={this.floatedRoot.name} key={this.floatedRoot.id}></pal-panel> : null}
+            </div>
           </main>
         </pal-drag-drop-context>
-        <div class="footer">Footer</div>
+        <div class="footer">
+          <div class="minimized-con">
+            {this.minimizedPanels?.map((p: Panel) => {
+              return (
+                <div
+                  onClick={() => {
+                    this.moveToOriginal(p);
+                  }}
+                  style={{ borderTopColor: `${p?.color}` }}
+                  class="mini-panel"
+                >
+                  {p.name}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </Host>
     );
   }

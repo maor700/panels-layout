@@ -6,17 +6,44 @@ import { Component, Host, h, State, Element } from '@stencil/core';
 })
 export class PalFloatable {
   @State() movements: number[] = [0, 0];
+  @State() ctrlPressed: boolean = false;
   @Element() cont: HTMLDivElement;
 
-  componentDidLoad() {}
+  ctrlPrfessedHandler = event => {
+    this.ctrlPressed = event.ctrlKey;
+  };
+  componentDidLoad() {
+    window.addEventListener(
+      'keydown',
+      this.ctrlPrfessedHandler,
+      false,
+    );
+
+    window.addEventListener(
+      'keyup',
+      this.ctrlPrfessedHandler,
+      false,
+    );
+
+    this.cont.addEventListener('tabDrag', ev => {
+      !this.ctrlPressed && ev.stopPropagation();
+    });
+  }
+
+  disconnectedCallback() {
+    this.cont.removeEventListener("keydown", this.ctrlPrfessedHandler)
+    this.cont.removeEventListener("keyup", this.ctrlPrfessedHandler)
+  }
 
   // Events
-  mouseDownHandler = _ => {
+  mouseDownHandler = (_: MouseEvent) => {
     document.addEventListener('mousemove', this.mouseMoveHandler);
     document.addEventListener('mouseup', this.mouseUpHandler);
   };
 
   private mouseMoveHandler = (_: MouseEvent) => {
+    _.stopPropagation();
+    _.preventDefault();
     if ((_ as MouseEvent).ctrlKey) {
       return;
     }
@@ -41,7 +68,7 @@ export class PalFloatable {
           <slot name="draggable-header">Window</slot>
           <span class="dot" style={{ background: '#ED594A' }}></span>
         </div>
-        <slot name='content'>Content</slot>
+        <slot name="content">Content</slot>
       </Host>
     );
   }

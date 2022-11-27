@@ -1,0 +1,35 @@
+.icon-div {
+  width: 1em;
+  height: 1em;
+  position: relative;
+}
+
+.icon-div::before {
+  position: absolute;
+  inset: 0;
+  display: block;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  content: attr(data-sap-ui-icon-content);
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased;
+  text-align: center;
+}
+
+.hover-style {
+  opacity: 0.75;
+}
+.hover-style:hover {
+  opacity: 1;
+}
+
+.sap.icon-div {
+  font-family: ui5-icons;
+}
+.tnt.icon-div {
+  font-family: ui5-tnt-icons;
+}
+.suite.icon-div {
+  font-family: ui5-suite-icons;
+}

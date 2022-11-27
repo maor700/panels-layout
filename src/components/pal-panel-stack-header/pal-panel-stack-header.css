@@ -5,7 +5,7 @@
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 0.2em;
+  gap: 0.5em;
   font-size: 0.8em;
 }
 .stack-head-btn {
@@ -22,4 +22,37 @@
 
 .stack-head.active .stack-head-btn {
   display: inherit;
+}
+
+.menu-con {
+  position: relative;
+}
+
+.menu {
+  all: unset;
+  position: absolute;
+  top: 1.3em;
+  right: 0.5em;
+  list-style: none;
+  background: #eee;
+  font-size: 0.8em;
+  color: #000;
+  padding: 0.4em;
+  border-radius: 0.2em;
+  z-index: 10;
+}
+
+.menu-item {
+  padding: 0.5em 0.5em;
+  font-weight: normal;
+}
+
+.menu-item:hover {
+  background: rgb(1, 140, 227, .4);
+}
+
+.option {
+  display: flex;
+  gap: 0.5em;
+  align-items: center;
 }

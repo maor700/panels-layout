@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.window-panel {
+  height: 100vh;
+  background: #333;
+}
+
+.window-panel.is-container {
+  height: calc(100vh - 0.8em);
+}

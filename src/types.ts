@@ -11,6 +11,7 @@ const DisplayModes = {
   minimize: 'minimize',
   maximize: 'maximize',
   dettach: 'dettach',
+  window: 'window',
   close: 'close',
 } as const;
 

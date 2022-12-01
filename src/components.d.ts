@@ -66,6 +66,9 @@ export namespace Components {
         "icon": string;
         "lib": 'sap' | 'tnt' | 'suite';
     }
+    interface PalWindowPanel {
+        "panelId": string;
+    }
 }
 export interface PalDividerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -162,6 +165,12 @@ declare global {
         prototype: HTMLPalUi5IconElement;
         new (): HTMLPalUi5IconElement;
     };
+    interface HTMLPalWindowPanelElement extends Components.PalWindowPanel, HTMLStencilElement {
+    }
+    var HTMLPalWindowPanelElement: {
+        prototype: HTMLPalWindowPanelElement;
+        new (): HTMLPalWindowPanelElement;
+    };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
         "pal-content-panel": HTMLPalContentPanelElement;
@@ -176,6 +185,7 @@ declare global {
         "pal-resizable": HTMLPalResizableElement;
         "pal-tabs-panel": HTMLPalTabsPanelElement;
         "pal-ui5-icon": HTMLPalUi5IconElement;
+        "pal-window-panel": HTMLPalWindowPanelElement;
     }
 }
 declare namespace LocalJSX {
@@ -246,6 +256,9 @@ declare namespace LocalJSX {
         "icon"?: string;
         "lib"?: 'sap' | 'tnt' | 'suite';
     }
+    interface PalWindowPanel {
+        "panelId"?: string;
+    }
     interface IntrinsicElements {
         "app-root": AppRoot;
         "pal-content-panel": PalContentPanel;
@@ -260,6 +273,7 @@ declare namespace LocalJSX {
         "pal-resizable": PalResizable;
         "pal-tabs-panel": PalTabsPanel;
         "pal-ui5-icon": PalUi5Icon;
+        "pal-window-panel": PalWindowPanel;
     }
 }
 export { LocalJSX as JSX };
@@ -279,6 +293,7 @@ declare module "@stencil/core" {
             "pal-resizable": LocalJSX.PalResizable & JSXBase.HTMLAttributes<HTMLPalResizableElement>;
             "pal-tabs-panel": LocalJSX.PalTabsPanel & JSXBase.HTMLAttributes<HTMLPalTabsPanelElement>;
             "pal-ui5-icon": LocalJSX.PalUi5Icon & JSXBase.HTMLAttributes<HTMLPalUi5IconElement>;
+            "pal-window-panel": LocalJSX.PalWindowPanel & JSXBase.HTMLAttributes<HTMLPalWindowPanelElement>;
         }
     }
 }

@@ -8,6 +8,7 @@
 
 .content.float {
   position: relative;
+  pointer-events:all;
 }
 
 .content.float > .panel {

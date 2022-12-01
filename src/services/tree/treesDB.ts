@@ -12,7 +12,7 @@ const TREES_TABLE_NAME = 'trees';
 const TREES_STATES_TABLE_NAME = 'treesStates';
 const APP_TABLE_NAME = 'app';
 
-export const MAX_TREES = 4;
+export const MAX_TREES = Infinity;
 
 export class TreesDB<TI extends TreeItem> extends Dexie {
   treesItems!: Table<TI>;

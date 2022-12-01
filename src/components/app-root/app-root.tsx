@@ -7,7 +7,10 @@ import '../../services/dbInit';
 import '../../services/controller';
 import { PalDragDropContextCustomEvent } from '../../components';
 import { Panel } from '../../services/panelsConfig';
-// import { PanelTypes } from '../../services/panelsConfig';
+import { FLOATED_TREE_ID, MAIN_TREE, MINI_TREE_ID, SECOND_TREE, WINDOW_TREE } from '../../services/dbInit';
+import { createRouter, match, Route } from 'stencil-router-v2';
+
+const Router = createRouter();
 
 console.log(treesDB);
 
@@ -20,6 +23,8 @@ export class AppRoot {
   @State() scondRoot: TreeItem;
   @State() floatedRoot: TreeItem;
   @State() minimizedPanels: TreeItem[];
+  @State() windowPanels: TreeItem[];
+  private activeWindows: Map<string, Window> = new Map();
   private subscriptions: Subscription[] = [];
   onDropHandler = async (ev: PalDragDropContextCustomEvent<DragProccess>) => {
     const { start, end } = ev?.detail;
@@ -42,21 +47,36 @@ export class AppRoot {
 
   componentWillLoad() {
     this.subscriptions.push(
-      liveQuery(() => treesDB.getRoot('main-layout')).subscribe(root => {
+      liveQuery(() => treesDB.getRoot(MAIN_TREE)).subscribe(root => {
         this.root = root;
       }),
-      liveQuery(() => treesDB.getRoot('second-tree')).subscribe(scondRoot => {
+      liveQuery(() => treesDB.getRoot(SECOND_TREE)).subscribe(scondRoot => {
         this.scondRoot = scondRoot;
       }),
-      liveQuery(() => treesDB.getRoot('floated-tree')).subscribe(floatedRoot => {
+      liveQuery(() => treesDB.getRoot(FLOATED_TREE_ID)).subscribe(floatedRoot => {
         this.floatedRoot = floatedRoot;
       }),
       liveQuery(async () => {
-        const root = await treesDB.getRoot('minimized-tree');
+        const root = await treesDB.getRoot(MINI_TREE_ID);
         return (await treesDB.getNodeChildrenCollection(root?.id)).toArray();
       }).subscribe(items => {
         this.minimizedPanels = items;
       }),
+      location.pathname === '/'
+        ? liveQuery(async () => {
+            const root = await treesDB.getRoot(WINDOW_TREE);
+            return (await treesDB.getNodeChildrenCollection(root?.id)).toArray();
+          }).subscribe(items => {
+            this.windowPanels = items;
+            items.forEach(item => {
+              const exist = this.activeWindows.get(item?.id);
+              if (!exist) {
+                var myWindow = window.open(`/window/${item.id}`, item.name, 'width=300,height=400');
+                this.activeWindows.set(item.id, myWindow);
+              }
+            });
+          })
+        : null,
     );
   }
 
@@ -67,56 +87,84 @@ export class AppRoot {
   render() {
     return (
       <Host class="grid-stick-layout">
-        <header class="header">
-          <h3>Stencil App Starter</h3>
-        </header>
-        <pal-drag-drop-context
-          onChangePanelDisplayMode={async ({ detail }) => {
-            console.log(detail);
-
-            if (detail?.displayMode == 'minimize') {
-              await treesDB.transaction('rw', treesDB.treesItems, async () => {
-                const { panelId } = detail;
-                let itemToTransfer = await treesDB.treesItems.get(panelId);
-                itemToTransfer = { ...itemToTransfer, originalData: itemToTransfer };
-                const target = await treesDB.getRoot('minimized-tree');
-                return treesDB.moveTreeItem(itemToTransfer, target);
-              });
-            }
-          }}
-          onTabClose={({ detail }) => {
-            treesDB.treesItems.delete(detail);
-          }}
-          onTabDroped={this.onDropHandler}
-        >
-          <main class="main">
-            {this.root ? <pal-panel panelData={this.root} panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel> : null}
-            <div style={{ width: '5px' }} class="divider"></div>
-            {this.scondRoot ? <pal-panel panelData={this.scondRoot} panelId={this.scondRoot.id} title={this.scondRoot.name} key={this.scondRoot.id}></pal-panel> : null}
-            <div class="floated-tree">
-              {this.floatedRoot ? <pal-panel panelData={this.floatedRoot} panelId={this.floatedRoot.id} title={this.floatedRoot.name} key={this.floatedRoot.id}></pal-panel> : null}
-            </div>
-          </main>
-        </pal-drag-drop-context>
-        <div class="footer">
-          <div class="minimized-con">
-            {this.minimizedPanels?.map((p: Panel) => {
-              return (
-                <div
-                  onClick={() => {
-                    this.moveToOriginal(p);
-                  }}
-                  style={{ borderTopColor: `${p?.color}` }}
-                  class="mini-panel"
-                >
-                  {p.name}
+        <Router.Switch>
+          <Route path={match('/window/:id')} render={({ id }) => <pal-window-panel panelId={id} />} />
+          <Route path={match('/')}>
+            <header class="header">
+              <h3>Stencil App Starter</h3>
+            </header>
+            <pal-drag-drop-context
+              onChangePanelDisplayMode={this.changeDisplayHandler()}
+              onTabClose={({ detail }) => {
+                treesDB.treesItems.delete(detail);
+              }}
+              onTabDroped={this.onDropHandler}
+            >
+              <main class="main">
+                {this.root ? <pal-panel panelData={this.root} panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel> : null}
+                <div style={{ width: '5px' }} class="divider"></div>
+                {this.scondRoot ? <pal-panel panelData={this.scondRoot} panelId={this.scondRoot.id} title={this.scondRoot.name} key={this.scondRoot.id}></pal-panel> : null}
+                <div class="floated-tree">
+                  {this.floatedRoot ? (
+                    <pal-panel panelData={this.floatedRoot} panelId={this.floatedRoot.id} title={this.floatedRoot.name} key={this.floatedRoot.id}></pal-panel>
+                  ) : null}
                 </div>
-              );
-            })}
-          </div>
-        </div>
+              </main>
+            </pal-drag-drop-context>
+            <div class="footer">
+              <div class="minimized-con">
+                {this.minimizedPanels?.map((p: Panel) => {
+                  return (
+                    <div
+                      onClick={() => {
+                        this.moveToOriginal(p);
+                      }}
+                      style={{ borderTopColor: `${p?.color}` }}
+                      class="mini-panel"
+                    >
+                      {p.name}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Route>
+        </Router.Switch>
       </Host>
     );
+  }
+
+  private changeDisplayHandler(): (event: PalDragDropContextCustomEvent<DisplayModeChange>) => void {
+    return async ({ detail }) => {
+      const { panelId, displayMode } = detail;
+
+      let itemToTransfer = await treesDB.treesItems.get(panelId);
+      itemToTransfer = { ...itemToTransfer, originalData: itemToTransfer };
+
+      switch (displayMode) {
+        case 'minimize':
+          await treesDB.transaction('rw', treesDB.treesItems, async () => {
+            const target = await treesDB.getRoot(MINI_TREE_ID);
+            return treesDB.moveTreeItem(itemToTransfer, target);
+          });
+          break;
+        case 'dettach':
+          await treesDB.transaction('rw', treesDB.treesItems, async () => {
+            const target = await treesDB.getRoot(FLOATED_TREE_ID);
+            return treesDB.moveTreeItem(itemToTransfer, target);
+          });
+          break;
+        case 'window':
+          await treesDB.transaction('rw', treesDB.treesItems, async () => {
+            const target = await treesDB.getRoot(WINDOW_TREE);
+            return treesDB.moveTreeItem(itemToTransfer, target);
+          });
+          break;
+
+        default:
+          break;
+      }
+    };
   }
 }
 

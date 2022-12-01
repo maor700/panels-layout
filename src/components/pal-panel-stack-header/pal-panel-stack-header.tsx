@@ -10,7 +10,7 @@ export class PalPanelStackHeader {
   @Prop() panelId: string;
   @Prop() logicContainer: string;
   @Prop() treeId: string;
-  @State() showMenu = true;
+  @State() showMenu = false;
   @Element() elm: HTMLElement;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabClose: EventEmitter<string>;
@@ -65,15 +65,19 @@ export class PalPanelStackHeader {
                   מזער
                 </div>
                 <div class="menu-item option">
-                  <pal-ui5-icon onClick={this.menuToggle} icon="border" lib="sap" title="הגדל" class="stack-head-btn" />
+                  <pal-ui5-icon onClick={()=>this.changeDisplayMode("maximize")} icon="border" lib="sap" title="הגדל" class="stack-head-btn" />
                   הגדל
                 </div>
-                <div class="menu-item option">
-                  <pal-ui5-icon onClick={this.menuToggle} icon="dimension" lib="sap" title="נתק" class="stack-head-btn" />
+                <div onClick={()=>this.changeDisplayMode("dettach")} class="menu-item option">
+                  <pal-ui5-icon  icon="dimension" lib="sap" title="נתק" class="stack-head-btn" />
                   נתק
                 </div>
+                <div onClick={()=>this.changeDisplayMode("window")} class="menu-item option">
+                  <pal-ui5-icon  icon="header" lib="sap" title="חלון" class="stack-head-btn" />
+                  חלון
+                </div>
                 <div class="menu-item option">
-                  <pal-ui5-icon onClick={this.menuToggle} icon="decline" lib="sap" title="סגור" class="stack-head-btn" />
+                  <pal-ui5-icon onClick={()=>this.changeDisplayMode("close")} icon="decline" lib="sap" title="סגור" class="stack-head-btn" />
                   סגור
                 </div>
               </ul>

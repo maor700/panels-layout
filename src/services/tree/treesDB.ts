@@ -219,10 +219,10 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
   };
 
   getRoot = async (treeId: string) => {
-    return this.treesItems.where(INDEXES.tp).equals([treeId, '']).first() as Promise<TreeItem>;
+    return this.treesItems.where(INDEXES.tp).equals([treeId, '']).first() as Promise<TI>;
   };
 
-  getRootAndChildren = async (treeId: string): Promise<[TreeItem | null, TreeItem[]]> => {
+  getRootAndChildren = async (treeId: string): Promise<[TI | null, TI[]]> => {
     const root = await this.getRoot(treeId);
     if (root === undefined) return [null, []];
     return this.getNodeAndChildren(root.id);

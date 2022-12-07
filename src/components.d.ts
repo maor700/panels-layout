@@ -40,11 +40,18 @@ export namespace Components {
     }
     interface PalFloatable {
     }
+    interface PalOriginContext {
+    }
     interface PalPanel {
         "index": number;
         "logicContainer": string;
         "panelData": Panel;
         "panelId": string;
+    }
+    interface PalPanelHeaderMenu {
+        "panelId": string;
+        "panelTitle": string;
+        "treeId": string;
     }
     interface PalPanelStackHeader {
         "active": boolean;
@@ -81,6 +88,14 @@ export interface PalDragDropContextCustomEvent<T> extends CustomEvent<T> {
 export interface PalDragDropSnapCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalDragDropSnapElement;
+}
+export interface PalOriginContextCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalOriginContextElement;
+}
+export interface PalPanelHeaderMenuCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalPanelHeaderMenuElement;
 }
 export interface PalPanelStackHeaderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -135,11 +150,23 @@ declare global {
         prototype: HTMLPalFloatableElement;
         new (): HTMLPalFloatableElement;
     };
+    interface HTMLPalOriginContextElement extends Components.PalOriginContext, HTMLStencilElement {
+    }
+    var HTMLPalOriginContextElement: {
+        prototype: HTMLPalOriginContextElement;
+        new (): HTMLPalOriginContextElement;
+    };
     interface HTMLPalPanelElement extends Components.PalPanel, HTMLStencilElement {
     }
     var HTMLPalPanelElement: {
         prototype: HTMLPalPanelElement;
         new (): HTMLPalPanelElement;
+    };
+    interface HTMLPalPanelHeaderMenuElement extends Components.PalPanelHeaderMenu, HTMLStencilElement {
+    }
+    var HTMLPalPanelHeaderMenuElement: {
+        prototype: HTMLPalPanelHeaderMenuElement;
+        new (): HTMLPalPanelHeaderMenuElement;
     };
     interface HTMLPalPanelStackHeaderElement extends Components.PalPanelStackHeader, HTMLStencilElement {
     }
@@ -180,7 +207,9 @@ declare global {
         "pal-flex-container-panel": HTMLPalFlexContainerPanelElement;
         "pal-float-panel": HTMLPalFloatPanelElement;
         "pal-floatable": HTMLPalFloatableElement;
+        "pal-origin-context": HTMLPalOriginContextElement;
         "pal-panel": HTMLPalPanelElement;
+        "pal-panel-header-menu": HTMLPalPanelHeaderMenuElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
         "pal-resizable": HTMLPalResizableElement;
         "pal-tabs-panel": HTMLPalTabsPanelElement;
@@ -227,11 +256,22 @@ declare namespace LocalJSX {
     }
     interface PalFloatable {
     }
+    interface PalOriginContext {
+        "onChangePanelDisplayMode"?: (event: PalOriginContextCustomEvent<DisplayModeChange>) => void;
+        "onTabClose"?: (event: PalOriginContextCustomEvent<string>) => void;
+        "onTabDroped"?: (event: PalOriginContextCustomEvent<DragProccess>) => void;
+    }
     interface PalPanel {
         "index"?: number;
         "logicContainer"?: string;
         "panelData"?: Panel;
         "panelId"?: string;
+    }
+    interface PalPanelHeaderMenu {
+        "onChangePanelDisplayMode"?: (event: PalPanelHeaderMenuCustomEvent<DisplayModeChange>) => void;
+        "panelId"?: string;
+        "panelTitle"?: string;
+        "treeId"?: string;
     }
     interface PalPanelStackHeader {
         "active"?: boolean;
@@ -268,7 +308,9 @@ declare namespace LocalJSX {
         "pal-flex-container-panel": PalFlexContainerPanel;
         "pal-float-panel": PalFloatPanel;
         "pal-floatable": PalFloatable;
+        "pal-origin-context": PalOriginContext;
         "pal-panel": PalPanel;
+        "pal-panel-header-menu": PalPanelHeaderMenu;
         "pal-panel-stack-header": PalPanelStackHeader;
         "pal-resizable": PalResizable;
         "pal-tabs-panel": PalTabsPanel;
@@ -288,7 +330,9 @@ declare module "@stencil/core" {
             "pal-flex-container-panel": LocalJSX.PalFlexContainerPanel & JSXBase.HTMLAttributes<HTMLPalFlexContainerPanelElement>;
             "pal-float-panel": LocalJSX.PalFloatPanel & JSXBase.HTMLAttributes<HTMLPalFloatPanelElement>;
             "pal-floatable": LocalJSX.PalFloatable & JSXBase.HTMLAttributes<HTMLPalFloatableElement>;
+            "pal-origin-context": LocalJSX.PalOriginContext & JSXBase.HTMLAttributes<HTMLPalOriginContextElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
+            "pal-panel-header-menu": LocalJSX.PalPanelHeaderMenu & JSXBase.HTMLAttributes<HTMLPalPanelHeaderMenuElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
             "pal-resizable": LocalJSX.PalResizable & JSXBase.HTMLAttributes<HTMLPalResizableElement>;
             "pal-tabs-panel": LocalJSX.PalTabsPanel & JSXBase.HTMLAttributes<HTMLPalTabsPanelElement>;

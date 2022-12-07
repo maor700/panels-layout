@@ -8,6 +8,7 @@ export class TreeItem<T = any> {
   parentPath!: string;
   order!: number;
   data?: T;
+  persistContainer?: 1 | 0;
   selected?: 1 | 0;
   leaf: 1 | 0 = 1;
 }

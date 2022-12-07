@@ -2,13 +2,14 @@ import { Component, h, Host, State } from '@stencil/core';
 import { liveQuery, Subscription } from 'dexie';
 import { TreeItem } from '../../services/tree/TreeItem';
 import { treesDB } from '../../services/tree/treesDB';
-import '../../services/panelsConfig';
-import '../../services/dbInit';
-import '../../services/controller';
 import { PalDragDropContextCustomEvent } from '../../components';
 import { Panel } from '../../services/panelsConfig';
 import { FLOATED_TREE_ID, MAIN_TREE, MINI_TREE_ID, SECOND_TREE, WINDOW_TREE } from '../../services/dbInit';
 import { createRouter, match, Route } from 'stencil-router-v2';
+import '../../services/panelsConfig';
+import '../../services/dbInit';
+import '../../services/controller';
+import { TreeClass } from '../../services/tree/Tree';
 
 const Router = createRouter();
 
@@ -24,8 +25,10 @@ export class AppRoot {
   @State() floatedRoot: TreeItem;
   @State() minimizedPanels: TreeItem[];
   @State() windowPanels: TreeItem[];
+
   private activeWindows: Map<string, Window> = new Map();
   private subscriptions: Subscription[] = [];
+
   onDropHandler = async (ev: PalDragDropContextCustomEvent<DragProccess>) => {
     const { start, end } = ev?.detail;
     console.log({ start, end });
@@ -68,16 +71,37 @@ export class AppRoot {
             return (await treesDB.getNodeChildrenCollection(root?.id)).toArray();
           }).subscribe(items => {
             this.windowPanels = items;
+
             items.forEach(item => {
               const exist = this.activeWindows.get(item?.id);
               if (!exist) {
-                var myWindow = window.open(`/window/${item.id}`, item.name, 'width=300,height=400');
+                var myWindow = window.open(
+                  `/window/${item.id}`,
+                  item.name,
+                  'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=300,height=400',
+                );
                 this.activeWindows.set(item.id, myWindow);
               }
+            });
+            treesDB.transaction('rw', treesDB.treesItems, async () => {
+              [...this.activeWindows.entries()].forEach(async ([winId, windowInstance]) => {
+                const exist = items.find(_ => _.id === winId);
+                if (!exist) {
+                  windowInstance.close();
+                  this.activeWindows.delete(winId);
+                }
+              });
             });
           })
         : null,
     );
+
+    // close all related windows when user close the main app.
+    addEventListener('beforeunload', () => {
+      [...this.activeWindows.entries()].forEach(([_, winInstance]) => {
+        winInstance.close();
+      });
+    });
   }
 
   disconnectedCallback() {
@@ -86,20 +110,20 @@ export class AppRoot {
 
   render() {
     return (
-      <Host class="grid-stick-layout">
-        <Router.Switch>
-          <Route path={match('/window/:id')} render={({ id }) => <pal-window-panel panelId={id} />} />
-          <Route path={match('/')}>
-            <header class="header">
-              <h3>Stencil App Starter</h3>
-            </header>
-            <pal-drag-drop-context
-              onChangePanelDisplayMode={this.changeDisplayHandler()}
-              onTabClose={({ detail }) => {
-                treesDB.treesItems.delete(detail);
-              }}
-              onTabDroped={this.onDropHandler}
-            >
+      <Host>
+        <pal-drag-drop-context
+          class="grid-stick-layout"
+          onTabDroped={this.onDropHandler}
+          onChangePanelDisplayMode={this.changeDisplayHandler()}
+          onTabClose={({ detail: apnelId }) => closeHandler(apnelId)}
+        >
+          <Router.Switch>
+            <Route path={match('/window/:id')} render={({ id }) => <pal-window-panel panelId={id} />} />
+            <Route path={match('/')}>
+              <header class="header">
+                <h3>Stencil App Starter</h3>
+              </header>
+
               <main class="main">
                 {this.root ? <pal-panel panelData={this.root} panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel> : null}
                 <div style={{ width: '5px' }} class="divider"></div>
@@ -110,30 +134,31 @@ export class AppRoot {
                   ) : null}
                 </div>
               </main>
-            </pal-drag-drop-context>
-            <div class="footer">
-              <div class="minimized-con">
-                {this.minimizedPanels?.map((p: Panel) => {
-                  return (
-                    <div
-                      onClick={() => {
-                        this.moveToOriginal(p);
-                      }}
-                      style={{ borderTopColor: `${p?.color}` }}
-                      class="mini-panel"
-                    >
-                      {p.name}
-                    </div>
-                  );
-                })}
+              <div class="footer">
+                <div class="minimized-con">
+                  {this.minimizedPanels?.map((p: Panel) => {
+                    return (
+                      <div
+                        onClick={() => {
+                          this.moveToOriginal(p);
+                        }}
+                        style={{ borderTopColor: `${p?.color}` }}
+                        class="mini-panel"
+                      >
+                        {p.name}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          </Route>
-        </Router.Switch>
+            </Route>
+          </Router.Switch>
+        </pal-drag-drop-context>
       </Host>
     );
   }
 
+  //@ts-ignore
   private changeDisplayHandler(): (event: PalDragDropContextCustomEvent<DisplayModeChange>) => void {
     return async ({ detail }) => {
       const { panelId, displayMode } = detail;
@@ -160,6 +185,13 @@ export class AppRoot {
             return treesDB.moveTreeItem(itemToTransfer, target);
           });
           break;
+        case 'close':
+          console.log('close', panelId);
+
+          await treesDB.transaction('rw', treesDB.treesItems, async () => {
+            return closeHandler(panelId);
+          });
+          break;
 
         default:
           break;
@@ -167,6 +199,10 @@ export class AppRoot {
     };
   }
 }
+
+const closeHandler = (panelId: string) => {
+  treesDB.deleteNode(panelId);
+};
 
 // Drop on center - create a new tabs panel (or use the exist one) and move the original + moved panel to the tabs panel;
 const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProccess>) => {
@@ -177,8 +213,8 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
   let [ItemToTransfer, targetItem, toTransferLogicContainer, targetLogicContainer] = await treesDB.treesItems.bulkGet([
     start?.panelId,
     end?.panelId,
-    start.logicContainer,
-    end.logicContainer,
+    start?.logicContainer,
+    end?.logicContainer,
   ]);
 
   // if (targetLogicContainer.type === 'tabs' && end?.direction !== 'center') {
@@ -235,3 +271,58 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
     }
   });
 };
+
+const removeEmptyContainers = async (treesIds: string[]) => {
+  // find all containers with children <= 1;
+  treesDB.transaction('rw', treesDB.treesItems, async () => {
+    const toMove: { who: Panel; to: Panel }[] = [];
+    const toDelete: Panel[] = [];
+
+    for (let treeId of treesIds) {
+      const node = await treesDB.getRoot(treeId);
+      await removeEmptyRecursive(node, toMove, toDelete);
+    }
+
+    console.log({ toDelete, toMove });
+
+    const idsToDelete = toDelete.map(({ id }) => id);
+
+    toMove.forEach(async ({ who, to }) => {
+      await treesDB.moveTreeItem(who, to);
+    });
+
+    console.log({ idsToDelete });
+    await treesDB.treesItems.bulkDelete(idsToDelete);
+  });
+
+  //for each of them, if children === 0 remove.
+  // if children ===1 , in check his parent.
+  //if the parent with the same type, remove the container.else do nothing
+};
+
+const removeEmptyRecursive = async (node: Panel, toMove: { who: Panel; to: Panel }[] = [], toDelete: Panel[] = []) => {
+  const parent = await treesDB.getParent(node);
+  const isContainerType = node.type !== 'content';
+
+  if (!isContainerType) return [toMove, toDelete];
+
+  const children = await (await treesDB.getNodeChildrenCollection(node.id))?.toArray();
+
+  if (node.persistContainer !== 1) {
+    if (children?.length === 0) {
+      toDelete.push(node);
+    } else if (children?.length == 1) {
+      toDelete.push(node);
+      const childToMove = children.map(child => ({ who: child, to: parent }));
+      toMove.push(...childToMove);
+    }
+  }
+
+  for (let child of children) {
+    await removeEmptyRecursive(child, toMove, toDelete);
+  }
+
+  return [toMove, toDelete];
+};
+
+console.log(removeEmptyContainers);

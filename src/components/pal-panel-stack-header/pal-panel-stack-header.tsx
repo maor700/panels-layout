@@ -1,4 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
 
 @Component({
   tag: 'pal-panel-stack-header',
@@ -10,7 +10,6 @@ export class PalPanelStackHeader {
   @Prop() panelId: string;
   @Prop() logicContainer: string;
   @Prop() treeId: string;
-  @State() showMenu = false;
   @Element() elm: HTMLElement;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabClose: EventEmitter<string>;
@@ -24,13 +23,6 @@ export class PalPanelStackHeader {
     this.tabDrag.emit(null);
     top.document.removeEventListener('mousemove', this.moveHandler);
     top.document.removeEventListener('mouseup', this.upHandler);
-  };
-
-  menuToggle = (_: MouseEvent) => {
-    this.showMenu = !this.showMenu;
-  };
-  changeDisplayMode = (displayMode:DisplayModes) => {
-    this.changePanelDisplayMode.emit({panelId:this.panelId, treeId:this.treeId, displayMode})
   };
 
   render() {
@@ -56,33 +48,7 @@ export class PalPanelStackHeader {
           <div class="name" title="גרור כדי למקם מחדש">
             {this.panelTitle}
           </div>
-          <pal-ui5-icon onClick={this.menuToggle} icon="menu2" lib="sap" title="תפריט פעולות" hoverStyle class="stack-head-btn" />
-          <div class="menu-con">
-            {this.showMenu && (
-              <ul class="menu">
-                <div onClick={()=>this.changeDisplayMode("minimize")} class="menu-item option">
-                  <pal-ui5-icon icon="minimize" lib="sap" title="מזער" class="stack-head-btn" />
-                  מזער
-                </div>
-                <div class="menu-item option">
-                  <pal-ui5-icon onClick={()=>this.changeDisplayMode("maximize")} icon="border" lib="sap" title="הגדל" class="stack-head-btn" />
-                  הגדל
-                </div>
-                <div onClick={()=>this.changeDisplayMode("dettach")} class="menu-item option">
-                  <pal-ui5-icon  icon="dimension" lib="sap" title="נתק" class="stack-head-btn" />
-                  נתק
-                </div>
-                <div onClick={()=>this.changeDisplayMode("window")} class="menu-item option">
-                  <pal-ui5-icon  icon="header" lib="sap" title="חלון" class="stack-head-btn" />
-                  חלון
-                </div>
-                <div class="menu-item option">
-                  <pal-ui5-icon onClick={()=>this.changeDisplayMode("close")} icon="decline" lib="sap" title="סגור" class="stack-head-btn" />
-                  סגור
-                </div>
-              </ul>
-            )}
-          </div>
+          <pal-panel-header-menu panelId={this.panelId} treeId={this.treeId}/>
         </div>
       </Host>
     );

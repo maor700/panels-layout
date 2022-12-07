@@ -8,18 +8,18 @@ export const FLOATED_TREE_ID = 'floated-tree';
 export const MINI_TREE_ID = 'minimized-tree';
 export const WINDOW_TREE = 'window-tree';
 
-treesDB.on('ready', async () => {
+treesDB.on('populate', async () => {
   treesDB.transaction('rw', treesDB.trees, treesDB.treesItems, async () => {
     await treesDB.treesItems.clear();
     await treesDB.trees.clear();
-    await treesDB.createNewTree(MAIN_TREE, true, { id: MAIN_TREE, treeName: 'פריסה מרכזית' }, { id: 'root', leaf: 0, hideHeader: 1, type: PanelTypes.row, order: 100 });
+    await treesDB.createNewTree(MAIN_TREE, true, { id: MAIN_TREE, treeName: 'פריסה מרכזית' }, { id: 'root', persistContainer:1, leaf: 0, hideHeader: 1, type: PanelTypes.row, order: 100 });
     const { id } = await treesDB.getRoot(MAIN_TREE);
 
     await treesDB.createNewTree(
       SECOND_TREE,
       true,
       { id: SECOND_TREE, treeName: 'פריסה מרכזית' },
-      { id: 'second-root', leaf: 0, hideHeader: 1, type: PanelTypes.column, order: 100 },
+      { id: 'second-root', persistContainer:1, leaf: 0, hideHeader: 1, type: PanelTypes.column, order: 100 },
     );
     const { id: secondTreeId } = await treesDB.getRoot(SECOND_TREE);
 
@@ -27,7 +27,7 @@ treesDB.on('ready', async () => {
       MINI_TREE_ID,
       true,
       { id: MINI_TREE_ID, treeName: 'חלונות ממוזערים' },
-      { id: 'minimized-root', leaf: 0, hideHeader: 1, type: PanelTypes.column, order: 100 },
+      { id: 'minimized-root', persistContainer:1, leaf: 0, hideHeader: 1, type: PanelTypes.column, order: 100 },
     );
     const { id: miniTreeId } = await treesDB.getRoot(MINI_TREE_ID);
 
@@ -35,8 +35,9 @@ treesDB.on('ready', async () => {
       FLOATED_TREE_ID,
       true,
       { id: FLOATED_TREE_ID, treeName: 'חלונות צפים' },
-      { id: 'floated-root', leaf: 0, hideHeader: 1, type: PanelTypes.float, order: 100 },
+      { id: 'floated-root', persistContainer:1, leaf: 0, hideHeader: 1, type: PanelTypes.float, order: 100 },
     );
+    
     const { id: floatedTreeId } = await treesDB.getRoot(FLOATED_TREE_ID);
     
     await treesDB.createNewTree(WINDOW_TREE, true, { id: WINDOW_TREE, treeName: 'חלונות' }, { id: 'window-root', leaf: 0, hideHeader: 1, type: PanelTypes.window });

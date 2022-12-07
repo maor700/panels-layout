@@ -2,6 +2,7 @@ import { Component, Element, h, Host, Prop, State } from '@stencil/core';
 import { liveQuery, Subscription } from 'dexie';
 import { Panel, PanelTypes } from '../../services/panelsConfig';
 import { treesDB } from '../../services/tree/treesDB';
+
 @Component({
   tag: 'pal-panel',
   styleUrl: 'pal-panel.css',
@@ -28,7 +29,6 @@ export class PalPanel {
   }
 
   render() {
-    console.log('panel', this.logicContainer);
 
     return (
       <Host class={`panel`} style={{ 'flex': this.panelData?.flex + '', '--panel-bg': this.panelData?.color }}>

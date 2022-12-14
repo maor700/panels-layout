@@ -1,0 +1,6 @@
+:host {
+  display: block;
+  resize: both;
+  overflow: auto;
+  z-index: 0;
+}

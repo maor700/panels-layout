@@ -9,7 +9,6 @@ import { createRouter, match, Route } from 'stencil-router-v2';
 import '../../services/panelsConfig';
 import '../../services/dbInit';
 import '../../services/controller';
-import { TreeClass } from '../../services/tree/Tree';
 
 const Router = createRouter();
 

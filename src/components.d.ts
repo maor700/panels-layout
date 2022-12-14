@@ -101,6 +101,10 @@ export interface PalPanelStackHeaderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalPanelStackHeaderElement;
 }
+export interface PalResizableCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalResizableElement;
+}
 declare global {
     interface HTMLAppRootElement extends Components.AppRoot, HTMLStencilElement {
     }
@@ -233,6 +237,7 @@ declare namespace LocalJSX {
     }
     interface PalDragDropContext {
         "onChangePanelDisplayMode"?: (event: PalDragDropContextCustomEvent<DisplayModeChange>) => void;
+        "onRequestOverlay"?: (event: PalDragDropContextCustomEvent<boolean>) => void;
         "onTabClose"?: (event: PalDragDropContextCustomEvent<string>) => void;
         "onTabDroped"?: (event: PalDragDropContextCustomEvent<DragProccess>) => void;
     }
@@ -284,6 +289,7 @@ declare namespace LocalJSX {
         "treeId"?: string;
     }
     interface PalResizable {
+        "onRequestOverlay"?: (event: PalResizableCustomEvent<{status:boolean, clearance?:()=>void}>) => void;
     }
     interface PalTabsPanel {
         "index"?: number;

@@ -39,6 +39,11 @@ export namespace Components {
         "panels": Panel[];
     }
     interface PalFloatable {
+        "intersectObserver": IntersectionObserver;
+        "maxArea": PanelPosition;
+        "panelId": string;
+        "pauseDrag": boolean;
+        "position": PanelPosition;
     }
     interface PalOriginContext {
     }
@@ -61,6 +66,8 @@ export namespace Components {
         "treeId": string;
     }
     interface PalResizable {
+        "dimensions": PanelDimensions;
+        "panelId": string;
     }
     interface PalTabsPanel {
         "index": number;
@@ -88,6 +95,10 @@ export interface PalDragDropContextCustomEvent<T> extends CustomEvent<T> {
 export interface PalDragDropSnapCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalDragDropSnapElement;
+}
+export interface PalFloatableCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalFloatableElement;
 }
 export interface PalOriginContextCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -238,6 +249,7 @@ declare namespace LocalJSX {
     interface PalDragDropContext {
         "onChangePanelDisplayMode"?: (event: PalDragDropContextCustomEvent<DisplayModeChange>) => void;
         "onRequestOverlay"?: (event: PalDragDropContextCustomEvent<boolean>) => void;
+        "onSubmitTransform"?: (event: PalDragDropContextCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
         "onTabClose"?: (event: PalDragDropContextCustomEvent<string>) => void;
         "onTabDroped"?: (event: PalDragDropContextCustomEvent<DragProccess>) => void;
     }
@@ -260,6 +272,13 @@ declare namespace LocalJSX {
         "panels"?: Panel[];
     }
     interface PalFloatable {
+        "intersectObserver"?: IntersectionObserver;
+        "maxArea"?: PanelPosition;
+        "onRequestOverlay"?: (event: PalFloatableCustomEvent<{ status: boolean; clearance?: () => void }>) => void;
+        "onSubmitTransform"?: (event: PalFloatableCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
+        "panelId"?: string;
+        "pauseDrag"?: boolean;
+        "position"?: PanelPosition;
     }
     interface PalOriginContext {
         "onChangePanelDisplayMode"?: (event: PalOriginContextCustomEvent<DisplayModeChange>) => void;
@@ -289,7 +308,10 @@ declare namespace LocalJSX {
         "treeId"?: string;
     }
     interface PalResizable {
-        "onRequestOverlay"?: (event: PalResizableCustomEvent<{status:boolean, clearance?:()=>void}>) => void;
+        "dimensions"?: PanelDimensions;
+        "onRequestOverlay"?: (event: PalResizableCustomEvent<{ status: boolean; clearance?: () => void }>) => void;
+        "onSubmitTransform"?: (event: PalResizableCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
+        "panelId"?: string;
     }
     interface PalTabsPanel {
         "index"?: number;

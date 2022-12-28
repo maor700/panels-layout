@@ -47,6 +47,11 @@ export class AppRoot {
     });
   };
 
+  submitTansformHandler = async ({ detail: { panelId, transform } }: PalDragDropContextCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => {
+    const { transform: originalTransform } = await treesDB.treesItems.get(panelId);
+    treesDB.treesItems.update(panelId, { transform: { ...originalTransform, ...transform } });
+  };
+
   componentWillLoad() {
     this.subscriptions.push(
       liveQuery(() => treesDB.getRoot(MAIN_TREE)).subscribe(root => {
@@ -115,6 +120,7 @@ export class AppRoot {
           onTabDroped={this.onDropHandler}
           onChangePanelDisplayMode={this.changeDisplayHandler()}
           onTabClose={({ detail: apnelId }) => closeHandler(apnelId)}
+          onSubmitTransform={this.submitTansformHandler}
         >
           <Router.Switch>
             <Route path={match('/window/:id')} render={({ id }) => <pal-window-panel panelId={id} />} />

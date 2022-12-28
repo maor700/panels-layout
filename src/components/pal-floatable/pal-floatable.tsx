@@ -1,29 +1,41 @@
-import { Component, Host, h, State, Element } from '@stencil/core';
+import { Component, Host, h, State, Element, EventEmitter, Event, Prop, Watch } from '@stencil/core';
 
 @Component({
   tag: 'pal-floatable',
   styleUrl: 'pal-floatable.css',
 })
 export class PalFloatable {
+  @Prop() panelId: string;
+  @Prop() position: PanelPosition;
+  @Prop() maxArea: PanelPosition = { top: Infinity, left: Infinity };
+  @Prop() intersectObserver: IntersectionObserver;
+  @Prop({reflect:true, mutable:true}) pauseDrag: boolean = false;
   @State() movements: number[] = [0, 0];
   @State() ctrlPressed: boolean = false;
+  @Event({ bubbles: true, composed: true, cancelable: true }) requestOverlay: EventEmitter<{ status: boolean; clearance?: () => void }>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) submitTransform: EventEmitter<{ panelId: string; transform: Partial<PanelTransform> }>;
   @Element() cont: HTMLDivElement;
 
   ctrlPrfessedHandler = event => {
     this.ctrlPressed = event.ctrlKey;
   };
-  componentDidLoad() {
-    window.addEventListener(
-      'keydown',
-      this.ctrlPrfessedHandler,
-      false,
-    );
 
-    window.addEventListener(
-      'keyup',
-      this.ctrlPrfessedHandler,
-      false,
-    );
+  @Watch('position')
+  updateMovements(position: PanelPosition) {
+    if (position && position?.left !== this.movements?.[0] && position?.top !== this.movements?.[1]) {
+      this.movements = [position?.left, position?.top];
+    }
+  }
+
+  componentWillLoad() {
+    this.updateMovements(this.position);
+  }
+
+  componentDidLoad() {
+    this.intersectObserver.observe(this.cont);
+    window.addEventListener('keydown', this.ctrlPrfessedHandler, false);
+
+    window.addEventListener('keyup', this.ctrlPrfessedHandler, false);
 
     this.cont.addEventListener('tabDrag', ev => {
       !this.ctrlPressed && ev.stopPropagation();
@@ -31,10 +43,17 @@ export class PalFloatable {
   }
 
   disconnectedCallback() {
-    this.cont.removeEventListener("keydown", this.ctrlPrfessedHandler)
-    this.cont.removeEventListener("keyup", this.ctrlPrfessedHandler)
+    this.cont.removeEventListener('keydown', this.ctrlPrfessedHandler);
+    this.cont.removeEventListener('keyup', this.ctrlPrfessedHandler);
+    this.clearance();
   }
 
+  clearance = () => {
+    document.removeEventListener('mousemove', this.mouseMoveHandler);
+    document.removeEventListener('mouseup', this.mouseUpHandler);
+    this.pauseDrag = false;
+  };
+  
   // Events
   mouseDownHandler = (_: MouseEvent) => {
     document.addEventListener('mousemove', this.mouseMoveHandler);
@@ -42,6 +61,8 @@ export class PalFloatable {
   };
 
   private mouseMoveHandler = (_: MouseEvent) => {
+    if(this.pauseDrag) return;
+    !this.ctrlPressed && this.requestOverlay.emit({ status: true, clearance: this.mouseUpHandler });
     _.stopPropagation();
     _.preventDefault();
     if ((_ as MouseEvent).ctrlKey) {
@@ -53,10 +74,10 @@ export class PalFloatable {
   };
 
   mouseUpHandler = () => {
-    // const [movementX, movementY] = this.movements;
-    // this.movements = [0, 0];
-    document.removeEventListener('mousemove', this.mouseMoveHandler);
-    document.removeEventListener('mouseup', this.mouseUpHandler);
+    this.clearance();
+    const { offsetTop, offsetLeft } = this.cont;
+    const transform: PanelPosition = { top: offsetTop, left: offsetLeft };
+    this.submitTransform.emit({ panelId: this.panelId, transform });
   };
 
   render() {

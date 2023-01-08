@@ -22,6 +22,8 @@ export class PalFloatable {
 
   @Watch('position')
   updateMovements(position: PanelPosition) {
+    console.log({position});
+    
     if (position && position?.left !== this.movements?.[0] && position?.top !== this.movements?.[1]) {
       this.movements = [position?.left, position?.top];
     }
@@ -51,11 +53,11 @@ export class PalFloatable {
   clearance = () => {
     document.removeEventListener('mousemove', this.mouseMoveHandler);
     document.removeEventListener('mouseup', this.mouseUpHandler);
-    this.pauseDrag = false;
   };
   
   // Events
   mouseDownHandler = (_: MouseEvent) => {
+    this.pauseDrag = false;
     document.addEventListener('mousemove', this.mouseMoveHandler);
     document.addEventListener('mouseup', this.mouseUpHandler);
   };
@@ -74,6 +76,7 @@ export class PalFloatable {
   };
 
   mouseUpHandler = () => {
+    if(this.pauseDrag) return;
     this.clearance();
     const { offsetTop, offsetLeft } = this.cont;
     const transform: PanelPosition = { top: offsetTop, left: offsetLeft };
@@ -84,7 +87,7 @@ export class PalFloatable {
     const [x, y] = this.movements;
     const style = { top: y + 'px', left: x + 'px' };
     return (
-      <Host id="container" style={style}>
+      <Host id="container"  class={`${this.pauseDrag?"pause-drag":""}`}style={style}>
         <div onMouseDown={this.mouseDownHandler} id="mover">
           <slot name="draggable-header">Window</slot>
           <span class="dot" style={{ background: '#ED594A' }}></span>

@@ -2,6 +2,7 @@ import { Component, Host, h, Prop, Element } from '@stencil/core';
 import { Panel } from '../../services/panelsConfig';
 import { treesDB } from '../../services/tree/treesDB';
 import '@deckdeckgo/drag-resize-rotate';
+import { debounce } from 'lodash';
 
 @Component({
   tag: 'pal-float-panel',
@@ -20,29 +21,47 @@ export class PalFloatPanel {
     this.intersectObserver = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
-          const { intersectionRect, boundingClientRect } = entry;
-          console.log({ intersectionRect, boundingClientRect });
+          const { intersectionRect, boundingClientRect, intersectionRatio, target, isIntersecting } = entry;
+          // console.log({ intersectionRect, boundingClientRect, intersectionRatio, isIntersecting });
+          const floatPanel = target as HTMLPalFloatableElement;
+          if (!isIntersecting) {
+            floatPanel.pauseDrag = true;
+            const delta = { top: intersectionRect.bottom - boundingClientRect.bottom, left: intersectionRect.right - boundingClientRect.right };
+            const { topFactor, leftFactor } = { topFactor: delta.top < 0 ? -1 : delta.top === 0 ? 0 : 1, leftFactor: delta.left < 0 ? -1 : delta.left === 0 ? 0 : 1 };
 
-          const floatPanel = entry.target as HTMLPalFloatableElement;
-          floatPanel.pauseDrag = true;
-          const delta = { top: intersectionRect.bottom - (boundingClientRect.bottom + 1), left: intersectionRect.right - (boundingClientRect.right - 1) };
-          const dimentions = { top: floatPanel.offsetTop + delta.top, left: floatPanel.offsetLeft + delta.left };
-          const ev = new CustomEvent('submitTransform', {
-            detail: { panelId: floatPanel?.panelId, transform: dimentions },
-            bubbles: true,
-            cancelable: true,
-            composed: true,
-          });
-          (entry.target as HTMLElement).dispatchEvent(ev);
+            // console.log({ topFactor, leftFactor });
+
+            const dimentions = {
+              top: topFactor ? floatPanel.offsetTop + (delta.top + 10 * topFactor) : undefined,
+              left: leftFactor ? floatPanel.offsetLeft + (delta.left + 10 * leftFactor) : undefined,
+            };
+            
+            if(dimentions.top === undefined) delete dimentions.top;
+            if(dimentions.left === undefined) delete dimentions.left;
+            // console.log({ delta });
+
+            const ev = new CustomEvent('submitTransform', {
+              detail: { panelId: floatPanel?.panelId, transform: dimentions },
+              bubbles: true,
+              cancelable: true,
+              composed: true,
+            });
+            // (entry.target as HTMLElement).dispatchEvent(ev);
+            this.debouncedTransformSubmit(target, ev);
+          } else {
+            // floatPanel.pauseDrag = false;
+          }
         });
       },
-      { root: this.elm, threshold: 1, rootMargin: '-4px' },
+      { root: this.elm, threshold: 1, rootMargin: '-1px' },
     );
   }
 
   componentDidLoad() {
     this.max = { maxWith: this.elm.offsetWidth, maxHeight: this.elm.offsetHeight };
   }
+
+  debouncedTransformSubmit = debounce((target, ev) => (target as HTMLElement).dispatchEvent(ev), 200);
 
   setActive(panel: Panel) {
     treesDB.treesItems.update(this.panelId, { activeTab: panel?.id });

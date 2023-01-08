@@ -15,6 +15,10 @@
   overflow: hidden;
 }
 
+#container.pause-drag {
+  transition:all .5s ease-out;  
+}
+
 #mover{
   min-height: 1em;
   background: #444;

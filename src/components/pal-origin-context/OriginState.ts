@@ -6,7 +6,6 @@ export class AppState<T extends Object, U extends keyof T> {
 }
 
 const APP_TABLE_NAME = 'app';
-
 export class OriginState<P extends Record<any, any>> extends Dexie {
   app!: Table<AppState<P, keyof P>, 'key'>;
   

@@ -39,10 +39,7 @@ export namespace Components {
         "panels": Panel[];
     }
     interface PalFloatable {
-        "intersectObserver": IntersectionObserver;
-        "maxArea": PanelPosition;
         "panelId": string;
-        "pauseDrag": boolean;
         "position": PanelPosition;
     }
     interface PalOriginContext {
@@ -272,12 +269,9 @@ declare namespace LocalJSX {
         "panels"?: Panel[];
     }
     interface PalFloatable {
-        "intersectObserver"?: IntersectionObserver;
-        "maxArea"?: PanelPosition;
         "onRequestOverlay"?: (event: PalFloatableCustomEvent<{ status: boolean; clearance?: () => void }>) => void;
         "onSubmitTransform"?: (event: PalFloatableCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
         "panelId"?: string;
-        "pauseDrag"?: boolean;
         "position"?: PanelPosition;
     }
     interface PalOriginContext {

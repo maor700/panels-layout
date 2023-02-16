@@ -1,4 +1,6 @@
 import { Component, Host, h, State, Element, EventEmitter, Event, Prop, Watch } from '@stencil/core';
+import { firstValueFrom } from 'rxjs';
+import { OverlayMouseMovement } from '../../services/overlayMovementService';
 
 @Component({
   tag: 'pal-floatable',
@@ -13,10 +15,13 @@ export class PalFloatable {
   @Event({ bubbles: true, composed: true, cancelable: true }) submitTransform: EventEmitter<{ panelId: string; transform: Partial<PanelTransform> }>;
   @Element() floatableElm: HTMLDivElement;
   private isMouseDown: boolean;
+  private moveStarted = false;
   private startX: number;
   private startY: number;
-
+  private moverHeight: number;
+  private overlayMovementService: OverlayMouseMovement;
   container: HTMLElement;
+  moverElm: HTMLElement;
 
   ctrlPrfessedHandler = event => {
     this.ctrlPressed = event.ctrlKey;
@@ -24,8 +29,6 @@ export class PalFloatable {
 
   @Watch('position')
   updateMovements(position: PanelPosition) {
-    console.log({ position });
-
     if (position && position?.left !== this.movements?.[0] && position?.top !== this.movements?.[1]) {
       this.movements = [position?.left, position?.top];
     }
@@ -34,17 +37,13 @@ export class PalFloatable {
   componentWillLoad() {
     this.updateMovements(this.position);
     this.container = this.floatableElm.closest('.main');
-    console.log({ container: this.container });
-
-    document.addEventListener('mousemove', this.mouseMoveHandler);
-    document.addEventListener('mouseup', this.mouseUpHandler);
+    
   }
-
+  
   componentDidLoad() {
     window.addEventListener('keydown', this.ctrlPrfessedHandler, false);
-
     window.addEventListener('keyup', this.ctrlPrfessedHandler, false);
-
+    this.moverHeight = this.moverElm.clientHeight;
     this.floatableElm.addEventListener('tabDrag', ev => {
       !this.ctrlPressed && ev.stopPropagation();
     });
@@ -56,24 +55,35 @@ export class PalFloatable {
     this.clearance();
   }
 
-  clearance = () => {
-    document.removeEventListener('mousemove', this.mouseMoveHandler);
-    document.removeEventListener('mouseup', this.mouseUpHandler);
-  };
-
   // Events
   mouseDownHandler = (event: MouseEvent) => {
-    if (this.ctrlPressed) return;
+    if (event.ctrlKey) return;
     this.isMouseDown = true;
+    document.addEventListener('mousemove', this.mouseMoveHandler);
+    document.addEventListener('mouseup', this.mouseUpHandler);
+
     this.requestOverlay.emit({ status: true });
     this.startX = event.clientX - this.floatableElm.getBoundingClientRect().left;
-    this.startY = event.clientY - this.floatableElm.getBoundingClientRect().top;
+    this.startY = event.clientY - this.floatableElm.getBoundingClientRect().top + this.moverHeight;
   };
 
-  private mouseMoveHandler = (event: MouseEvent) => {
-    if (!this.isMouseDown || this.ctrlPressed) {
+  mouseMoveHandler = (_: MouseEvent) => {
+    if (_.ctrlKey) {
       return;
     }
+    if (this.isMouseDown && !this.moveStarted) {
+      this.moveStarted = true;
+      this.overlayMovementService = new OverlayMouseMovement(this.panelId);
+      this.overlayMovementService.start();
+      const moveSubs = this.overlayMovementService.movements$.subscribe(this.moveLogic);
+      firstValueFrom(this.overlayMovementService.moveEnd$).then(() => {
+        this.overlayMovementService.stop();
+        moveSubs.unsubscribe();
+      });
+    }
+  };
+
+  private moveLogic = (event: MouseEvent) => {
     const x = event.clientX - this.startX;
     const y = event.clientY - this.startY;
     const maxX = this.container.clientWidth - this.floatableElm.clientWidth;
@@ -84,11 +94,18 @@ export class PalFloatable {
   };
 
   mouseUpHandler = () => {
-    this.requestOverlay.emit({ status: false });
-    this.isMouseDown = false;
+    this.overlayMovementService.stop();
+    this.clearance();
     const { offsetTop, offsetLeft } = this.floatableElm;
     const transform: PanelPosition = { top: offsetTop, left: offsetLeft };
     this.submitTransform.emit({ panelId: this.panelId, transform });
+  };
+
+  clearance = () => {
+    document.removeEventListener('mousemove', this.mouseMoveHandler);
+    document.removeEventListener('mouseup', this.mouseUpHandler);
+    this.isMouseDown = false;
+    this.moveStarted = false;
   };
 
   render() {
@@ -96,7 +113,13 @@ export class PalFloatable {
     const style = { top: y + 'px', left: x + 'px' };
     return (
       <Host id="container" style={style}>
-        <div onMouseDown={this.mouseDownHandler} id="mover">
+        <div
+          ref={el => {
+            this.moverElm = el;
+          }}
+          onMouseDown={this.mouseDownHandler}
+          id="mover"
+        >
           <slot name="draggable-header">Window</slot>
           <span class="dot" style={{ background: '#ED594A' }}></span>
         </div>

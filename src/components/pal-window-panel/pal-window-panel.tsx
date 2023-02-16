@@ -15,8 +15,6 @@ export class PalWindowPanel {
   componentWillLoad() {
     this.subscriptions?.push(
       liveQuery(() => treesDB.treesItems.get(this.panelId)).subscribe(panel => {
-        console.log({panel});
-        
         this.panel = panel;
       }),
     );

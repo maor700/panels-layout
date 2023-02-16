@@ -30,7 +30,6 @@ export class AppRoot {
 
   onDropHandler = async (ev: PalDragDropContextCustomEvent<DragProccess>) => {
     const { start, end } = ev?.detail;
-    console.log({ start, end });
 
     if (!end && !start) return;
 
@@ -191,8 +190,6 @@ export class AppRoot {
           });
           break;
         case 'close':
-          console.log('close', panelId);
-
           await treesDB.transaction('rw', treesDB.treesItems, async () => {
             return closeHandler(panelId);
           });
@@ -288,15 +285,11 @@ const removeEmptyContainers = async (treesIds: string[]) => {
       await removeEmptyRecursive(node, toMove, toDelete);
     }
 
-    console.log({ toDelete, toMove });
-
     const idsToDelete = toDelete.map(({ id }) => id);
 
     toMove.forEach(async ({ who, to }) => {
       await treesDB.moveTreeItem(who, to);
     });
-
-    console.log({ idsToDelete });
     await treesDB.treesItems.bulkDelete(idsToDelete);
   });
 
@@ -329,5 +322,3 @@ const removeEmptyRecursive = async (node: Panel, toMove: { who: Panel; to: Panel
 
   return [toMove, toDelete];
 };
-
-console.log(removeEmptyContainers);

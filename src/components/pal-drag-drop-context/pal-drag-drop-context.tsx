@@ -1,4 +1,4 @@
-import { Component, Host, h, Event, EventEmitter, State, Element } from '@stencil/core';
+import { Component, Host, h, Event, EventEmitter, State } from '@stencil/core';
 
 @Component({
   tag: 'pal-drag-drop-context',
@@ -14,26 +14,8 @@ export class PalDragDropContext {
   @Event() tabClose: EventEmitter<string>;
   @Event() requestOverlay: EventEmitter<boolean>;
   @Event() submitTransform: EventEmitter<{ panelId: string; transform: Partial<PanelTransform> }>;
-  @Element() elm: HTMLElement;
   overlayElm: HTMLDivElement;
   clearance = null;
-
-  componentDidLoad() {
-    this.elm.addEventListener('requestOverlay', this.requestOverlayHandler);
-  }
-  
-  requestOverlayHandler = ({ detail }: CustomEvent<{ status: boolean; clearance?: () => void }>) => {
-    const { status, clearance } = detail;
-    this.showOverlay = status;
-    this.clearance = clearance;
-    this.overlayElm.addEventListener('mouseup', this.mouseupHandler);
-  };
-
-  mouseupHandler = () => {
-    this.showOverlay = false;
-    this.clearance?.();
-    this.elm.removeEventListener('mouseup', this.mouseupHandler);
-  };
 
   render() {
     return (
@@ -51,13 +33,6 @@ export class PalDragDropContext {
         }}
         class={`${this.dragMode ? 'drag-mode' : ''}`}
       >
-        <div
-          ref={el => {
-            this.overlayElm = el;
-          }}
-          class="resizable-overlay"
-          style={{ zIndex: `${this.showOverlay ? 1000 : -10}` }}
-        ></div>
         <slot></slot>
       </Host>
     );

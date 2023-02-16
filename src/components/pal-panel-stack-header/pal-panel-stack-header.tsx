@@ -29,7 +29,6 @@ export class PalPanelStackHeader {
     return (
       <Host
         onMouseDown={_ => {
-          _.preventDefault();
           top.document.addEventListener('mousemove', this.moveHandler);
           top.document.addEventListener('mouseup', this.upHandler);
         }}

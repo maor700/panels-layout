@@ -24,12 +24,9 @@ export class PalOriginContext {
 
   componentDidLoad() {
     panelsCtx.live$('dragProccess').subscribe(dragProccess => {
-      console.log({ dragProccess });
       this.dragProccess = dragProccess;
     });
     panelsCtx.live$('dragMode').subscribe(dragMode => {
-      console.log({ dragMode });
-
       this.dragMode = dragMode ? 1 : 0;
     });
   }
@@ -39,8 +36,6 @@ export class PalOriginContext {
   }
 
   render() {
-    console.log(this.dragProccess);
-
     return (
       <Host
         onTabDrag={async ({ detail }) => {

@@ -37,9 +37,8 @@ export class PalFloatable {
   componentWillLoad() {
     this.updateMovements(this.position);
     this.container = this.floatableElm.closest('.main');
-    
   }
-  
+
   componentDidLoad() {
     window.addEventListener('keydown', this.ctrlPrfessedHandler, false);
     window.addEventListener('keyup', this.ctrlPrfessedHandler, false);
@@ -67,16 +66,18 @@ export class PalFloatable {
     this.startY = event.clientY - this.floatableElm.getBoundingClientRect().top + this.moverHeight;
   };
 
-  mouseMoveHandler = (_: MouseEvent) => {
-    if (_.ctrlKey) {
+  mouseMoveHandler = ({ movementX, movementY, ctrlKey }: MouseEvent) => {
+    const majoreMove = Math.abs((movementX || 1) * (movementY || 1)) > 2;
+    if (ctrlKey) {
       return;
     }
-    if (this.isMouseDown && !this.moveStarted) {
+    if (this.isMouseDown && majoreMove && !this.moveStarted) {
       this.moveStarted = true;
       this.overlayMovementService = new OverlayMouseMovement(this.panelId);
       this.overlayMovementService.start();
       const moveSubs = this.overlayMovementService.movements$.subscribe(this.moveLogic);
       firstValueFrom(this.overlayMovementService.moveEnd$).then(() => {
+        console.log('end');
         this.overlayMovementService.stop();
         moveSubs.unsubscribe();
       });

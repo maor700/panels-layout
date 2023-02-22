@@ -259,22 +259,27 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
         const treeId = tragetItem.treeId;
         ref.value = { ...item, treeId, parentPath };
       });
-      await this.treesItems.update(itemToTransfer.id, { ...itemToTransfer,treeId: tragetItem.treeId, parentPath: newParentPath });
+      await this.treesItems.update(itemToTransfer.id, { ...itemToTransfer, treeId: tragetItem.treeId, parentPath: newParentPath });
     });
   };
 
-  async getParents(node: TI) {
+  async getParents(node: TI): Promise<TI[]> {
     const parentsIds = node?.parentPath.split('/').reverse();
     parentsIds.shift();
+    if (!parentsIds) return [];
     const parents = await this.treesItems.bulkGet(parentsIds);
     return parents;
   }
 
-  async getParent(node: TI) {
+  async getParent(node: TI): Promise<TI | undefined> {
     const parents = await this.getParents(node);
     const parent = parents?.[0];
-
     return parent;
+  }
+
+  async getRootByTreeItemId(node: TI): Promise<TI | undefined> {
+    const parents = await this.getParents(node);
+    return parents && parents[parents?.length - 1];
   }
 
   // app table utils

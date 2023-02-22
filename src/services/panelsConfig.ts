@@ -17,4 +17,5 @@ export class Panel extends TreeItem {
   url?: string;
   transform?: PanelTransform;
   originalData?: Panel;
+  persistContainer?: 1 | 0;
 }

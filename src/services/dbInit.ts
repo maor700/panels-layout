@@ -41,7 +41,6 @@ treesDB.on('populate', async () => {
     const { id: floatedTreeId } = await treesDB.getRoot(FLOATED_TREE_ID);
     
     await treesDB.createNewTree(WINDOW_TREE, true, { id: WINDOW_TREE, treeName: 'חלונות' }, { id: 'window-root', leaf: 0, hideHeader: 1, type: PanelTypes.window });
-    const { id: x } = await treesDB.getRoot(WINDOW_TREE);
     await treesDB.treesItems.bulkPut([
       { id: 'panel_1', color: 'red', order: 100, parentPath: `${id}/`, treeId: MAIN_TREE, leaf: 1, type: PanelTypes.content, name: 'panel_1', flex: 33 },
       { id: 'panel_2', color: 'blue', order: 200, parentPath: `${id}/`, treeId: MAIN_TREE, leaf: 1, name: 'panel_2', type: PanelTypes.content, flex: 33 },

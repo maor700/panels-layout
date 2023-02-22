@@ -271,18 +271,26 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
         toTransferLogicContainer?.id && (await treesDB.deleteNode(toTransferLogicContainer.id));
       }
     }
+    const root1 = await treesDB.getRootByTreeItemId(ItemToTransfer);
+    const root2 = await treesDB.getRootByTreeItemId(targetItem);
+    if (root1) {
+      const changes1 = await removeEmptyRecursive(root1);
+      const changes2 = await removeEmptyRecursive(root2);
+      console.log(changes1, changes2);
+    }
   });
 };
 
-const removeEmptyContainers = async (treesIds: string[]) => {
-  // find all containers with children <= 1;
-  treesDB.transaction('rw', treesDB.treesItems, async () => {
+const removeEmptyContainers = async (panelsIds: string[]) => {
+  // find all containers with children <= 1  and with the same type of they parent;
+  treesDB.transaction('rw', 'trees', 'treesItems', async () => {
     const toMove: { who: Panel; to: Panel }[] = [];
     const toDelete: Panel[] = [];
 
-    for (let treeId of treesIds) {
+    for (let treeId of panelsIds) {
       const node = await treesDB.getRoot(treeId);
-      await removeEmptyRecursive(node, toMove, toDelete);
+      const changes = await removeEmptyRecursive(node, toMove, toDelete);
+      console.log(changes);
     }
 
     const idsToDelete = toDelete.map(({ id }) => id);
@@ -292,24 +300,24 @@ const removeEmptyContainers = async (treesIds: string[]) => {
     });
     await treesDB.treesItems.bulkDelete(idsToDelete);
   });
-
+  //in any case do not remove persistContainer
   //for each of them, if children === 0 remove.
   // if children ===1 , in check his parent.
   //if the parent with the same type, remove the container.else do nothing
 };
 
-const removeEmptyRecursive = async (node: Panel, toMove: { who: Panel; to: Panel }[] = [], toDelete: Panel[] = []) => {
+type ToMove = { who: Panel; to: Panel };
+const removeEmptyRecursive = async (node: Panel, toMove: ToMove[] = [], toDelete: Panel[] = []): Promise<{ toMove: ToMove[]; toDelete: Panel[] }> => {
   const parent = await treesDB.getParent(node);
   const isContainerType = node.type !== 'content';
 
-  if (!isContainerType) return [toMove, toDelete];
 
-  const children = await (await treesDB.getNodeChildrenCollection(node.id))?.toArray();
+  const [_, children] = await treesDB.getNodeAndChildren(node.id);
 
-  if (node.persistContainer !== 1) {
+  if (isContainerType && node.persistContainer !== 1) {
     if (children?.length === 0) {
       toDelete.push(node);
-    } else if (children?.length == 1) {
+    } else if (children?.length == 1 && parent.type === node.type) {
       toDelete.push(node);
       const childToMove = children.map(child => ({ who: child, to: parent }));
       toMove.push(...childToMove);
@@ -317,8 +325,8 @@ const removeEmptyRecursive = async (node: Panel, toMove: { who: Panel; to: Panel
   }
 
   for (let child of children) {
-    await removeEmptyRecursive(child, toMove, toDelete);
+    child && (await removeEmptyRecursive(child, toMove, toDelete));
   }
 
-  return [toMove, toDelete];
+  return { toMove, toDelete };
 };

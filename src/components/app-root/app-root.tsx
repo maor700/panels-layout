@@ -210,9 +210,10 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
 
   treesDB.transaction('rw', 'trees', 'treesItems', async () => {
     // get ItemToTransfer
-    let [ItemToTransfer, targetItem, targetLogicContainer] = await treesDB.treesItems.bulkGet([
+    let [ItemToTransfer, targetItem, toTransferLogicContainer, targetLogicContainer] = await treesDB.treesItems.bulkGet([
       start?.panelId,
       end?.panelId,
+      start?.logicContainer,
       end?.logicContainer,
     ]);
 
@@ -223,16 +224,18 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
     
     // move the new node to the parent of the target node
     const parentChildrenBeforeMove = await (await treesDB.getNodeChildrenCollection(targetLogicContainer?.id)).sortBy('order');
-    const indexTarget = parentChildrenBeforeMove.findIndex(_ => _.id === end.panelId);
-    const isLast = indexTarget === parentChildrenBeforeMove?.length - 1;
-    const isfirst = indexTarget === 0;
     let finalOrder = ItemToTransfer?.order ?? 0;
-    const orderFactor = end.direction === 'left' || end.direction === 'top' ? -1 : 1;
-    const targetOrder = parentChildrenBeforeMove[indexTarget]?.order;
-    const childBefore = parentChildrenBeforeMove?.[indexTarget + 1 * orderFactor]?.order ?? (isLast !== isfirst ? targetOrder + 10 * orderFactor : 0);
-    const max = Math.max(childBefore, targetOrder);
-    const min = Math.min(childBefore, targetOrder);
-    finalOrder = min + (max - min) / 2;
+    if(parentChildrenBeforeMove.length){
+      const indexTarget = parentChildrenBeforeMove.findIndex(_ => _.id === end.panelId);
+      const isLast = indexTarget === parentChildrenBeforeMove?.length - 1;
+      const isfirst = indexTarget === 0;
+      const orderFactor = end.direction === 'left' || end.direction === 'top' ? -1 : 1;
+      const targetOrder = parentChildrenBeforeMove[indexTarget]?.order;
+      const childBefore = parentChildrenBeforeMove?.[indexTarget + 1 * orderFactor]?.order ?? (isLast !== isfirst ? targetOrder + 10 * orderFactor : 0);
+      const max = Math.max(childBefore, targetOrder);
+      const min = Math.min(childBefore, targetOrder);
+      finalOrder = min + (max - min) / 2;
+    }
 
     // if direction is center use exist tabs container or create new one
     // else if the parent type is tabs use the parent as target item;

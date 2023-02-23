@@ -41,8 +41,11 @@ export class AppRoot {
 
   moveToOriginal = async ({ originalData }: Panel) => {
     await treesDB.transaction('rw', treesDB.treesItems, async () => {
-      const originalContainer = await treesDB.getParent(originalData);
-      return treesDB.moveTreeItem(originalData, originalContainer);
+      let moveToTarget = await treesDB.getParent(originalData);
+      if(!moveToTarget){
+        moveToTarget = await treesDB.getRoot(FLOATED_TREE_ID);
+      }
+      return treesDB.moveTreeItem(originalData, moveToTarget);
     });
   };
 

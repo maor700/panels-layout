@@ -170,34 +170,28 @@ export class AppRoot {
       let itemToTransfer = await treesDB.treesItems.get(panelId);
       itemToTransfer = { ...itemToTransfer, originalData: itemToTransfer };
 
-      switch (displayMode) {
-        case 'minimize':
-          await treesDB.transaction('rw', treesDB.treesItems, async () => {
-            const target = await treesDB.getRoot(MINI_TREE_ID);
-            return treesDB.moveTreeItem(itemToTransfer, target);
-          });
-          break;
-        case 'dettach':
-          await treesDB.transaction('rw', treesDB.treesItems, async () => {
-            const target = await treesDB.getRoot(FLOATED_TREE_ID);
-            return treesDB.moveTreeItem(itemToTransfer, target);
-          });
-          break;
-        case 'window':
-          await treesDB.transaction('rw', treesDB.treesItems, async () => {
-            const target = await treesDB.getRoot(WINDOW_TREE);
-            return treesDB.moveTreeItem(itemToTransfer, target);
-          });
-          break;
-        case 'close':
-          await treesDB.transaction('rw', treesDB.treesItems, async () => {
-            return closeHandler(panelId);
-          });
-          break;
-
-        default:
-          break;
-      }
+      treesDB.transaction('rw', treesDB.trees, treesDB.treesItems, async () => {
+        switch (displayMode) {
+          case 'minimize':
+            const target1 = await treesDB.getRoot(MINI_TREE_ID);
+            treesDB.moveTreeItem(itemToTransfer, target1);
+            break;
+          case 'dettach':
+            const target2 = await treesDB.getRoot(FLOATED_TREE_ID);
+            treesDB.moveTreeItem(itemToTransfer, target2);
+            break;
+          case 'window':
+            const target3 = await treesDB.getRoot(WINDOW_TREE);
+            treesDB.moveTreeItem(itemToTransfer, target3);
+            break;
+          case 'close':
+            closeHandler(panelId);
+            break;
+          default:
+            break;
+        }
+        return removeEmptyContainers([itemToTransfer.treeId]);
+      });
     };
   }
 }
@@ -211,22 +205,20 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
   const { start, end } = detail;
   const translatedType = end?.direction === 'center' ? 'tabs' : end?.direction === 'bottom' || end?.direction === 'top' ? 'column' : 'row';
 
-  // get ItemToTransfer
-  let [ItemToTransfer, targetItem, toTransferLogicContainer, targetLogicContainer] = await treesDB.treesItems.bulkGet([
-    start?.panelId,
-    end?.panelId,
-    start?.logicContainer,
-    end?.logicContainer,
-  ]);
-
-  // if (targetLogicContainer.type === 'tabs' && end?.direction !== 'center') {
-  //   targetLogicContainer = await treesDB.getParent(targetLogicContainer);
-  // }
-
-  const ItemToTransferGrandpa = await treesDB.getParent(toTransferLogicContainer);
-  // move the new node to the parent of the target node
-
   treesDB.transaction('rw', 'trees', 'treesItems', async () => {
+    // get ItemToTransfer
+    let [ItemToTransfer, targetItem, targetLogicContainer] = await treesDB.treesItems.bulkGet([
+      start?.panelId,
+      end?.panelId,
+      end?.logicContainer,
+    ]);
+
+    // if (targetLogicContainer.type === 'tabs' && end?.direction !== 'center') {
+    //   targetLogicContainer = await treesDB.getParent(targetLogicContainer);
+    // }
+
+    
+    // move the new node to the parent of the target node
     const parentChildrenBeforeMove = await (await treesDB.getNodeChildrenCollection(targetLogicContainer?.id)).sortBy('order');
     const indexTarget = parentChildrenBeforeMove.findIndex(_ => _.id === end.panelId);
     const isLast = indexTarget === parentChildrenBeforeMove?.length - 1;
@@ -245,8 +237,11 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
     let container;
     container = targetLogicContainer;
     const sameType = targetLogicContainer?.type === translatedType;
+    const targetIsTheContainerItself = targetLogicContainer.id === targetItem.id
 
-    if (!sameType) {
+    const haveToCreateNewContainer = !sameType && !targetIsTheContainerItself;
+
+    if (haveToCreateNewContainer) {
       const id = await treesDB.addChildNode(targetItem.treeId, 'container', targetLogicContainer.id, {
         flex: targetItem.flex,
         order: targetItem?.order,
@@ -257,49 +252,32 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
     }
     // move the two nodes to be the children of the new node;
     await treesDB.moveTreeItem(ItemToTransfer, container);
-    !sameType && (await treesDB.moveTreeItem(targetItem, container));
+    haveToCreateNewContainer && (await treesDB.moveTreeItem(targetItem, container));
     await treesDB.treesItems.update(ItemToTransfer?.id, { order: finalOrder });
     await treesDB.treesItems.update(container?.id, { activeTab: ItemToTransfer?.id });
-
-    //in case the parent of the ItemToTransfer is container with just one child. move the last child to the grandpa and remove the container.
-    const [_, baseParentChildern] = await treesDB.getNodeAndChildren(toTransferLogicContainer.id);
-    if (baseParentChildern?.length <= 1) {
-      const [lastChild] = baseParentChildern;
-      if (lastChild && ItemToTransferGrandpa) {
-        const order = toTransferLogicContainer?.order;
-        await treesDB.moveTreeItem({ ...lastChild, order }, ItemToTransferGrandpa);
-        toTransferLogicContainer?.id && (await treesDB.deleteNode(toTransferLogicContainer.id));
-      }
-    }
-    const root1 = await treesDB.getRootByTreeItemId(ItemToTransfer);
-    const root2 = await treesDB.getRootByTreeItemId(targetItem);
-    if (root1) {
-      const changes1 = await removeEmptyRecursive(root1);
-      const changes2 = await removeEmptyRecursive(root2);
-      console.log(changes1, changes2);
-    }
+    
+    await removeEmptyContainers([ItemToTransfer.treeId, targetItem.treeId]);
   });
 };
 
-const removeEmptyContainers = async (panelsIds: string[]) => {
+const removeEmptyContainers = async (treesIds: string[]) => {
   // find all containers with children <= 1  and with the same type of they parent;
-  treesDB.transaction('rw', 'trees', 'treesItems', async () => {
-    const toMove: { who: Panel; to: Panel }[] = [];
-    const toDelete: Panel[] = [];
+  const toMove: { who: Panel; to: Panel }[] = [];
+  const toDelete: Panel[] = [];
 
-    for (let treeId of panelsIds) {
-      const node = await treesDB.getRoot(treeId);
-      const changes = await removeEmptyRecursive(node, toMove, toDelete);
-      console.log(changes);
-    }
+  for (let treeId of treesIds) {
+    const node = await treesDB.getRoot(treeId);
+    if (!node) return;
+    const changes = await removeEmptyRecursive(node, toMove, toDelete);
+    console.log(changes);
+  }
 
-    const idsToDelete = toDelete.map(({ id }) => id);
+  const idsToDelete = toDelete.map(({ id }) => id);
 
-    toMove.forEach(async ({ who, to }) => {
-      await treesDB.moveTreeItem(who, to);
-    });
-    await treesDB.treesItems.bulkDelete(idsToDelete);
+  toMove.forEach(async ({ who, to }) => {
+    await treesDB.moveTreeItem(who, to);
   });
+  await treesDB.treesItems.bulkDelete(idsToDelete);
   //in any case do not remove persistContainer
   //for each of them, if children === 0 remove.
   // if children ===1 , in check his parent.
@@ -311,13 +289,12 @@ const removeEmptyRecursive = async (node: Panel, toMove: ToMove[] = [], toDelete
   const parent = await treesDB.getParent(node);
   const isContainerType = node.type !== 'content';
 
-
   const [_, children] = await treesDB.getNodeAndChildren(node.id);
 
   if (isContainerType && node.persistContainer !== 1) {
     if (children?.length === 0) {
       toDelete.push(node);
-    } else if (children?.length == 1 && parent.type === node.type) {
+    } else if (children?.length == 1) {
       toDelete.push(node);
       const childToMove = children.map(child => ({ who: child, to: parent }));
       toMove.push(...childToMove);

@@ -265,8 +265,8 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
 
   async getParents(node: TI): Promise<TI[]> {
     const parentsIds = node?.parentPath.split('/').reverse();
-    parentsIds.shift();
     if (!parentsIds) return [];
+    parentsIds.shift();
     const parents = await this.treesItems.bulkGet(parentsIds);
     return parents;
   }

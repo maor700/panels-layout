@@ -6,6 +6,7 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { Panel, PanelTypes } from "./services/panelsConfig";
+export { Panel, PanelTypes } from "./services/panelsConfig";
 export namespace Components {
     interface AppRoot {
     }

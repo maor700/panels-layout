@@ -26,6 +26,9 @@
 .drag-mode .content:hover>.snaps {
   display: flex;
 }
+.drag-mode .isEmpty:hover>.snaps {
+  display: flex;
+}
 
 .trapeze {
   position: absolute;

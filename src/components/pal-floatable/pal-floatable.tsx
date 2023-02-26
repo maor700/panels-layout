@@ -78,7 +78,7 @@ export class PalFloatable {
       const moveSubs = this.overlayMovementService.movements$.subscribe(this.moveLogic);
       firstValueFrom(this.overlayMovementService.moveEnd$).then(() => {
         console.log('end');
-        this.overlayMovementService.stop();
+        this.mouseUpHandler();
         moveSubs.unsubscribe();
       });
     }
@@ -95,7 +95,7 @@ export class PalFloatable {
   };
 
   mouseUpHandler = () => {
-    this.overlayMovementService.stop();
+    this.overlayMovementService?.stop();
     this.clearance();
     const { offsetTop, offsetLeft } = this.floatableElm;
     const transform: PanelPosition = { top: offsetTop, left: offsetLeft };

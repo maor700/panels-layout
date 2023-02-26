@@ -42,7 +42,7 @@ export class AppRoot {
   moveToOriginal = async ({ originalData }: Panel) => {
     await treesDB.transaction('rw', treesDB.treesItems, async () => {
       let moveToTarget = await treesDB.getParent(originalData);
-      if(!moveToTarget){
+      if (!moveToTarget) {
         moveToTarget = await treesDB.getRoot(FLOATED_TREE_ID);
       }
       return treesDB.moveTreeItem(originalData, moveToTarget);
@@ -210,22 +210,16 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
 
   treesDB.transaction('rw', 'trees', 'treesItems', async () => {
     // get ItemToTransfer
-    let [ItemToTransfer, targetItem, toTransferLogicContainer, targetLogicContainer] = await treesDB.treesItems.bulkGet([
-      start?.panelId,
-      end?.panelId,
-      start?.logicContainer,
-      end?.logicContainer,
-    ]);
+    let [ItemToTransfer, targetItem, targetLogicContainer] = await treesDB.treesItems.bulkGet([start?.panelId, end?.panelId, end?.logicContainer]);
 
     // if (targetLogicContainer.type === 'tabs' && end?.direction !== 'center') {
     //   targetLogicContainer = await treesDB.getParent(targetLogicContainer);
     // }
 
-    
     // move the new node to the parent of the target node
     const parentChildrenBeforeMove = await (await treesDB.getNodeChildrenCollection(targetLogicContainer?.id)).sortBy('order');
     let finalOrder = ItemToTransfer?.order ?? 0;
-    if(parentChildrenBeforeMove.length){
+    if (parentChildrenBeforeMove.length) {
       const indexTarget = parentChildrenBeforeMove.findIndex(_ => _.id === end.panelId);
       const isLast = indexTarget === parentChildrenBeforeMove?.length - 1;
       const isfirst = indexTarget === 0;
@@ -243,7 +237,7 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
     let container;
     container = targetLogicContainer;
     const sameType = targetLogicContainer?.type === translatedType;
-    const targetIsTheContainerItself = targetLogicContainer.id === targetItem.id
+    const targetIsTheContainerItself = targetLogicContainer.id === targetItem.id;
 
     const haveToCreateNewContainer = !sameType && !targetIsTheContainerItself;
 
@@ -261,7 +255,7 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
     haveToCreateNewContainer && (await treesDB.moveTreeItem(targetItem, container));
     await treesDB.treesItems.update(ItemToTransfer?.id, { order: finalOrder });
     await treesDB.treesItems.update(container?.id, { activeTab: ItemToTransfer?.id });
-    
+
     await removeEmptyContainers([ItemToTransfer.treeId, targetItem.treeId]);
   });
 };

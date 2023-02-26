@@ -19,14 +19,20 @@ export class PalFlexContainerPanel {
   private conSize: number;
 
   @Watch('panels')
-  setupFlex(panels) {
+  setupFlex(panels: Panel[]) {
     if (!this.flexDirection) return;
     const con = this.elm;
     const isContainer = !!panels?.length;
     this.isContainer = isContainer;
     this.conAxis = this.flexDirection === 'column' ? 'offsetHeight' : 'offsetWidth';
     this.conSize = con[this.conAxis];
-    this.flexFactor = 100 / this.conSize;
+    const sumOfFlex = panels.reduce((sum, curr) => {
+      sum += curr.flex;
+      return sum;
+    }, 0);
+    this.flexFactor = sumOfFlex / this.conSize;
+    console.log(sumOfFlex, this.conSize);
+    
   }
 
   dividerMoveHandler = async (event: CustomEvent<{ sibiling: string[]; movementX: number; movementY: number }>) => {
@@ -50,8 +56,8 @@ export class PalFlexContainerPanel {
   };
 
   render() {
-    console.log({logic:this.panelData?.id});
-    
+    console.log({ logic: this.panelData?.id });
+
     return (
       <Host
         style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.flex + '' }}

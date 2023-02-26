@@ -33,8 +33,8 @@ export class PalContentPanel {
           <div class="main">
             <div class="content" style={{height:"100%"}}>
               <div class="panel-content">
-                {/* <div>TEST</div> */}
-                <iframe src="https://omny.fm/shows/kan-4240/4-12-2022/embed?style=cover&size=square&image=1&share=0&download=0&description=0&subscribe=0&foreground=6d4d8f&background=f7f7f7&highlight=000000&ttag=ad:ipbc&dist=kan" frameborder="0"></iframe>
+                <div>TEST</div>
+                {/* <iframe src="https://omny.fm/shows/kan-4240/4-12-2022/embed?style=cover&size=square&image=1&share=0&download=0&description=0&subscribe=0&foreground=6d4d8f&background=f7f7f7&highlight=000000&ttag=ad:ipbc&dist=kan" frameborder="0"></iframe> */}
                 </div>
               <div class="snaps">
                     <pal-drag-drop-snap direction={'top'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>

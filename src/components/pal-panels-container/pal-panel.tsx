@@ -43,10 +43,6 @@ export class PalPanel {
         ) : null}
         {this?.panelData && isEmptyContainer ? (
           <div class="snaps">
-            <pal-drag-drop-snap direction={'top'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.panelId}></pal-drag-drop-snap>
-            <pal-drag-drop-snap direction={'right'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.panelId}></pal-drag-drop-snap>
-            <pal-drag-drop-snap direction={'left'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.panelId}></pal-drag-drop-snap>
-            <pal-drag-drop-snap direction={'bottom'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.panelId}></pal-drag-drop-snap>
             <pal-drag-drop-snap direction={'center'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.panelId}></pal-drag-drop-snap>
           </div>
         ) : null}

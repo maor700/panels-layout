@@ -12,7 +12,7 @@ export class PalDivider {
   @Event() dividerMove: EventEmitter<{ sibiling; movementX; movementY }>;
   @Element() elm;
 
-  public overlayElm:HTMLDivElement;
+  public overlayElm: HTMLDivElement;
 
   mouseDownHandler = (_: MouseEvent) => {
     this.focused = true;
@@ -29,7 +29,7 @@ export class PalDivider {
   private mouseUpHandler = () => {
     this.focused = false;
     const [movementX, movementY] = this.movements;
-    
+
     this.movements = [0, 0];
     this.dividerMove.emit({ sibiling: this.sibiling, movementX, movementY });
     this.elm?.removeEventListener('mousemove', this.mouseMoveHandler);
@@ -38,11 +38,16 @@ export class PalDivider {
 
   render() {
     const [x, y] = this.movements;
-    const style = this.flexDirection == 'column' ? { top: y + 'px', left: '0' } : { top: '0', left: x + 'px' };
+    const style = this.flexDirection == 'column' ? { top: y + 'px', left: '0', cursor:'row-resize' } : { top: '0', left: x + 'px', cursor: 'col-resize' };
     return (
-      <Host  class={`v-divider ${this.focused ? 'focused' : ''}`}>
-        <div style={style} class="resize-handle"  onMouseDown={this.mouseDownHandler} ></div>
-        <div ref={(elm)=>{this.overlayElm = elm}} class="resize-overlay"></div>
+      <Host class={`v-divider ${this.focused ? 'focused' : ''}`}>
+        <div style={style} class="resize-handle" onMouseDown={this.mouseDownHandler}></div>
+        <div
+          ref={elm => {
+            this.overlayElm = elm;
+          }}
+          class="resize-overlay"
+        ></div>
       </Host>
     );
   }

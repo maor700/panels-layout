@@ -27,6 +27,7 @@ export class AppRoot {
 
   private activeWindows: Map<string, Window> = new Map();
   private subscriptions: Subscription[] = [];
+  private lastFloatIndex = 0;
 
   onDropHandler = async (ev: PalDragDropContextCustomEvent<DragProccess>) => {
     const { start, end } = ev?.detail;
@@ -120,7 +121,7 @@ export class AppRoot {
         <pal-drag-drop-context
           class="grid-stick-layout"
           onTabDroped={this.onDropHandler}
-          onChangePanelDisplayMode={this.changeDisplayHandler()}
+          onChangePanelDisplayMode={this.changeDisplayHandler}
           onTabClose={({ detail: apnelId }) => closeHandler(apnelId)}
           onSubmitTransform={this.submitTansformHandler}
         >
@@ -166,37 +167,41 @@ export class AppRoot {
   }
 
   //@ts-ignore
-  private changeDisplayHandler(): (event: PalDragDropContextCustomEvent<DisplayModeChange>) => void {
-    return async ({ detail }) => {
-      const { panelId, displayMode } = detail;
+  private changeDisplayHandler: (ev: PalDragDropContextCustomEvent<DisplayModeChange>) => void = async ({ detail }) => {
+    const { panelId, displayMode } = detail;
+    let itemToTransfer = await treesDB.treesItems.get(panelId);
+    itemToTransfer = { ...itemToTransfer, originalData: itemToTransfer };
 
-      let itemToTransfer = await treesDB.treesItems.get(panelId);
-      itemToTransfer = { ...itemToTransfer, originalData: itemToTransfer };
-
-      treesDB.transaction('rw', treesDB.trees, treesDB.treesItems, async () => {
-        switch (displayMode) {
-          case 'minimize':
-            const target1 = await treesDB.getRoot(MINI_TREE_ID);
-            treesDB.moveTreeItem(itemToTransfer, target1);
-            break;
-          case 'dettach':
-            const target2 = await treesDB.getRoot(FLOATED_TREE_ID);
-            treesDB.moveTreeItem(itemToTransfer, target2);
-            break;
-          case 'window':
-            const target3 = await treesDB.getRoot(WINDOW_TREE);
-            treesDB.moveTreeItem(itemToTransfer, target3);
-            break;
-          case 'close':
-            closeHandler(panelId);
-            break;
-          default:
-            break;
-        }
-        return removeEmptyContainers([itemToTransfer.treeId]);
-      });
-    };
-  }
+    treesDB.transaction('rw', treesDB.trees, treesDB.treesItems, async () => {
+      switch (displayMode) {
+        case 'minimize':
+          const target1 = await treesDB.getRoot(MINI_TREE_ID);
+          treesDB.moveTreeItem(itemToTransfer, target1);
+          break;
+        case 'dettach':
+          const target2 = await treesDB.getRoot(FLOATED_TREE_ID);
+          let { top, left } = itemToTransfer.transform ?? {};
+          if (top === undefined && left === undefined) {
+            top = this.lastFloatIndex * 50 || 0;
+            left = this.lastFloatIndex * 50 || 0;
+            this.lastFloatIndex++;
+          }
+          const newTransform = { ...itemToTransfer.transform, top, left };
+          treesDB.moveTreeItem({ ...itemToTransfer, transform: newTransform }, target2);
+          break;
+        case 'window':
+          const target3 = await treesDB.getRoot(WINDOW_TREE);
+          treesDB.moveTreeItem(itemToTransfer, target3);
+          break;
+        case 'close':
+          closeHandler(panelId);
+          break;
+        default:
+          break;
+      }
+      return removeEmptyContainers([itemToTransfer.treeId]);
+    });
+  };
 }
 
 const closeHandler = (panelId: string) => {

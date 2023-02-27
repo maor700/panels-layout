@@ -11,7 +11,7 @@ import { OverlayMouseMovement } from '../../services/overlayMovementService';
 })
 export class PalResizable {
   @Prop() panelId: string;
-  @Prop() dimensions: PanelDimensions = {width:200, height:100};
+  @Prop() dimensions: Partial<PanelDimensions> = {width:200, height:100};
   @State() isMouseDown = false;
   @State() inResizeMode = false;
   @Element() el: HTMLElement;

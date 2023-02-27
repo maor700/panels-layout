@@ -64,7 +64,7 @@ export namespace Components {
         "treeId": string;
     }
     interface PalResizable {
-        "dimensions": PanelDimensions;
+        "dimensions": Partial<PanelDimensions>;
         "panelId": string;
     }
     interface PalTabsPanel {
@@ -303,7 +303,7 @@ declare namespace LocalJSX {
         "treeId"?: string;
     }
     interface PalResizable {
-        "dimensions"?: PanelDimensions;
+        "dimensions"?: Partial<PanelDimensions>;
         "onRequestOverlay"?: (event: PalResizableCustomEvent<{ status: boolean; clearance?: () => void }>) => void;
         "onSubmitTransform"?: (event: PalResizableCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
         "panelId"?: string;

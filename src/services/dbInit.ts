@@ -8,6 +8,13 @@ export const FLOATED_TREE_ID = 'floated-tree';
 export const MINI_TREE_ID = 'minimized-tree';
 export const WINDOW_TREE = 'window-tree';
 
+// const HTML1 = `<div>TEST_1<div/>`;
+// const HTML2 = `<div>TEST_2<div/>`;
+// const HTML3 = `<div>TEST_3<div/>`;
+const HTML1 = `<iframe src='https://omny.fm/shows/kan-4240/4-12-2022/embed?style=cover&size=square&image=1&share=0&download=0&description=0&subscribe=0&foreground=6d4d8f&background=f7f7f7&highlight=000000&ttag=ad:ipbc&dist=kan' frameborder=0 />`;
+const HTML2 = `<iframe src='https://moridimtv.com/Movie/%D7%94%D7%A4%D7%A0%D7%AA%D7%A8-%D7%94%D7%A9%D7%97%D7%95%D7%A8-%D7%95%D7%95%D7%90%D7%A7%D7%A0%D7%93%D7%94-%D7%9C%D7%A0%D7%A6%D7%97_13195.html' frameborder=0 />`;
+const HTML3 = `<iframe height="100%" src='https://cdpn.io/maor700/fullpage/KKyzJMW?view=true' frameborder=0 />`;
+
 treesDB.on('populate', async () => {
   treesDB.transaction('rw', treesDB.trees, treesDB.treesItems, async () => {
     await treesDB.treesItems.clear();
@@ -52,11 +59,34 @@ treesDB.on('populate', async () => {
       { id: 'window-root', leaf: 0, hideHeader: 1, type: PanelTypes.window, persistContainer: 1 },
     );
     await treesDB.treesItems.bulkPut([
-      { id: 'panel_1', color: 'red', order: 100, parentPath: `${id}/`, treeId: MAIN_TREE, leaf: 1, type: PanelTypes.content, name: 'panel_1', flex: 33 },
-      { id: 'panel_2', color: 'blue', order: 200, parentPath: `${id}/`, treeId: MAIN_TREE, leaf: 1, name: 'panel_2', type: PanelTypes.content, flex: 33 },
-      { id: 'panel_4', color: 'pink', order: 10, parentPath: `${floatedTreeId}/`, treeId: FLOATED_TREE_ID, leaf: 1, name: 'panel_4', type: PanelTypes.content, flex: 50 },
-      { id: 'panel_5', color: 'gold', order: 20, parentPath: `${floatedTreeId}/`, treeId: FLOATED_TREE_ID, leaf: 1, name: 'panel_5', type: PanelTypes.content, flex: 25 },
-      { id: 'panel_6', color: 'gray', order: 30, parentPath: `${floatedTreeId}/`, treeId: FLOATED_TREE_ID, leaf: 1, name: 'panel_6', type: PanelTypes.content, flex: 25 },
+      { id: 'panel_1', html: HTML3, order: 100, parentPath: `${id}/`, treeId: MAIN_TREE, leaf: 1, type: PanelTypes.content, name: 'panel_1', flex: 33 },
+      { id: 'panel_2', html: HTML2, color: 'blue', order: 200, parentPath: `${id}/`, treeId: MAIN_TREE, leaf: 1, name: 'panel_2', type: PanelTypes.content, flex: 33 },
+      {
+        id: 'panel_4',
+        html: HTML1,
+        color: 'pink',
+        order: 10,
+        parentPath: `${floatedTreeId}/`,
+        treeId: FLOATED_TREE_ID,
+        leaf: 1,
+        name: 'panel_4',
+        type: PanelTypes.content,
+        transform: { top: 50, left: 50 },
+        flex: 50,
+      },
+      {
+        id: 'panel_5',
+        html: HTML2,
+        color: 'gold',
+        order: 20,
+        parentPath: `${floatedTreeId}/`,
+        treeId: FLOATED_TREE_ID,
+        leaf: 1,
+        name: 'panel_5',
+        type: PanelTypes.content,
+        transform: { top: 100, left: 100 },
+        flex: 25,
+      },
 
       {
         id: 'second_panel_1',
@@ -67,6 +97,8 @@ treesDB.on('populate', async () => {
         leaf: 1,
         name: 'second_panel_1',
         type: PanelTypes.content,
+        transform: { top: 150, left: 150 },
+        html: HTML1,
         flex: 50,
       },
       {
@@ -78,6 +110,8 @@ treesDB.on('populate', async () => {
         leaf: 1,
         name: 'second_panel_2',
         type: PanelTypes.content,
+        html: HTML2,
+        transform: { top: 200, left: 200 },
         flex: 50,
       },
 
@@ -91,6 +125,8 @@ treesDB.on('populate', async () => {
           leaf: 1,
           name: 'מעקב חשודים',
           type: PanelTypes.content,
+          html: HTML3,
+          transform: { top: 250, left: 250 },
           flex: 50,
         },
         id: 'mini_panel_1',
@@ -101,6 +137,8 @@ treesDB.on('populate', async () => {
         leaf: 1,
         name: 'מעקב חשודים',
         type: PanelTypes.content,
+        html: HTML2,
+        transform: { top: 300, left: 300 },
         flex: 50,
       },
       {
@@ -114,6 +152,8 @@ treesDB.on('populate', async () => {
           leaf: 1,
           name: 'אינדיקציות',
           type: PanelTypes.content,
+          html: HTML2,
+          transform: { top: 350, left: 350 },
           flex: 50,
         },
         color: 'green',
@@ -123,6 +163,8 @@ treesDB.on('populate', async () => {
         leaf: 1,
         name: 'אינדיקציות',
         type: PanelTypes.content,
+        html: HTML1,
+        transform: { top: 400, left: 400 },
         flex: 50,
       },
     ]);

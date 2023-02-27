@@ -23,8 +23,14 @@ export class PalFloatPanel {
 
   debouncedTransformSubmit = debounce((target, ev) => (target as HTMLElement).dispatchEvent(ev), 200);
 
-  setActive(panel: Panel) {
+  setActive(panel: Panel, elm?: HTMLElement) {
     treesDB.treesItems.update(this.panelId, { activeTab: panel?.id });
+    elm && this.bringToFront(elm);
+  }
+
+  bringToFront(elm: HTMLElement) {
+    this.zIndexCounter += 1;
+    elm.style.setProperty('z-index', this.zIndexCounter + '');
   }
 
   render() {
@@ -45,8 +51,7 @@ export class PalFloatPanel {
               {this.panels?.map((p, i) => (
                 <pal-floatable
                   onMouseDown={({ currentTarget }) => {
-                    this.zIndexCounter += 1;
-                    (currentTarget as HTMLDivElement).style.setProperty('z-index', this.zIndexCounter + '');
+                    this.setActive(p, currentTarget as HTMLElement);
                   }}
                   panelId={p.id}
                   position={p?.transform}
@@ -61,7 +66,6 @@ export class PalFloatPanel {
                     panelTitle={p.name}
                     title={p.name}
                     active={p.id === activeTab.id}
-                    onClick={() => this.setActive(p)}
                   />
                   <pal-resizable panelId={p.id} dimensions={p?.transform} style={{ display: 'block' }} slot="content">
                     <pal-panel style={{ width: '40%', height: '60%' }} logicContainer={this.panelData?.id} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>

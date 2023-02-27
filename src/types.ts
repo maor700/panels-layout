@@ -15,8 +15,8 @@ const DisplayModes = {
   close: 'close',
 } as const;
 
-type PanelDimensions = { width: number; height: number };
-type PanelPosition = { top: number; left: number };
+type PanelDimensions = { width?: number; height?: number };
+type PanelPosition = { top?: number; left?: number };
 type PanelTransform = PanelDimensions & PanelPosition;
 
 type DisplayModes = typeof DisplayModes[keyof typeof DisplayModes];

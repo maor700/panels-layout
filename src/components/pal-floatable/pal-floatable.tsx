@@ -1,6 +1,9 @@
 import { Component, Host, h, State, Element, EventEmitter, Event, Prop, Watch } from '@stencil/core';
 import { firstValueFrom } from 'rxjs';
 import { OverlayMouseMovement } from '../../services/overlayMovementService';
+import { treesDB } from '../../services/tree/treesDB';
+
+const THRESHOLD = 0.8;
 
 @Component({
   tag: 'pal-floatable',
@@ -9,10 +12,12 @@ import { OverlayMouseMovement } from '../../services/overlayMovementService';
 export class PalFloatable {
   @Prop() panelId: string;
   @Prop() position: PanelPosition;
+  @Prop() intresectionObserver: IntersectionObserver;
   @State() movements: number[] = [0, 0];
   @State() ctrlPressed: boolean = false;
   @Event({ bubbles: true, composed: true, cancelable: true }) requestOverlay: EventEmitter<{ status: boolean; clearance?: () => void }>;
   @Event({ bubbles: true, composed: true, cancelable: true }) submitTransform: EventEmitter<{ panelId: string; transform: Partial<PanelTransform> }>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode: EventEmitter<DisplayModeChange>;
   @Element() floatableElm: HTMLDivElement;
   private isMouseDown: boolean;
   private moveStarted = false;
@@ -20,6 +25,13 @@ export class PalFloatable {
   private startY: number;
   private moverHeight: number;
   private overlayMovementService: OverlayMouseMovement;
+  private intersectionObserver = new IntersectionObserver(
+    entries => {
+      console.log(entries);
+      entries.forEach(this.calcIntersectionCorrection);
+    },
+    { threshold: THRESHOLD },
+  );
   container: HTMLElement;
   moverElm: HTMLElement;
 
@@ -29,7 +41,7 @@ export class PalFloatable {
 
   @Watch('position')
   updateMovements(position: PanelPosition) {
-    if (position && position?.left !== this.movements?.[0] && position?.top !== this.movements?.[1]) {
+    if ((position && position?.left !== this.movements?.[0]) || position?.top !== this.movements?.[1]) {
       this.movements = [position?.left, position?.top];
     }
   }
@@ -40,6 +52,7 @@ export class PalFloatable {
   }
 
   componentDidLoad() {
+    this.intersectionObserver?.observe(this.floatableElm);
     window.addEventListener('keydown', this.ctrlPrfessedHandler, false);
     window.addEventListener('keyup', this.ctrlPrfessedHandler, false);
     this.moverHeight = this.moverElm.clientHeight;
@@ -49,6 +62,7 @@ export class PalFloatable {
   }
 
   disconnectedCallback() {
+    this.intersectionObserver?.unobserve(this.floatableElm);
     this.floatableElm.removeEventListener('keydown', this.ctrlPrfessedHandler);
     this.floatableElm.removeEventListener('keyup', this.ctrlPrfessedHandler);
     this.clearance();
@@ -107,6 +121,13 @@ export class PalFloatable {
     document.removeEventListener('mouseup', this.mouseUpHandler);
     this.isMouseDown = false;
     this.moveStarted = false;
+  };
+
+  private calcIntersectionCorrection = async ({ isIntersecting, target }) => {
+    if (isIntersecting) return;
+    const panelId = target.panelId;
+    const panelData = await treesDB.treesItems.get(panelId);
+    this.changePanelDisplayMode.emit({ panelId, treeId: panelData.treeId, displayMode: 'minimize' });
   };
 
   render() {

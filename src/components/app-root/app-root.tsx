@@ -4,7 +4,7 @@ import { TreeItem } from '../../services/tree/TreeItem';
 import { treesDB } from '../../services/tree/treesDB';
 import { PalDragDropContextCustomEvent } from '../../components';
 import { Panel } from '../../services/panelsConfig';
-import { FLOATED_TREE_ID, MAIN_TREE, MINI_TREE_ID, SECOND_TREE, WINDOW_TREE } from '../../services/dbInit';
+import { FLOATED_TREE_ID, MAIN_TREE, MAP_TREE_ID, MINI_TREE_ID, SECOND_TREE, WINDOW_TREE } from '../../services/dbInit';
 import { createRouter, match, Route } from 'stencil-router-v2';
 import '../../services/panelsConfig';
 import '../../services/dbInit';
@@ -20,7 +20,10 @@ console.log(treesDB);
 })
 export class AppRoot {
   @State() root: TreeItem;
-  @State() scondRoot: TreeItem;
+  @State() secondRoot: TreeItem;
+  @State() mapRoot: TreeItem;
+  @State() firstShowBottomTree = true;
+  @State() scondShowBottomTree = false;
   @State() floatedRoot: TreeItem;
   @State() minimizedPanels: TreeItem[];
   @State() windowPanels: TreeItem[];
@@ -36,15 +39,17 @@ export class AppRoot {
 
     if (!end?.panelId) return;
 
-    if (end?.treeId === start?.treeId && end?.panelId === start?.panelId) return;
+    if (end?.panelId === start?.panelId && end?.logicContainer === start?.logicContainer) return;
     return dropHandler(ev);
   };
 
   moveToOriginal = async ({ originalData }: Panel) => {
     await treesDB.transaction('rw', treesDB.treesItems, async () => {
       let moveToTarget = await treesDB.getParent(originalData);
-      if (!moveToTarget) {
+      if (!moveToTarget || moveToTarget.type === 'float') {
         moveToTarget = await treesDB.getRoot(FLOATED_TREE_ID);
+        const newTransform = this.correctTransform(originalData, moveToTarget);
+        originalData = { ...originalData, transform: newTransform, originalData: null };
       }
       return treesDB.moveTreeItem(originalData, moveToTarget);
     });
@@ -60,8 +65,11 @@ export class AppRoot {
       liveQuery(() => treesDB.getRoot(MAIN_TREE)).subscribe(root => {
         this.root = root;
       }),
-      liveQuery(() => treesDB.getRoot(SECOND_TREE)).subscribe(scondRoot => {
-        this.scondRoot = scondRoot;
+      liveQuery(() => treesDB.getRoot(SECOND_TREE)).subscribe(secondRoot => {
+        this.secondRoot = secondRoot;
+      }),
+      liveQuery(() => treesDB.getRoot(MAP_TREE_ID)).subscribe(mapRoot => {
+        this.mapRoot = mapRoot;
       }),
       liveQuery(() => treesDB.getRoot(FLOATED_TREE_ID)).subscribe(floatedRoot => {
         this.floatedRoot = floatedRoot;
@@ -115,6 +123,21 @@ export class AppRoot {
     this.subscriptions.forEach(subscription => subscription?.unsubscribe?.());
   }
 
+  correctTransform = (itemToTransfer, floatedRoot) => {
+    let { top, left, width, height } = itemToTransfer.transform ?? {};
+    let { width: parentWidth, height: parentHeight } = floatedRoot.transform ?? {};
+    if (left + width > parentWidth || top + height > parentHeight) {
+      top = undefined;
+      left = undefined;
+    }
+    if (top === undefined && left === undefined) {
+      top = this.lastFloatIndex * 50 || 0;
+      left = this.lastFloatIndex * 50 || 0;
+      this.lastFloatIndex++;
+    }
+    return { ...itemToTransfer, top, left };
+  };
+
   render() {
     return (
       <Host>
@@ -129,13 +152,43 @@ export class AppRoot {
             <Route path={match('/window/:id')} render={({ id }) => <pal-window-panel panelId={id} />} />
             <Route path={match('/')}>
               <header class="header">
-                <h3>Stencil App Starter</h3>
+                <h3>Layout System</h3>
               </header>
 
-              <main class="main">
-                {this.root ? <pal-panel panelData={this.root} panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel> : null}
-                <div style={{ width: '5px' }} class="divider"></div>
-                {this.scondRoot ? <pal-panel panelData={this.scondRoot} panelId={this.scondRoot.id} title={this.scondRoot.name} key={this.scondRoot.id}></pal-panel> : null}
+              <main class="main" style={{ overflow: 'hidden' }}>
+                {this.mapRoot ? (
+                  <div style={{ width: '100%', height: '100%' }}>
+                    <pal-panel panelData={this.mapRoot} panelId={this.mapRoot.id} title={this.mapRoot.name} key={this.mapRoot.id}></pal-panel>
+                  </div>
+                ) : null}
+                {this.root ? (
+                  <div class={`first-tree-layout ${!this.firstShowBottomTree ? 'closed' : ''}`}>
+                    <div
+                      class="btn-expender"
+                      role="button"
+                      onClick={() => {
+                        this.firstShowBottomTree = !this.firstShowBottomTree;
+                      }}
+                    >
+                      <div class="chevron"></div>
+                    </div>
+                    <pal-panel panelData={this.root} panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel>
+                  </div>
+                ) : null}
+                {this.secondRoot ? (
+                  <div class={`second-tree-layout ${!this.scondShowBottomTree ? 'closed' : ''}`}>
+                    <div
+                      class="btn-expender"
+                      role="button"
+                      onClick={() => {
+                        this.scondShowBottomTree = !this.scondShowBottomTree;
+                      }}
+                    >
+                      <div class="chevron"></div>
+                    </div>
+                    <pal-panel panelData={this.secondRoot} panelId={this.secondRoot.id} title={this.secondRoot.name} key={this.secondRoot.id}></pal-panel>
+                  </div>
+                ) : null}
                 <div class="floated-tree">
                   {this.floatedRoot ? (
                     <pal-panel panelData={this.floatedRoot} panelId={this.floatedRoot.id} title={this.floatedRoot.name} key={this.floatedRoot.id}></pal-panel>
@@ -179,15 +232,9 @@ export class AppRoot {
           treesDB.moveTreeItem(itemToTransfer, target1);
           break;
         case 'dettach':
-          const target2 = await treesDB.getRoot(FLOATED_TREE_ID);
-          let { top, left } = itemToTransfer.transform ?? {};
-          if (top === undefined && left === undefined) {
-            top = this.lastFloatIndex * 50 || 0;
-            left = this.lastFloatIndex * 50 || 0;
-            this.lastFloatIndex++;
-          }
-          const newTransform = { ...itemToTransfer.transform, top, left };
-          treesDB.moveTreeItem({ ...itemToTransfer, transform: newTransform }, target2);
+          const floatedRoot = await treesDB.getRoot(FLOATED_TREE_ID);
+          const correctedTransform = this.correctTransform(itemToTransfer, floatedRoot);
+          treesDB.moveTreeItem({ ...itemToTransfer, transform: correctedTransform }, floatedRoot);
           break;
         case 'window':
           const target3 = await treesDB.getRoot(WINDOW_TREE);
@@ -217,9 +264,9 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
     // get ItemToTransfer
     let [ItemToTransfer, targetItem, targetLogicContainer] = await treesDB.treesItems.bulkGet([start?.panelId, end?.panelId, end?.logicContainer]);
 
-    // if (targetLogicContainer.type === 'tabs' && end?.direction !== 'center') {
-    //   targetLogicContainer = await treesDB.getParent(targetLogicContainer);
-    // }
+    if (targetLogicContainer.type === 'tabs' && end?.direction !== 'center') {
+      targetLogicContainer = await treesDB.getParent(targetLogicContainer);
+    }
 
     // move the new node to the parent of the target node
     const parentChildrenBeforeMove = await (await treesDB.getNodeChildrenCollection(targetLogicContainer?.id)).sortBy('order');

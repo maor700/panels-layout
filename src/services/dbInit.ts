@@ -7,18 +7,21 @@ export const SECOND_TREE = 'second-tree';
 export const FLOATED_TREE_ID = 'floated-tree';
 export const MINI_TREE_ID = 'minimized-tree';
 export const WINDOW_TREE = 'window-tree';
+export const MAP_TREE_ID = 'map-tree';
 
 // const HTML1 = `<div>TEST_1<div/>`;
 // const HTML2 = `<div>TEST_2<div/>`;
 // const HTML3 = `<div>TEST_3<div/>`;
 const HTML1 = `<iframe src='https://omny.fm/shows/kan-4240/4-12-2022/embed?style=cover&size=square&image=1&share=0&download=0&description=0&subscribe=0&foreground=6d4d8f&background=f7f7f7&highlight=000000&ttag=ad:ipbc&dist=kan' frameborder=0 />`;
 const HTML2 = `<iframe src='https://moridimtv.com/Movie/%D7%94%D7%A4%D7%A0%D7%AA%D7%A8-%D7%94%D7%A9%D7%97%D7%95%D7%A8-%D7%95%D7%95%D7%90%D7%A7%D7%A0%D7%93%D7%94-%D7%9C%D7%A0%D7%A6%D7%97_13195.html' frameborder=0 />`;
-const HTML3 = `<iframe height="100%" src='https://cdpn.io/maor700/fullpage/KKyzJMW?view=true' frameborder=0 />`;
+const HTML3 = `<iframe height="100%" src='https://omny.fm/shows/kan-news/7551d8f3-99a1-4222-ab13-afb500740d67/embed?size=square&ttag=ad:ipbc&dist=kan&download=0' frameborder=0 />`;
+const MAP_HTML = `<div class="map-con">MAP</div>`;
 
 treesDB.on('populate', async () => {
   treesDB.transaction('rw', treesDB.trees, treesDB.treesItems, async () => {
     await treesDB.treesItems.clear();
     await treesDB.trees.clear();
+
     await treesDB.createNewTree(
       MAIN_TREE,
       true,
@@ -53,12 +56,33 @@ treesDB.on('populate', async () => {
     const { id: floatedTreeId } = await treesDB.getRoot(FLOATED_TREE_ID);
 
     await treesDB.createNewTree(
+      MAP_TREE_ID,
+      true,
+      { id: MAP_TREE_ID, treeName: 'מפה' },
+      { id: 'map-root', persistContainer: 1, leaf: 0, hideHeader: 1, type: PanelTypes.column, order: 100 },
+    );
+
+    const { id: mapTreeRootId } = await treesDB.getRoot(MAP_TREE_ID);
+
+    await treesDB.createNewTree(
       WINDOW_TREE,
       true,
       { id: WINDOW_TREE, treeName: 'חלונות' },
       { id: 'window-root', leaf: 0, hideHeader: 1, type: PanelTypes.window, persistContainer: 1 },
     );
     await treesDB.treesItems.bulkPut([
+      {
+        id: 'map_1',
+        html: MAP_HTML,
+        order: 100,
+        parentPath: `${mapTreeRootId}/`,
+        hideHeader: 1,
+        treeId: MAP_TREE_ID,
+        leaf: 1,
+        type: PanelTypes.content,
+        name: 'map_1',
+        flex: 100,
+      },
       { id: 'panel_1', html: HTML3, order: 100, parentPath: `${id}/`, treeId: MAIN_TREE, leaf: 1, type: PanelTypes.content, name: 'panel_1', flex: 33 },
       { id: 'panel_2', html: HTML2, color: 'blue', order: 200, parentPath: `${id}/`, treeId: MAIN_TREE, leaf: 1, name: 'panel_2', type: PanelTypes.content, flex: 33 },
       {
@@ -110,11 +134,10 @@ treesDB.on('populate', async () => {
         leaf: 1,
         name: 'second_panel_2',
         type: PanelTypes.content,
-        html: HTML2,
+        html: HTML1,
         transform: { top: 200, left: 200 },
         flex: 50,
       },
-
       {
         originalData: {
           id: 'mini_panel_1',

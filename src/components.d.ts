@@ -40,6 +40,7 @@ export namespace Components {
         "panels": Panel[];
     }
     interface PalFloatable {
+        "intresectionObserver": IntersectionObserver;
         "panelId": string;
         "position": PanelPosition;
     }
@@ -93,6 +94,10 @@ export interface PalDragDropContextCustomEvent<T> extends CustomEvent<T> {
 export interface PalDragDropSnapCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalDragDropSnapElement;
+}
+export interface PalFloatPanelCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalFloatPanelElement;
 }
 export interface PalFloatableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -265,11 +270,14 @@ declare namespace LocalJSX {
     }
     interface PalFloatPanel {
         "index"?: number;
+        "onSubmitTransform"?: (event: PalFloatPanelCustomEvent<TransformEvent>) => void;
         "panelData"?: Panel;
         "panelId"?: string;
         "panels"?: Panel[];
     }
     interface PalFloatable {
+        "intresectionObserver"?: IntersectionObserver;
+        "onChangePanelDisplayMode"?: (event: PalFloatableCustomEvent<DisplayModeChange>) => void;
         "onRequestOverlay"?: (event: PalFloatableCustomEvent<{ status: boolean; clearance?: () => void }>) => void;
         "onSubmitTransform"?: (event: PalFloatableCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
         "panelId"?: string;

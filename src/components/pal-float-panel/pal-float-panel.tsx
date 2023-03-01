@@ -1,8 +1,10 @@
-import { Component, Host, h, Prop, Element } from '@stencil/core';
+import { Component, Host, h, Prop, Element, Event, EventEmitter } from '@stencil/core';
 import { Panel } from '../../services/panelsConfig';
 import { treesDB } from '../../services/tree/treesDB';
 import '@deckdeckgo/drag-resize-rotate';
 import { debounce } from 'lodash';
+
+type TransformEvent = { panelId: string; transform: Partial<PanelTransform> };
 
 @Component({
   tag: 'pal-float-panel',
@@ -13,15 +15,28 @@ export class PalFloatPanel {
   @Prop() panelData: Panel;
   @Prop() index: number;
   @Prop() panels: Panel[] = [];
+  @Event({ bubbles: true, composed: true, cancelable: true }) submitTransform: EventEmitter<TransformEvent>;
   @Element() elm: HTMLElement;
+  public resizeObsr: ResizeObserver;
   public floatedPanelCon: HTMLDivElement;
   public zIndexCounter = 1;
 
   componentDidLoad() {
     this.zIndexCounter += this.panels.length;
+    this.resizeObsr = new ResizeObserver(entries => {
+      entries.forEach(({ contentRect }) => {
+        const { width, height } = contentRect;
+        this.debouncedTransformSubmit({ panelId: this.panelId, transform: { ...this.panelData?.transform, width, height } });
+      });
+    });
+    this.resizeObsr.observe(this.elm);
   }
 
-  debouncedTransformSubmit = debounce((target, ev) => (target as HTMLElement).dispatchEvent(ev), 200);
+  discodisconnectedCallback() {
+    this.resizeObsr?.disconnect();
+  }
+
+  debouncedTransformSubmit = debounce((transformEvent: TransformEvent) => this.submitTransform.emit(transformEvent), 200);
 
   setActive(panel: Panel, elm?: HTMLElement) {
     treesDB.treesItems.update(this.panelId, { activeTab: panel?.id });
@@ -68,7 +83,7 @@ export class PalFloatPanel {
                     active={p.id === activeTab.id}
                   />
                   <pal-resizable panelId={p.id} dimensions={p?.transform} style={{ display: 'block' }} slot="content">
-                    <pal-panel style={{ width: '40%', height: '60%' }} logicContainer={this.panelData?.id} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>
+                    <pal-panel logicContainer={this.panelData?.id} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>
                   </pal-resizable>
                 </pal-floatable>
               ))}

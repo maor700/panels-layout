@@ -283,6 +283,9 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
       finalOrder = min + (max - min) / 2;
     }
 
+    if (Number.isNaN(finalOrder) || typeof finalOrder !== 'number') {
+      finalOrder = 100;
+    }
     // if direction is center use exist tabs container or create new one
     // else if the parent type is tabs use the parent as target item;
 

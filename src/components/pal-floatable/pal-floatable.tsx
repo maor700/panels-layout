@@ -34,6 +34,7 @@ export class PalFloatable {
   );
   container: HTMLElement;
   moverElm: HTMLElement;
+  elmDir: string;
 
   ctrlPrfessedHandler = event => {
     this.ctrlPressed = event.ctrlKey;
@@ -52,6 +53,7 @@ export class PalFloatable {
   }
 
   componentDidLoad() {
+    this.elmDir = getComputedStyle(this.floatableElm).direction;
     this.intersectionObserver?.observe(this.floatableElm);
     window.addEventListener('keydown', this.ctrlPrfessedHandler, false);
     window.addEventListener('keyup', this.ctrlPrfessedHandler, false);
@@ -105,7 +107,7 @@ export class PalFloatable {
     const maxY = this.container.clientHeight - this.floatableElm.clientHeight;
     const newX = Math.min(Math.max(x, 0), maxX);
     const newY = Math.min(Math.max(y, 0), maxY);
-    this.movements = [newX, newY];
+    this.movements = [newX, newY, this.container.clientWidth, this.floatableElm.clientWidth];
   };
 
   mouseUpHandler = () => {
@@ -131,8 +133,8 @@ export class PalFloatable {
   };
 
   render() {
-    const [x, y] = this.movements;
-    const style = { top: y + 'px', left: x + 'px' };
+    const [x, y, containerWidth, floatedWidth] = this.movements;
+    const style = this.elmDir === 'ltr'? { top: y + 'px', left: x + 'px' } : { top: y + 'px', right: containerWidth - (x + floatedWidth) + 'px' };
     return (
       <Host id="container" style={style}>
         <div

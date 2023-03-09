@@ -7,7 +7,7 @@
 
   Any global CSS variables should also be applied here.
 */
-
+@import './rtl.css';
 @font-face {
   font-family: ui5-icons;
   src: url("/assets/fonts/sap-icons.ttf");

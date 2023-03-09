@@ -255,11 +255,17 @@ const closeHandler = (panelId: string) => {
   treesDB.deleteNode(panelId);
 };
 
+const DIRECTION_LOOKUP = {
+  ltr:{left:-1, top:-1, right:1, bottom:1},
+  rtl:{left:1, top:1, right:-1, bottom:-1}
+}
+
 // Drop on center - create a new tabs panel (or use the exist one) and move the original + moved panel to the tabs panel;
 const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProccess>) => {
   const { start, end } = detail;
   const translatedType = end?.direction === 'center' ? 'tabs' : end?.direction === 'bottom' || end?.direction === 'top' ? 'column' : 'row';
-
+  const rtlLtr = end.targetDirection ?? 'ltr';
+  const htmlDirection = DIRECTION_LOOKUP[rtlLtr]
   treesDB.transaction('rw', 'trees', 'treesItems', async () => {
     // get ItemToTransfer
     let [ItemToTransfer, targetItem, targetLogicContainer] = await treesDB.treesItems.bulkGet([start?.panelId, end?.panelId, end?.logicContainer]);
@@ -275,7 +281,7 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
       const indexTarget = parentChildrenBeforeMove.findIndex(_ => _.id === end.panelId);
       const isLast = indexTarget === parentChildrenBeforeMove?.length - 1;
       const isfirst = indexTarget === 0;
-      const orderFactor = end.direction === 'left' || end.direction === 'top' ? -1 : 1;
+      const orderFactor = htmlDirection[end.direction];
       const targetOrder = parentChildrenBeforeMove[indexTarget]?.order;
       const childBefore = parentChildrenBeforeMove?.[indexTarget + 1 * orderFactor]?.order ?? (isLast !== isfirst ? targetOrder + 10 * orderFactor : 0);
       const max = Math.max(childBefore, targetOrder);

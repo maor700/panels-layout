@@ -5,7 +5,8 @@ enum TabDropDirections {
   right = 'right',
   center = 'center',
 }
-type DragStage = { treeId: string; panelId: string; direction?: TabDropDirections; logicContainer?: string };
+
+type DragStage = { treeId: string; panelId: string; direction?: TabDropDirections; logicContainer?: string; targetDirection?: string };
 type DragProccess = { start: DragStage; end: DragStage };
 const DisplayModes = {
   minimize: 'minimize',

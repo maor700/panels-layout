@@ -1,0 +1,3 @@
+html[dir="rtl"] .stack-head{
+    flex-direction: row-reverse;
+}

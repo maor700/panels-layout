@@ -257,7 +257,7 @@ const closeHandler = (panelId: string) => {
 
 const DIRECTION_LOOKUP = {
   ltr:{left:-1, top:-1, right:1, bottom:1},
-  rtl:{left:1, top:1, right:-1, bottom:-1}
+  rtl:{left:1, top:-1, right:-1, bottom:1}
 }
 
 // Drop on center - create a new tabs panel (or use the exist one) and move the original + moved panel to the tabs panel;

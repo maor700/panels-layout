@@ -43,16 +43,16 @@ export class PalFloatable {
   @Watch('position')
   updateMovements(position: PanelPosition) {
     if ((position && position?.left !== this.movements?.[0]) || position?.top !== this.movements?.[1]) {
-      this.movements = [position?.left, position?.top];
+      this.movements = [position?.left, position?.top, this.container.clientWidth, this.floatableElm.clientWidth];
     }
   }
 
   componentWillLoad() {
-    this.updateMovements(this.position);
     this.container = this.floatableElm.closest('.main');
   }
 
   componentDidLoad() {
+    this.updateMovements(this.position);
     this.elmDir = getComputedStyle(this.floatableElm).direction;
     this.intersectionObserver?.observe(this.floatableElm);
     window.addEventListener('keydown', this.ctrlPrfessedHandler, false);
@@ -134,7 +134,7 @@ export class PalFloatable {
 
   render() {
     const [x, y, containerWidth, floatedWidth] = this.movements;
-    const style = this.elmDir === 'ltr'? { top: y + 'px', left: x + 'px' } : { top: y + 'px', right: containerWidth - (x + floatedWidth) + 'px' };
+    const style = this.elmDir === 'ltr' ? { top: y + 'px', left: x + 'px' } : { top: y + 'px', right: containerWidth - (x + floatedWidth) + 'px' };
     return (
       <Host id="container" style={style}>
         <div

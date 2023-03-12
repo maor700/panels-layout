@@ -14,9 +14,14 @@ export class PalFlexContainerPanel {
   @State() flexFactor = 1;
   @State() active: string;
   @Element() elm: HTMLElement;
+  elementDirection: 'rtl' | 'ltr';
 
   private conAxis: string;
   private conSize: number;
+
+  componentDidLoad() {
+    this.elementDirection = getComputedStyle(this.elm).direction as 'rtl' | 'ltr';
+  }
 
   @Watch('panels')
   setupFlex(panels: Panel[]) {
@@ -32,18 +37,17 @@ export class PalFlexContainerPanel {
     }, 0);
     this.flexFactor = sumOfFlex / this.conSize;
     console.log(sumOfFlex, this.conSize);
-    
   }
 
   dividerMoveHandler = async (event: CustomEvent<{ sibiling: string[]; movementX: number; movementY: number }>) => {
     const { sibiling, movementX, movementY } = event?.detail;
-
+    const rtlOrLtrFactor = this.elementDirection === 'rtl' && this.flexDirection === 'row' ? -1 : 1;
     const [sibilingL, sibilingR] = await treesDB.treesItems.bulkGet(sibiling);
     const rightWinW = sibilingR?.flex as number;
     const leftWinW = sibilingL?.flex as number;
     const movementAxis = this.conAxis === 'offsetWidth' ? movementX : movementY;
-    const leftPanelNewSize = leftWinW + movementAxis * this.flexFactor;
-    const rightPanelNewSize = rightWinW - movementAxis * this.flexFactor;
+    const leftPanelNewSize = leftWinW + movementAxis * this.flexFactor * rtlOrLtrFactor;
+    const rightPanelNewSize = rightWinW - movementAxis * this.flexFactor * rtlOrLtrFactor;
 
     treesDB.treesItems.bulkPut([
       { ...sibilingL, flex: leftPanelNewSize },

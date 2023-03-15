@@ -18,4 +18,13 @@ export class Panel extends TreeItem {
   transform?: PanelTransform;
   originalData?: Panel;
   persistContainer?: 1 | 0;
+  settings?: PanelSettings;
+}
+
+export interface PanelSettings {
+  transform?: { resize: boolean; move: boolean };
+  displayModes?: { tabs: boolean; flex: boolean; minimized: boolean; dettached: boolean, newWindow:boolean };
+  flexDrop?: { center: boolean; top: boolean; bottom: boolean; left: boolean; right: boolean };
+  showLock?: boolean;
+  editableHeaderName?: boolean;
 }

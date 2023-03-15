@@ -66,6 +66,7 @@ h1 {
   display: block;
   bottom: 0;
   position: absolute;
+  z-index: 20;
 }
 
 .first-tree-layout.closed {

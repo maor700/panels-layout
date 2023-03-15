@@ -29,6 +29,7 @@ export class PalTabsPanel {
             {this.panels.map(p => {
               return (
                 <pal-panel-stack-header
+                  panelData={p}
                   logicContainer={this.panelData?.id}
                   panelId={p.id}
                   treeId={p?.treeId}

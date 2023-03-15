@@ -1,6 +1,7 @@
 import { Component, Host, h, State, Element, EventEmitter, Event, Prop, Watch } from '@stencil/core';
 import { firstValueFrom } from 'rxjs';
 import { OverlayMouseMovement } from '../../services/overlayMovementService';
+import { PanelSettings } from '../../services/panelsConfig';
 import { treesDB } from '../../services/tree/treesDB';
 
 const THRESHOLD = 0.8;
@@ -12,12 +13,15 @@ const THRESHOLD = 0.8;
 export class PalFloatable {
   @Prop() panelId: string;
   @Prop() position: PanelPosition;
+  @Prop() disableMove: boolean;
+  @Prop() settings: PanelSettings;
   @Prop() intresectionObserver: IntersectionObserver;
   @State() movements: number[] = [0, 0];
   @State() ctrlPressed: boolean = false;
   @Event({ bubbles: true, composed: true, cancelable: true }) requestOverlay: EventEmitter<{ status: boolean; clearance?: () => void }>;
   @Event({ bubbles: true, composed: true, cancelable: true }) submitTransform: EventEmitter<{ panelId: string; transform: Partial<PanelTransform> }>;
   @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode: EventEmitter<DisplayModeChange>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) showSettings: EventEmitter<boolean>;
   @Element() floatableElm: HTMLDivElement;
   private isMouseDown: boolean;
   private moveStarted = false;
@@ -72,7 +76,7 @@ export class PalFloatable {
 
   // Events
   mouseDownHandler = (event: MouseEvent) => {
-    if (event.ctrlKey) return;
+    if (event.ctrlKey || this.disableMove) return;
     this.isMouseDown = true;
     document.addEventListener('mousemove', this.mouseMoveHandler);
     document.addEventListener('mouseup', this.mouseUpHandler);
@@ -137,16 +141,17 @@ export class PalFloatable {
     const style = this.elmDir === 'ltr' ? { top: y + 'px', left: x + 'px' } : { top: y + 'px', right: containerWidth - (x + floatedWidth) + 'px' };
     return (
       <Host id="container" style={style}>
-        <div
-          ref={el => {
-            this.moverElm = el;
-          }}
-          onMouseDown={this.mouseDownHandler}
-          id="mover"
-        >
-          <slot name="draggable-header">Window</slot>
-          <span class="dot" style={{ background: '#ED594A' }}></span>
-        </div>
+        <pal-panel-settings panelId={this.panelId} settings={this.settings}>
+          <div
+            ref={el => {
+              this.moverElm = el;
+            }}
+            onMouseDown={this.mouseDownHandler}
+            id="mover"
+          >
+            <slot name="draggable-header">Window</slot>
+          </div>
+        </pal-panel-settings>
         <slot name="content">Content</slot>
       </Host>
     );

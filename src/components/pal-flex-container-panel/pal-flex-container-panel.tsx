@@ -71,6 +71,7 @@ export class PalFlexContainerPanel {
           {this.panelData && !this.panelData?.hideHeader ? (
             <div class="header panels-container-header">
               <pal-panel-stack-header
+                panelData={this.panelData}
                 logicContainer={this.panelData?.id}
                 panelId={this.panelData?.id}
                 treeId={this.panelData?.treeId}

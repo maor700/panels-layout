@@ -70,9 +70,12 @@ export class PalFloatPanel {
                   }}
                   panelId={p.id}
                   position={p?.transform}
+                  settings={p?.settings}
                   style={{ zIndex: '1' }}
+                  disableMove={!p?.settings?.transform.move}
                 >
                   <pal-panel-stack-header
+                    panelData={p}
                     slot="draggable-header"
                     logicContainer={this.panelData?.id}
                     panelId={p.id}
@@ -82,9 +85,11 @@ export class PalFloatPanel {
                     title={p.name}
                     active={p.id === activeTab.id}
                   />
-                  <pal-resizable panelId={p.id} dimensions={p?.transform} style={{ display: 'block' }} slot="content">
-                    <pal-panel logicContainer={this.panelData?.id} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>
-                  </pal-resizable>
+                  {
+                    <pal-resizable disabledResize={!p?.settings?.transform.resize} panelId={p.id} dimensions={p?.transform} style={{ display: 'block' }} slot="content">
+                      <pal-panel logicContainer={this.panelData?.id} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>
+                    </pal-resizable>
+                  }
                 </pal-floatable>
               ))}
             </div>

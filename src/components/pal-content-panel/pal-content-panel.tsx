@@ -19,6 +19,7 @@ export class PalContentPanel {
           {this.panelData && !this.panelData?.hideHeader ? (
             <div class="header panels-container-header">
               <pal-panel-stack-header
+                panelData={this.panelData}
                 logicContainer={this.logicContainer}
                 panelId={this.panelId}
                 treeId={this.panelData?.treeId}
@@ -33,11 +34,20 @@ export class PalContentPanel {
             <div class="content" style={{ height: '100%' }}>
               <div class="panel-content" innerHTML={this.panelData.html}></div>
               <div class="snaps">
-                <pal-drag-drop-snap direction={'top'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'right'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'left'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'bottom'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>
-                <pal-drag-drop-snap direction={'center'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>
+                {
+                  this.panelData?.settings?.flexDrop
+                    ? Object.entries(this.panelData?.settings?.flexDrop).map(([direction, isOn]) => {
+                        return isOn ? (
+                          <pal-drag-drop-snap
+                            direction={direction}
+                            treeId={this?.panelData?.treeId}
+                            panelId={this.panelId}
+                            logicContainer={this.logicContainer}
+                          ></pal-drag-drop-snap>
+                        ) : null;
+                      })
+                    : null
+                }
               </div>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import { Component, Element, Event, EventEmitter, h, Host, Prop, State } from '@stencil/core';
+import { Panel } from '../../services/panelsConfig';
 
 @Component({
   tag: 'pal-panel-stack-header',
@@ -8,6 +9,7 @@ export class PalPanelStackHeader {
   @Prop() panelTitle: string;
   @Prop() active: boolean = false;
   @Prop() panelId: string;
+  @Prop() panelData: Panel;
   @Prop() logicContainer: string;
   @Prop() treeId: string;
   @Element() elm: HTMLElement;
@@ -15,6 +17,7 @@ export class PalPanelStackHeader {
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabClose: EventEmitter<string>;
   @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode: EventEmitter<DisplayModeChange>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) showSettings: EventEmitter<boolean>;
 
   moveHandler = _ => {
     this.tabDrag.emit({ treeId: this.treeId, panelId: this.panelId, logicContainer: this.logicContainer });
@@ -51,7 +54,7 @@ export class PalPanelStackHeader {
           <div class="name" title="גרור כדי למקם מחדש">
             {this.panelTitle}
           </div>
-          <pal-panel-header-menu panelId={this.panelId} treeId={this.treeId} />
+          {this.panelData?.settings?.displayModes && <pal-panel-header-menu displayModes={this.panelData?.settings?.displayModes} panelId={this.panelId} treeId={this.treeId} />}
         </div>
       </Host>
     );

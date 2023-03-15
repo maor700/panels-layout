@@ -4,3 +4,7 @@
   overflow: auto;
   z-index: 0;
 }
+
+:host.disabled{
+    resize: none;
+}

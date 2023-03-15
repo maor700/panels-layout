@@ -3,8 +3,8 @@ import { liveQuery, Subscription } from 'dexie';
 import { TreeItem } from '../../services/tree/TreeItem';
 import { treesDB } from '../../services/tree/treesDB';
 import { PalDragDropContextCustomEvent } from '../../components';
-import { Panel } from '../../services/panelsConfig';
-import { FLOATED_TREE_ID, MAIN_TREE, MAP_TREE_ID, MINI_TREE_ID, SECOND_TREE, WINDOW_TREE } from '../../services/dbInit';
+import { Panel, PanelSettings } from '../../services/panelsConfig';
+import { DEFALTE_PANEL_SETTINGS, FLOATED_TREE_ID, MAIN_TREE, MAP_TREE_ID, MINI_TREE_ID, SECOND_TREE, WINDOW_TREE } from '../../services/dbInit';
 import { createRouter, match, Route } from 'stencil-router-v2';
 import '../../services/panelsConfig';
 import '../../services/dbInit';
@@ -58,6 +58,11 @@ export class AppRoot {
   submitTansformHandler = async ({ detail: { panelId, transform } }: PalDragDropContextCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => {
     const { transform: originalTransform } = await treesDB.treesItems.get(panelId);
     treesDB.treesItems.update(panelId, { transform: { ...originalTransform, ...transform } });
+  };
+
+  submitSettingsHandler = async ({ detail: { panelId, settings } }: PalDragDropContextCustomEvent<{ panelId: string; settings: Partial<PanelSettings> }>) => {
+    const { settings: originalSettings } = await treesDB.treesItems.get(panelId);
+    treesDB.treesItems.update(panelId, { settings: { ...originalSettings, ...settings } });
   };
 
   componentWillLoad() {
@@ -147,6 +152,7 @@ export class AppRoot {
           onChangePanelDisplayMode={this.changeDisplayHandler}
           onTabClose={({ detail: apnelId }) => closeHandler(apnelId)}
           onSubmitTransform={this.submitTansformHandler}
+          onSubmitSettings = {this.submitSettingsHandler}
         >
           <Router.Switch>
             <Route path={match('/window/:id')} render={({ id }) => <pal-window-panel panelId={id} />} />
@@ -308,6 +314,7 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
         order: targetItem?.order,
         type: translatedType,
         hideHeader: 1,
+        settings: DEFALTE_PANEL_SETTINGS
       });
       container = await treesDB.treesItems.get(id);
     }

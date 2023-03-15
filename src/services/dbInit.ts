@@ -1,4 +1,4 @@
-import { PanelTypes } from './panelsConfig';
+import { PanelSettings, PanelTypes } from './panelsConfig';
 import { treesDB } from './tree/treesDB';
 
 // init
@@ -8,6 +8,13 @@ export const FLOATED_TREE_ID = 'floated-tree';
 export const MINI_TREE_ID = 'minimized-tree';
 export const WINDOW_TREE = 'window-tree';
 export const MAP_TREE_ID = 'map-tree';
+export const DEFALTE_PANEL_SETTINGS: PanelSettings = {
+  transform: { resize: true, move: true },
+  displayModes: { tabs: true, flex: true, dettached: true, minimized: true, newWindow: true },
+  flexDrop: { center: true, left: true, right: true, top: true, bottom: true },
+  showLock: false,
+  editableHeaderName: true,
+};
 
 // const HTML1 = `<div>TEST_1<div/>`;
 // const HTML2 = `<div>TEST_2<div/>`;
@@ -82,9 +89,33 @@ treesDB.on('populate', async () => {
         type: PanelTypes.content,
         name: 'map_1',
         flex: 100,
+        settings: { ...DEFALTE_PANEL_SETTINGS, flexDrop: { ...DEFALTE_PANEL_SETTINGS.flexDrop, center: false, top:false, bottom:false } },
       },
-      { id: 'panel_1', html: HTML3, order: 100, parentPath: `${id}/`, treeId: MAIN_TREE, leaf: 1, type: PanelTypes.content, name: 'panel_1', flex: 33 },
-      { id: 'panel_2', html: HTML2, color: 'blue', order: 200, parentPath: `${id}/`, treeId: MAIN_TREE, leaf: 1, name: 'panel_2', type: PanelTypes.content, flex: 33 },
+      {
+        id: 'panel_1',
+        html: HTML3,
+        order: 100,
+        parentPath: `${id}/`,
+        treeId: MAIN_TREE,
+        leaf: 1,
+        type: PanelTypes.content,
+        name: 'panel_1',
+        flex: 33,
+        settings: DEFALTE_PANEL_SETTINGS,
+      },
+      {
+        id: 'panel_2',
+        html: HTML2,
+        color: 'blue',
+        order: 200,
+        parentPath: `${id}/`,
+        treeId: MAIN_TREE,
+        leaf: 1,
+        name: 'panel_2',
+        type: PanelTypes.content,
+        flex: 33,
+        settings: DEFALTE_PANEL_SETTINGS,
+      },
       {
         id: 'panel_4',
         html: HTML1,
@@ -97,6 +128,7 @@ treesDB.on('populate', async () => {
         type: PanelTypes.content,
         transform: { top: 50, left: 50 },
         flex: 50,
+        settings: DEFALTE_PANEL_SETTINGS,
       },
       {
         id: 'panel_5',
@@ -110,6 +142,7 @@ treesDB.on('populate', async () => {
         type: PanelTypes.content,
         transform: { top: 100, left: 100 },
         flex: 25,
+        settings: DEFALTE_PANEL_SETTINGS,
       },
 
       {
@@ -124,6 +157,7 @@ treesDB.on('populate', async () => {
         transform: { top: 150, left: 150 },
         html: HTML1,
         flex: 50,
+        settings: DEFALTE_PANEL_SETTINGS,
       },
       {
         id: 'second_panel_2',
@@ -137,6 +171,7 @@ treesDB.on('populate', async () => {
         html: HTML1,
         transform: { top: 200, left: 200 },
         flex: 50,
+        settings: DEFALTE_PANEL_SETTINGS,
       },
       {
         originalData: {
@@ -151,6 +186,7 @@ treesDB.on('populate', async () => {
           html: HTML3,
           transform: { top: 250, left: 250 },
           flex: 50,
+          settings: DEFALTE_PANEL_SETTINGS,
         },
         id: 'mini_panel_1',
         color: 'gold',
@@ -163,6 +199,7 @@ treesDB.on('populate', async () => {
         html: HTML2,
         transform: { top: 300, left: 300 },
         flex: 50,
+        settings: DEFALTE_PANEL_SETTINGS,
       },
       {
         id: 'mini_panel_2',
@@ -178,6 +215,7 @@ treesDB.on('populate', async () => {
           html: HTML2,
           transform: { top: 350, left: 350 },
           flex: 50,
+          settings: DEFALTE_PANEL_SETTINGS,
         },
         color: 'green',
         order: 200,
@@ -189,6 +227,7 @@ treesDB.on('populate', async () => {
         html: HTML1,
         transform: { top: 400, left: 400 },
         flex: 50,
+        settings: DEFALTE_PANEL_SETTINGS,
       },
     ]);
   });

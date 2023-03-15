@@ -1,0 +1,129 @@
+:host {
+  display: initial;
+}
+
+:host .modal-container {
+  direction: ltr;
+  position: absolute;
+  height: calc(100% - 1em);
+  width: calc(100% - 1em);
+  background: #000000ed;
+  color: #bbb;
+  top: 0;
+  right: 0;
+  padding: 0.5em;
+  z-index: 1;
+}
+
+:host .title {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+:host .settings-form {
+  padding: 0 0.5em;
+}
+
+:host .group-title {
+  text-transform: uppercase;
+  font-size: 0.8em;
+}
+
+:host .section {
+  margin: 1em 0;
+  padding: 0.4em;
+  background: #212121;
+  border-radius: 5px;
+}
+
+:host .field-group {
+  display: flex;
+  margin: 0.2em 0.5em;
+  gap: 0.3em;
+  flex-wrap: wrap;
+}
+
+:host .field {
+  display: flex;
+}
+:host .field label:hover {
+  color: white;
+}
+
+:host .grid-stick-layout {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: 'header' 'main' 'footer';
+  overflow: auto;
+}
+
+:host .grid-stick-layout > .header {
+  grid-area: header;
+  position: relative;
+  font-weight: 100;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  border-bottom: 1px solid #80808045;
+  padding-bottom: 0.3em;
+  justify-content: space-between;
+}
+:host .grid-stick-layout > .main {
+  grid-area: main;
+  overflow: auto;
+}
+
+:host .grid-stick-layout > .footer {
+  grid-area: footer;
+  justify-content: center;
+  display: flex;
+  font-size: 0.8em;
+  gap: 0.5em;
+  padding-top: 0.5em;
+}
+
+:host .footer .btn {
+  background: transparent;
+  color: #aaa;
+  border: 2px solid #474545;
+  padding: 0.2em 0.5em;
+  border-radius: 0.2em;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+:host .footer .btn.ghost {
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+:host .footer .btn.ghost:hover {
+  border: 2px solid transparent;
+  border: 2px solid #474545;
+}
+
+:host .footer .btn.primary {
+  background: #00b3f6a1;
+  color: white;
+  border: 1px solid #0075ff;
+  transition: all 0.3s ease;
+}
+
+:host .footer .btn.primary:hover {
+  background: #0075ff;
+}
+
+:host ::-webkit-scrollbar {
+  width: 6px;
+}
+
+:host ::-webkit-scrollbar-track {
+  background: #1c1c1c94;
+}
+
+:host ::-webkit-scrollbar-thumb {
+  background-color: #282828ed;
+}

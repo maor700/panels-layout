@@ -1,4 +1,5 @@
 import { Component, Host, h, Event, EventEmitter, State } from '@stencil/core';
+import { PanelSettings } from '../../components';
 
 @Component({
   tag: 'pal-drag-drop-context',
@@ -14,6 +15,7 @@ export class PalDragDropContext {
   @Event() tabClose: EventEmitter<string>;
   @Event() requestOverlay: EventEmitter<boolean>;
   @Event() submitTransform: EventEmitter<{ panelId: string; transform: Partial<PanelTransform> }>;
+  @Event() submitSettings: EventEmitter<{ panelId: string; settings: Partial<PanelSettings> }>;
   overlayElm: HTMLDivElement;
   clearance = null;
 

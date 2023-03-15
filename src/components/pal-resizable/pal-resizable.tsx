@@ -2,16 +2,15 @@ import { Component, h, Host, Element, State, Event, EventEmitter, Prop } from '@
 import { debounce } from 'lodash';
 import { OverlayMouseMovement } from '../../services/overlayMovementService';
 
-
-
 @Component({
   styleUrl: 'pal-resizable.css',
   tag: 'pal-resizable',
-  shadow: true,
+  scoped:true
 })
 export class PalResizable {
   @Prop() panelId: string;
-  @Prop() dimensions: Partial<PanelDimensions> = {width:200, height:100};
+  @Prop() disabledResize: boolean;
+  @Prop() dimensions: Partial<PanelDimensions> = { width: 200, height: 100 };
   @State() isMouseDown = false;
   @State() inResizeMode = false;
   @Element() el: HTMLElement;
@@ -44,7 +43,8 @@ export class PalResizable {
     this.resizeObserv.unobserve(this.el);
   }
 
-  mouseDownHandler = (_) => {
+  mouseDownHandler = _ => {
+    if (this.disabledResize) return;
     this.isMouseDown = true;
   };
 
@@ -64,7 +64,7 @@ export class PalResizable {
     const { width, height } = this.dimensions ?? {};
     const style = width ?? height ? { width: `${width}px`, height: `${height}px` } : null;
     return (
-      <Host style={style} class="resizable">
+      <Host style={style} class={`resizable ${this.disabledResize ? 'disabled' : ''}`}>
         <slot />
       </Host>
     );

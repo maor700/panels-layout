@@ -5,8 +5,10 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { Panel, PanelTypes } from "./services/panelsConfig";
-export { Panel, PanelTypes } from "./services/panelsConfig";
+import { Panel, PanelSettings as PanelSettings1, PanelTypes } from "./services/panelsConfig";
+import { PanelSettings } from "./components";
+export { Panel, PanelSettings as PanelSettings1, PanelTypes } from "./services/panelsConfig";
+export { PanelSettings } from "./components";
 export namespace Components {
     interface AppRoot {
     }
@@ -40,9 +42,11 @@ export namespace Components {
         "panels": Panel[];
     }
     interface PalFloatable {
+        "disableMove": boolean;
         "intresectionObserver": IntersectionObserver;
         "panelId": string;
         "position": PanelPosition;
+        "settings": PanelSettings1;
     }
     interface PalOriginContext {
     }
@@ -53,19 +57,26 @@ export namespace Components {
         "panelId": string;
     }
     interface PalPanelHeaderMenu {
+        "displayModes": PanelSettings1['displayModes'];
         "panelId": string;
         "panelTitle": string;
         "treeId": string;
     }
+    interface PalPanelSettings {
+        "panelId": string;
+        "settings": PanelSettings1;
+    }
     interface PalPanelStackHeader {
         "active": boolean;
         "logicContainer": string;
+        "panelData": Panel;
         "panelId": string;
         "panelTitle": string;
         "treeId": string;
     }
     interface PalResizable {
         "dimensions": Partial<PanelDimensions>;
+        "disabledResize": boolean;
         "panelId": string;
     }
     interface PalTabsPanel {
@@ -110,6 +121,10 @@ export interface PalOriginContextCustomEvent<T> extends CustomEvent<T> {
 export interface PalPanelHeaderMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalPanelHeaderMenuElement;
+}
+export interface PalPanelSettingsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalPanelSettingsElement;
 }
 export interface PalPanelStackHeaderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -186,6 +201,12 @@ declare global {
         prototype: HTMLPalPanelHeaderMenuElement;
         new (): HTMLPalPanelHeaderMenuElement;
     };
+    interface HTMLPalPanelSettingsElement extends Components.PalPanelSettings, HTMLStencilElement {
+    }
+    var HTMLPalPanelSettingsElement: {
+        prototype: HTMLPalPanelSettingsElement;
+        new (): HTMLPalPanelSettingsElement;
+    };
     interface HTMLPalPanelStackHeaderElement extends Components.PalPanelStackHeader, HTMLStencilElement {
     }
     var HTMLPalPanelStackHeaderElement: {
@@ -228,6 +249,7 @@ declare global {
         "pal-origin-context": HTMLPalOriginContextElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-header-menu": HTMLPalPanelHeaderMenuElement;
+        "pal-panel-settings": HTMLPalPanelSettingsElement;
         "pal-panel-stack-header": HTMLPalPanelStackHeaderElement;
         "pal-resizable": HTMLPalResizableElement;
         "pal-tabs-panel": HTMLPalTabsPanelElement;
@@ -252,6 +274,7 @@ declare namespace LocalJSX {
     interface PalDragDropContext {
         "onChangePanelDisplayMode"?: (event: PalDragDropContextCustomEvent<DisplayModeChange>) => void;
         "onRequestOverlay"?: (event: PalDragDropContextCustomEvent<boolean>) => void;
+        "onSubmitSettings"?: (event: PalDragDropContextCustomEvent<{ panelId: string; settings: Partial<PanelSettings> }>) => void;
         "onSubmitTransform"?: (event: PalDragDropContextCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
         "onTabClose"?: (event: PalDragDropContextCustomEvent<string>) => void;
         "onTabDroped"?: (event: PalDragDropContextCustomEvent<DragProccess>) => void;
@@ -276,12 +299,15 @@ declare namespace LocalJSX {
         "panels"?: Panel[];
     }
     interface PalFloatable {
+        "disableMove"?: boolean;
         "intresectionObserver"?: IntersectionObserver;
         "onChangePanelDisplayMode"?: (event: PalFloatableCustomEvent<DisplayModeChange>) => void;
         "onRequestOverlay"?: (event: PalFloatableCustomEvent<{ status: boolean; clearance?: () => void }>) => void;
+        "onShowSettings"?: (event: PalFloatableCustomEvent<boolean>) => void;
         "onSubmitTransform"?: (event: PalFloatableCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
         "panelId"?: string;
         "position"?: PanelPosition;
+        "settings"?: PanelSettings1;
     }
     interface PalOriginContext {
         "onChangePanelDisplayMode"?: (event: PalOriginContextCustomEvent<DisplayModeChange>) => void;
@@ -295,23 +321,34 @@ declare namespace LocalJSX {
         "panelId"?: string;
     }
     interface PalPanelHeaderMenu {
+        "displayModes"?: PanelSettings1['displayModes'];
         "onChangePanelDisplayMode"?: (event: PalPanelHeaderMenuCustomEvent<DisplayModeChange>) => void;
+        "onShowSettings"?: (event: PalPanelHeaderMenuCustomEvent<boolean>) => void;
         "panelId"?: string;
         "panelTitle"?: string;
         "treeId"?: string;
+    }
+    interface PalPanelSettings {
+        "onShowSettings"?: (event: PalPanelSettingsCustomEvent<boolean>) => void;
+        "onSubmitSettings"?: (event: PalPanelSettingsCustomEvent<{ panelId: string; settings: Partial<PanelSettings1> }>) => void;
+        "panelId"?: string;
+        "settings"?: PanelSettings1;
     }
     interface PalPanelStackHeader {
         "active"?: boolean;
         "logicContainer"?: string;
         "onChangePanelDisplayMode"?: (event: PalPanelStackHeaderCustomEvent<DisplayModeChange>) => void;
+        "onShowSettings"?: (event: PalPanelStackHeaderCustomEvent<boolean>) => void;
         "onTabClose"?: (event: PalPanelStackHeaderCustomEvent<string>) => void;
         "onTabDrag"?: (event: PalPanelStackHeaderCustomEvent<DragStage>) => void;
+        "panelData"?: Panel;
         "panelId"?: string;
         "panelTitle"?: string;
         "treeId"?: string;
     }
     interface PalResizable {
         "dimensions"?: Partial<PanelDimensions>;
+        "disabledResize"?: boolean;
         "onRequestOverlay"?: (event: PalResizableCustomEvent<{ status: boolean; clearance?: () => void }>) => void;
         "onSubmitTransform"?: (event: PalResizableCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
         "panelId"?: string;
@@ -342,6 +379,7 @@ declare namespace LocalJSX {
         "pal-origin-context": PalOriginContext;
         "pal-panel": PalPanel;
         "pal-panel-header-menu": PalPanelHeaderMenu;
+        "pal-panel-settings": PalPanelSettings;
         "pal-panel-stack-header": PalPanelStackHeader;
         "pal-resizable": PalResizable;
         "pal-tabs-panel": PalTabsPanel;
@@ -364,6 +402,7 @@ declare module "@stencil/core" {
             "pal-origin-context": LocalJSX.PalOriginContext & JSXBase.HTMLAttributes<HTMLPalOriginContextElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-header-menu": LocalJSX.PalPanelHeaderMenu & JSXBase.HTMLAttributes<HTMLPalPanelHeaderMenuElement>;
+            "pal-panel-settings": LocalJSX.PalPanelSettings & JSXBase.HTMLAttributes<HTMLPalPanelSettingsElement>;
             "pal-panel-stack-header": LocalJSX.PalPanelStackHeader & JSXBase.HTMLAttributes<HTMLPalPanelStackHeaderElement>;
             "pal-resizable": LocalJSX.PalResizable & JSXBase.HTMLAttributes<HTMLPalResizableElement>;
             "pal-tabs-panel": LocalJSX.PalTabsPanel & JSXBase.HTMLAttributes<HTMLPalTabsPanelElement>;

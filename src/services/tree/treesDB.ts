@@ -26,7 +26,7 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
       TREES_DB_NAME,
       //  { addons: [dexieCloud] }
     );
-    this.version(7).stores({
+    this.version(8).stores({
       [TREES_ITEMS_TABLE_NAME]: STRING_INDEXES,
       [TREES_TABLE_NAME]: '&id, treeName',
       [TREES_STATES_TABLE_NAME]: '&id, treeName',

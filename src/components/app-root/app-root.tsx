@@ -178,7 +178,7 @@ export class AppRoot {
                     >
                       <div class="chevron"></div>
                     </div>
-                    <pal-panel panelData={this.root} panelId={this.root.id} title={this.root.name} key={this.root.id}></pal-panel>
+                    <pal-panel panelData={this.root} panelId={this.root.id} key={this.root.id}></pal-panel>
                   </div>
                 ) : null}
                 {this.secondRoot ? (
@@ -192,12 +192,12 @@ export class AppRoot {
                     >
                       <div class="chevron"></div>
                     </div>
-                    <pal-panel panelData={this.secondRoot} panelId={this.secondRoot.id} title={this.secondRoot.name} key={this.secondRoot.id}></pal-panel>
+                    <pal-panel panelData={this.secondRoot} panelId={this.secondRoot.id}  key={this.secondRoot.id}></pal-panel>
                   </div>
                 ) : null}
                 <div class="floated-tree">
                   {this.floatedRoot ? (
-                    <pal-panel panelData={this.floatedRoot} panelId={this.floatedRoot.id} title={this.floatedRoot.name} key={this.floatedRoot.id}></pal-panel>
+                    <pal-panel panelData={this.floatedRoot} panelId={this.floatedRoot.id} key={this.floatedRoot.id}></pal-panel>
                   ) : null}
                 </div>
               </main>

@@ -18,6 +18,7 @@ export class PalPanelSettings {
 
   @Listen('showSettings')
   showSettingsHandler(ev: CustomEvent<boolean>) {
+    ev.stopPropagation();
     this.showSettingsModal = ev.detail;
   }
 
@@ -85,7 +86,7 @@ export class PalPanelSettings {
                           </div>
                         );
                       } else {
-                        
+
                       }
                     })}
                     {/* <div class="section">

@@ -12,9 +12,14 @@ export const DEFALTE_PANEL_SETTINGS: PanelSettings = {
   transform: { resize: true, move: true },
   displayModes: { tabs: true, flex: true, dettached: true, minimized: true, newWindow: true },
   flexDrop: { center: true, left: true, right: true, top: true, bottom: true },
-  showLock: false,
-  editableHeaderName: true,
+  misc: {
+    hideHeader: false,
+    showLock: false,
+    editableHeaderName: true,
+  },
 };
+
+export const ROOT_DEFAULT_SETTINGS = { ...DEFALTE_PANEL_SETTINGS, misc: { ...DEFALTE_PANEL_SETTINGS.misc, hideHeader: true } };
 
 // const HTML1 = `<div>TEST_1<div/>`;
 // const HTML2 = `<div>TEST_2<div/>`;
@@ -33,7 +38,14 @@ treesDB.on('populate', async () => {
       MAIN_TREE,
       true,
       { id: MAIN_TREE, treeName: 'פריסה מרכזית' },
-      { id: 'root', persistContainer: 1, leaf: 0, hideHeader: 1, type: PanelTypes.row, order: 100 },
+      {
+        id: 'root',
+        persistContainer: 1,
+        leaf: 0,
+        type: PanelTypes.row,
+        order: 100,
+        settings: ROOT_DEFAULT_SETTINGS,
+      },
     );
     const { id } = await treesDB.getRoot(MAIN_TREE);
 
@@ -41,7 +53,14 @@ treesDB.on('populate', async () => {
       SECOND_TREE,
       true,
       { id: SECOND_TREE, treeName: 'פריסה מרכזית' },
-      { id: 'second-root', persistContainer: 1, leaf: 0, hideHeader: 1, type: PanelTypes.column, order: 100 },
+      {
+        id: 'second-root',
+        persistContainer: 1,
+        leaf: 0,
+        type: PanelTypes.column,
+        order: 100,
+        settings: ROOT_DEFAULT_SETTINGS,
+      },
     );
     const { id: secondTreeId } = await treesDB.getRoot(SECOND_TREE);
 
@@ -49,7 +68,7 @@ treesDB.on('populate', async () => {
       MINI_TREE_ID,
       true,
       { id: MINI_TREE_ID, treeName: 'חלונות ממוזערים' },
-      { id: 'minimized-root', persistContainer: 1, leaf: 0, hideHeader: 1, type: PanelTypes.column, order: 100 },
+      { id: 'minimized-root', persistContainer: 1, leaf: 0, type: PanelTypes.column, order: 100, settings: ROOT_DEFAULT_SETTINGS },
     );
     const { id: miniTreeId } = await treesDB.getRoot(MINI_TREE_ID);
 
@@ -57,7 +76,7 @@ treesDB.on('populate', async () => {
       FLOATED_TREE_ID,
       true,
       { id: FLOATED_TREE_ID, treeName: 'חלונות צפים' },
-      { id: 'floated-root', persistContainer: 1, leaf: 0, hideHeader: 1, type: PanelTypes.float, order: 100 },
+      { id: 'floated-root', persistContainer: 1, leaf: 0, type: PanelTypes.float, order: 100, settings: ROOT_DEFAULT_SETTINGS },
     );
 
     const { id: floatedTreeId } = await treesDB.getRoot(FLOATED_TREE_ID);
@@ -66,7 +85,7 @@ treesDB.on('populate', async () => {
       MAP_TREE_ID,
       true,
       { id: MAP_TREE_ID, treeName: 'מפה' },
-      { id: 'map-root', persistContainer: 1, leaf: 0, hideHeader: 1, type: PanelTypes.column, order: 100 },
+      { id: 'map-root', persistContainer: 1, leaf: 0, type: PanelTypes.column, order: 100, settings: ROOT_DEFAULT_SETTINGS, },
     );
 
     const { id: mapTreeRootId } = await treesDB.getRoot(MAP_TREE_ID);
@@ -75,7 +94,7 @@ treesDB.on('populate', async () => {
       WINDOW_TREE,
       true,
       { id: WINDOW_TREE, treeName: 'חלונות' },
-      { id: 'window-root', leaf: 0, hideHeader: 1, type: PanelTypes.window, persistContainer: 1 },
+      { id: 'window-root', leaf: 0, type: PanelTypes.window, persistContainer: 1, settings: ROOT_DEFAULT_SETTINGS, },
     );
     await treesDB.treesItems.bulkPut([
       {
@@ -83,13 +102,12 @@ treesDB.on('populate', async () => {
         html: MAP_HTML,
         order: 90,
         parentPath: `${mapTreeRootId}/`,
-        hideHeader: 1,
         treeId: MAP_TREE_ID,
         leaf: 1,
         type: PanelTypes.content,
         name: 'map_1',
         flex: 100,
-        settings: { ...DEFALTE_PANEL_SETTINGS, flexDrop: { ...DEFALTE_PANEL_SETTINGS.flexDrop, center: false, top:false, bottom:false } },
+        settings: { ...ROOT_DEFAULT_SETTINGS, flexDrop: { ...DEFALTE_PANEL_SETTINGS.flexDrop, center: false, top: false, bottom: false } },
       },
       {
         id: 'panel_1',

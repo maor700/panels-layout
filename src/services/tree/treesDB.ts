@@ -249,12 +249,12 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
     /* eslint-disable */
   };
 
-  moveTreeItem = async (itemToTransfer: TI, tragetItem: TI) => {
+  moveTreeItem = async (itemToTransfer: TI, tragetItem: TI, deep: boolean = true) => {
     if (itemToTransfer?.id === tragetItem?.id) return;
     const oldParentPath = `${itemToTransfer.parentPath}`;
     const newParentPath = `${tragetItem.parentPath}${tragetItem.id}/`;
     return this.transaction('rw', this.treesItems, async () => {
-      (await this.getNodeDescendantsCollection(itemToTransfer.id)).modify((item, ref) => {
+      deep && (await this.getNodeDescendantsCollection(itemToTransfer.id)).modify((item, ref) => {
         const parentPath = item.parentPath.replace(oldParentPath, newParentPath);
         const treeId = tragetItem.treeId;
         ref.value = { ...item, treeId, parentPath };

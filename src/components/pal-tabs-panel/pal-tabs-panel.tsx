@@ -38,6 +38,7 @@ export class PalTabsPanel {
                   title={p.name}
                   active={p.id === activeTab.id}
                   onClick={() => this.setActive(p)}
+                  showSettingsBtn={false}
                 ></pal-panel-stack-header>
               );
             })}

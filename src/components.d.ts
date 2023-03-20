@@ -30,6 +30,9 @@ export namespace Components {
         "panelId": string;
         "treeId": string;
     }
+    interface PalEditInPlace {
+        "textValue": string;
+    }
     interface PalFlexContainerPanel {
         "flexDirection": PanelTypes.column | PanelTypes.row;
         "panelData": Panel;
@@ -60,6 +63,7 @@ export namespace Components {
         "displayModes": PanelSettings1['displayModes'];
         "panelId": string;
         "panelTitle": string;
+        "showSettingsBtn": boolean;
         "treeId": string;
     }
     interface PalPanelSettings {
@@ -72,6 +76,7 @@ export namespace Components {
         "panelData": Panel;
         "panelId": string;
         "panelTitle": string;
+        "showSettingsBtn": boolean;
         "treeId": string;
     }
     interface PalResizable {
@@ -105,6 +110,10 @@ export interface PalDragDropContextCustomEvent<T> extends CustomEvent<T> {
 export interface PalDragDropSnapCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalDragDropSnapElement;
+}
+export interface PalEditInPlaceCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalEditInPlaceElement;
 }
 export interface PalFloatPanelCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -164,6 +173,12 @@ declare global {
     var HTMLPalDragDropSnapElement: {
         prototype: HTMLPalDragDropSnapElement;
         new (): HTMLPalDragDropSnapElement;
+    };
+    interface HTMLPalEditInPlaceElement extends Components.PalEditInPlace, HTMLStencilElement {
+    }
+    var HTMLPalEditInPlaceElement: {
+        prototype: HTMLPalEditInPlaceElement;
+        new (): HTMLPalEditInPlaceElement;
     };
     interface HTMLPalFlexContainerPanelElement extends Components.PalFlexContainerPanel, HTMLStencilElement {
     }
@@ -243,6 +258,7 @@ declare global {
         "pal-divider": HTMLPalDividerElement;
         "pal-drag-drop-context": HTMLPalDragDropContextElement;
         "pal-drag-drop-snap": HTMLPalDragDropSnapElement;
+        "pal-edit-in-place": HTMLPalEditInPlaceElement;
         "pal-flex-container-panel": HTMLPalFlexContainerPanelElement;
         "pal-float-panel": HTMLPalFloatPanelElement;
         "pal-floatable": HTMLPalFloatableElement;
@@ -286,6 +302,11 @@ declare namespace LocalJSX {
         "panelId"?: string;
         "treeId"?: string;
     }
+    interface PalEditInPlace {
+        "onTextChange"?: (event: PalEditInPlaceCustomEvent<string>) => void;
+        "onTextSubmit"?: (event: PalEditInPlaceCustomEvent<string>) => void;
+        "textValue"?: string;
+    }
     interface PalFlexContainerPanel {
         "flexDirection"?: PanelTypes.column | PanelTypes.row;
         "panelData"?: Panel;
@@ -326,6 +347,7 @@ declare namespace LocalJSX {
         "onShowSettings"?: (event: PalPanelHeaderMenuCustomEvent<boolean>) => void;
         "panelId"?: string;
         "panelTitle"?: string;
+        "showSettingsBtn"?: boolean;
         "treeId"?: string;
     }
     interface PalPanelSettings {
@@ -344,6 +366,7 @@ declare namespace LocalJSX {
         "panelData"?: Panel;
         "panelId"?: string;
         "panelTitle"?: string;
+        "showSettingsBtn"?: boolean;
         "treeId"?: string;
     }
     interface PalResizable {
@@ -373,6 +396,7 @@ declare namespace LocalJSX {
         "pal-divider": PalDivider;
         "pal-drag-drop-context": PalDragDropContext;
         "pal-drag-drop-snap": PalDragDropSnap;
+        "pal-edit-in-place": PalEditInPlace;
         "pal-flex-container-panel": PalFlexContainerPanel;
         "pal-float-panel": PalFloatPanel;
         "pal-floatable": PalFloatable;
@@ -396,6 +420,7 @@ declare module "@stencil/core" {
             "pal-divider": LocalJSX.PalDivider & JSXBase.HTMLAttributes<HTMLPalDividerElement>;
             "pal-drag-drop-context": LocalJSX.PalDragDropContext & JSXBase.HTMLAttributes<HTMLPalDragDropContextElement>;
             "pal-drag-drop-snap": LocalJSX.PalDragDropSnap & JSXBase.HTMLAttributes<HTMLPalDragDropSnapElement>;
+            "pal-edit-in-place": LocalJSX.PalEditInPlace & JSXBase.HTMLAttributes<HTMLPalEditInPlaceElement>;
             "pal-flex-container-panel": LocalJSX.PalFlexContainerPanel & JSXBase.HTMLAttributes<HTMLPalFlexContainerPanelElement>;
             "pal-float-panel": LocalJSX.PalFloatPanel & JSXBase.HTMLAttributes<HTMLPalFloatPanelElement>;
             "pal-floatable": LocalJSX.PalFloatable & JSXBase.HTMLAttributes<HTMLPalFloatableElement>;

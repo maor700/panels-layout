@@ -4,7 +4,7 @@ import { TreeItem } from '../../services/tree/TreeItem';
 import { treesDB } from '../../services/tree/treesDB';
 import { PalDragDropContextCustomEvent } from '../../components';
 import { Panel, PanelSettings } from '../../services/panelsConfig';
-import { DEFALTE_PANEL_SETTINGS, FLOATED_TREE_ID, MAIN_TREE, MAP_TREE_ID, MINI_TREE_ID, SECOND_TREE, WINDOW_TREE } from '../../services/dbInit';
+import { FLOATED_TREE_ID, MAIN_TREE, MAP_TREE_ID, MINI_TREE_ID, ROOT_DEFAULT_SETTINGS, SECOND_TREE, WINDOW_TREE } from '../../services/dbInit';
 import { createRouter, match, Route } from 'stencil-router-v2';
 import '../../services/panelsConfig';
 import '../../services/dbInit';
@@ -235,7 +235,7 @@ export class AppRoot {
       switch (displayMode) {
         case 'minimize':
           const target1 = await treesDB.getRoot(MINI_TREE_ID);
-          treesDB.moveTreeItem(itemToTransfer, target1);
+          treesDB.moveTreeItem(itemToTransfer, target1, false);
           break;
         case 'dettach':
           const floatedRoot = await treesDB.getRoot(FLOATED_TREE_ID);
@@ -313,8 +313,7 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
         flex: targetItem.flex,
         order: targetItem?.order,
         type: translatedType,
-        hideHeader: 1,
-        settings: DEFALTE_PANEL_SETTINGS
+        settings: ROOT_DEFAULT_SETTINGS
       });
       container = await treesDB.treesItems.get(id);
     }

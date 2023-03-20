@@ -14,6 +14,7 @@
 
 .stack-head .name {
   font-size: 0.8em;
+  position: relative;
 }
 
 .stack-head.active {

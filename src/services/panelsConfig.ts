@@ -12,7 +12,6 @@ export class Panel extends TreeItem {
   type?: PanelTypes = PanelTypes.column;
   flex?: number;
   activeTab?: string;
-  hideHeader?: 0 | 1 = 0;
   color?: string;
   html?: string;
   transform?: PanelTransform;
@@ -23,8 +22,11 @@ export class Panel extends TreeItem {
 
 export interface PanelSettings {
   transform?: { resize: boolean; move: boolean };
-  displayModes?: { tabs: boolean; flex: boolean; minimized: boolean; dettached: boolean, newWindow:boolean };
+  displayModes?: { tabs: boolean; flex: boolean; minimized: boolean; dettached: boolean; newWindow: boolean };
   flexDrop?: { center: boolean; top: boolean; bottom: boolean; left: boolean; right: boolean };
-  showLock?: boolean;
-  editableHeaderName?: boolean;
+  misc?: {
+    hideHeader?: boolean;
+    showLock?: boolean;
+    editableHeaderName?: boolean;
+  };
 }

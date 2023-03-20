@@ -13,10 +13,12 @@ export class PalContentPanel {
   @State() active = true;
 
   render() {
+    const hideHeader = Boolean(this.panelData?.settings?.misc?.hideHeader);
+
     return (
       <Host>
         <div class="grid-stick-layout">
-          {this.panelData && !this.panelData?.hideHeader ? (
+          {this.panelData && !hideHeader ? (
             <div class="header panels-container-header">
               <pal-panel-stack-header
                 panelData={this.panelData}
@@ -34,20 +36,13 @@ export class PalContentPanel {
             <div class="content" style={{ height: '100%' }}>
               <div class="panel-content" innerHTML={this.panelData.html}></div>
               <div class="snaps">
-                {
-                  this.panelData?.settings?.flexDrop
-                    ? Object.entries(this.panelData?.settings?.flexDrop).map(([direction, isOn]) => {
-                        return isOn ? (
-                          <pal-drag-drop-snap
-                            direction={direction}
-                            treeId={this?.panelData?.treeId}
-                            panelId={this.panelId}
-                            logicContainer={this.logicContainer}
-                          ></pal-drag-drop-snap>
-                        ) : null;
-                      })
-                    : null
-                }
+                {this.panelData?.settings?.flexDrop
+                  ? Object.entries(this.panelData?.settings?.flexDrop).map(([direction, isOn]) => {
+                      return isOn ? (
+                        <pal-drag-drop-snap direction={direction} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.logicContainer}></pal-drag-drop-snap>
+                      ) : null;
+                    })
+                  : null}
               </div>
             </div>
           </div>

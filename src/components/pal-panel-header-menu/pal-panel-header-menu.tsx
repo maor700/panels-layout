@@ -9,6 +9,7 @@ export class PalPanelHeaderMenu {
   @Prop() panelTitle: string;
   @Prop() panelId: string;
   @Prop() treeId: string;
+  @Prop() showSettingsBtn: boolean = true;
   @Prop() displayModes: PanelSettings['displayModes'];
   @State() showMenu = false;
   @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode: EventEmitter<DisplayModeChange>;
@@ -57,10 +58,10 @@ export class PalPanelHeaderMenu {
                     <pal-ui5-icon icon="decline" lib="sap" title="סגור" class="stack-head-btn" />
                     סגור
                   </div>
-                  <div onClick={this.showSettingsHandler} class="menu-item option">
+                  {this.showSettingsBtn && <div onClick={this.showSettingsHandler} class="menu-item option">
                     <pal-ui5-icon icon="action-settings" lib="sap" title="הגדרות" class="stack-head-btn" />
                     הגדרות
-                  </div>
+                  </div>}
                 </ul>
               )}
             </div>

@@ -60,15 +60,15 @@ export class PalFlexContainerPanel {
   };
 
   render() {
-    console.log({ logic: this.panelData?.id });
-
+    const hideHeader = this.panelData?.settings?.misc?.hideHeader;
+    
     return (
       <Host
         style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.flex + '' }}
-        class={`panel ${this.isContainer ? 'is-container' : ''} ${this.panelData?.hideHeader ? 'no-padding' : ''}`}
+        class={`panel ${this.isContainer ? 'is-container' : ''} ${hideHeader ? 'no-padding' : ''}`}
       >
         <div class="grid-stick-layout">
-          {this.panelData && !this.panelData?.hideHeader ? (
+          {this.panelData && !hideHeader ? (
             <div class="header panels-container-header">
               <pal-panel-stack-header
                 panelData={this.panelData}

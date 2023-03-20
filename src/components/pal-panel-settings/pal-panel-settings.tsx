@@ -48,6 +48,7 @@ export class PalPanelSettings {
   };
 
   close = () => {
+    this.tempSettings = null;
     this.showSettingsModal = false;
   };
 
@@ -86,7 +87,6 @@ export class PalPanelSettings {
                           </div>
                         );
                       } else {
-
                       }
                     })}
                     {/* <div class="section">

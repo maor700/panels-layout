@@ -29,6 +29,7 @@ export class PalContentPanel {
                 panelTitle={this.panelData.name}
                 active={this.active}
                 title={this.panelData.name}
+                editablePanelName={this.panelData?.settings?.misc?.editableHeaderName}
               ></pal-panel-stack-header>
             </div>
           ) : null}

@@ -31,6 +31,7 @@ export namespace Components {
         "treeId": string;
     }
     interface PalEditInPlace {
+        "disableEdit": boolean;
         "textValue": string;
     }
     interface PalFlexContainerPanel {
@@ -72,6 +73,7 @@ export namespace Components {
     }
     interface PalPanelStackHeader {
         "active": boolean;
+        "editablePanelName": boolean;
         "logicContainer": string;
         "panelData": Panel;
         "panelId": string;
@@ -290,6 +292,7 @@ declare namespace LocalJSX {
     interface PalDragDropContext {
         "onChangePanelDisplayMode"?: (event: PalDragDropContextCustomEvent<DisplayModeChange>) => void;
         "onRequestOverlay"?: (event: PalDragDropContextCustomEvent<boolean>) => void;
+        "onSetPanelTitle"?: (event: PalDragDropContextCustomEvent<PanelTitlePayload>) => void;
         "onSubmitSettings"?: (event: PalDragDropContextCustomEvent<{ panelId: string; settings: Partial<PanelSettings> }>) => void;
         "onSubmitTransform"?: (event: PalDragDropContextCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
         "onTabClose"?: (event: PalDragDropContextCustomEvent<string>) => void;
@@ -303,6 +306,7 @@ declare namespace LocalJSX {
         "treeId"?: string;
     }
     interface PalEditInPlace {
+        "disableEdit"?: boolean;
         "onTextChange"?: (event: PalEditInPlaceCustomEvent<string>) => void;
         "onTextSubmit"?: (event: PalEditInPlaceCustomEvent<string>) => void;
         "textValue"?: string;
@@ -358,8 +362,10 @@ declare namespace LocalJSX {
     }
     interface PalPanelStackHeader {
         "active"?: boolean;
+        "editablePanelName"?: boolean;
         "logicContainer"?: string;
         "onChangePanelDisplayMode"?: (event: PalPanelStackHeaderCustomEvent<DisplayModeChange>) => void;
+        "onSetPanelTitle"?: (event: PalPanelStackHeaderCustomEvent<PanelTitlePayload>) => void;
         "onShowSettings"?: (event: PalPanelStackHeaderCustomEvent<boolean>) => void;
         "onTabClose"?: (event: PalPanelStackHeaderCustomEvent<string>) => void;
         "onTabDrag"?: (event: PalPanelStackHeaderCustomEvent<DragStage>) => void;

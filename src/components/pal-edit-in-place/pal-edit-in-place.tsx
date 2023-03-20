@@ -7,6 +7,7 @@ import { Component, Host, h, State, Event, EventEmitter, Prop, Watch } from '@st
 })
 export class PalEditInPlace {
   @Prop() textValue: string;
+  @Prop() disableEdit: boolean = false;
   @State() titleEditable = false;
   @State() fieldVal: string;
   @State() fieldWidth: string;
@@ -32,11 +33,15 @@ export class PalEditInPlace {
   }
 
   inputHandler = ({ target }) => {
+    if (this.disableEdit) return;
+    
     this.fieldVal = target.value;
     this.textChange.emit(target.value);
   };
 
   submitHandler = (ev: Event) => {
+    if (this.disableEdit) return;
+
     ev.preventDefault();
     this.fieldElm.blur();
     this.textSubmit.emit(this.fieldVal);
@@ -51,6 +56,8 @@ export class PalEditInPlace {
   };
 
   DClickHandler = () => {
+    if (this.disableEdit) return;
+
     this.titleEditable = true;
     setTimeout(() => {
       this.fieldElm.focus();
@@ -62,7 +69,7 @@ export class PalEditInPlace {
   };
 
   render() {
-    const inputStyle = { display: this.titleEditable ? 'block' : 'none', width: this.fieldWidth, maxWidth: this.fieldWidth };
+    const inputStyle = { display: this.titleEditable ? 'inline-block' : 'none', width: this.fieldWidth, maxWidth: this.fieldWidth };
 
     console.log(inputStyle);
 

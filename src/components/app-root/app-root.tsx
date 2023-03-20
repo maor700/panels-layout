@@ -64,6 +64,9 @@ export class AppRoot {
     const { settings: originalSettings } = await treesDB.treesItems.get(panelId);
     treesDB.treesItems.update(panelId, { settings: { ...originalSettings, ...settings } });
   };
+  setPanelTitleHandler = async ({ detail: { panelId, title } }: PalDragDropContextCustomEvent<PanelTitlePayload>) => {
+    treesDB.treesItems.update(panelId, { name: title });
+  };
 
   componentWillLoad() {
     this.subscriptions.push(
@@ -152,7 +155,8 @@ export class AppRoot {
           onChangePanelDisplayMode={this.changeDisplayHandler}
           onTabClose={({ detail: apnelId }) => closeHandler(apnelId)}
           onSubmitTransform={this.submitTansformHandler}
-          onSubmitSettings = {this.submitSettingsHandler}
+          onSubmitSettings={this.submitSettingsHandler}
+          onSetPanelTitle={this.setPanelTitleHandler}
         >
           <Router.Switch>
             <Route path={match('/window/:id')} render={({ id }) => <pal-window-panel panelId={id} />} />
@@ -192,13 +196,11 @@ export class AppRoot {
                     >
                       <div class="chevron"></div>
                     </div>
-                    <pal-panel panelData={this.secondRoot} panelId={this.secondRoot.id}  key={this.secondRoot.id}></pal-panel>
+                    <pal-panel panelData={this.secondRoot} panelId={this.secondRoot.id} key={this.secondRoot.id}></pal-panel>
                   </div>
                 ) : null}
                 <div class="floated-tree">
-                  {this.floatedRoot ? (
-                    <pal-panel panelData={this.floatedRoot} panelId={this.floatedRoot.id} key={this.floatedRoot.id}></pal-panel>
-                  ) : null}
+                  {this.floatedRoot ? <pal-panel panelData={this.floatedRoot} panelId={this.floatedRoot.id} key={this.floatedRoot.id}></pal-panel> : null}
                 </div>
               </main>
               <div class="footer">
@@ -262,16 +264,16 @@ const closeHandler = (panelId: string) => {
 };
 
 const DIRECTION_LOOKUP = {
-  ltr:{left:-1, top:-1, right:1, bottom:1},
-  rtl:{left:1, top:-1, right:-1, bottom:1}
-}
+  ltr: { left: -1, top: -1, right: 1, bottom: 1 },
+  rtl: { left: 1, top: -1, right: -1, bottom: 1 },
+};
 
 // Drop on center - create a new tabs panel (or use the exist one) and move the original + moved panel to the tabs panel;
 const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProccess>) => {
   const { start, end } = detail;
   const translatedType = end?.direction === 'center' ? 'tabs' : end?.direction === 'bottom' || end?.direction === 'top' ? 'column' : 'row';
   const rtlLtr = end.targetDirection ?? 'ltr';
-  const htmlDirection = DIRECTION_LOOKUP[rtlLtr]
+  const htmlDirection = DIRECTION_LOOKUP[rtlLtr];
   treesDB.transaction('rw', 'trees', 'treesItems', async () => {
     // get ItemToTransfer
     let [ItemToTransfer, targetItem, targetLogicContainer] = await treesDB.treesItems.bulkGet([start?.panelId, end?.panelId, end?.logicContainer]);
@@ -313,7 +315,7 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
         flex: targetItem.flex,
         order: targetItem?.order,
         type: translatedType,
-        settings: ROOT_DEFAULT_SETTINGS
+        settings: ROOT_DEFAULT_SETTINGS,
       });
       container = await treesDB.treesItems.get(id);
     }

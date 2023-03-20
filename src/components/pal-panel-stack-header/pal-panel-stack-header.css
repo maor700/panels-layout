@@ -1,7 +1,7 @@
 .stack-head {
   user-select: none;
-  border-bottom: 2px solid transparent;
-  padding: 0 0 0.4em 0em;
+  border-bottom: 1px solid transparent;
+  padding: 0 0 0.2em 0em;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -12,13 +12,17 @@
   display: none;
 }
 
+.header.panels-container-header{
+  padding: 2px;;
+}
+
 .stack-head .name {
   font-size: 0.8em;
   position: relative;
 }
 
 pal-panel:focus .stack-head.active {
-  border-bottom: 2px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 
 .stack-head.active .stack-head-btn {

@@ -8,8 +8,7 @@ top: 0;
 left: 0;
 display:block;
 z-index: 100000000;
-background:red;
-opacity: 0.5;
+opacity: 0;
 `;
 
 export class OverlayMouseMovement {

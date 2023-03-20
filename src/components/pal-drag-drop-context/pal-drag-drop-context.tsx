@@ -16,6 +16,8 @@ export class PalDragDropContext {
   @Event() requestOverlay: EventEmitter<boolean>;
   @Event() submitTransform: EventEmitter<{ panelId: string; transform: Partial<PanelTransform> }>;
   @Event() submitSettings: EventEmitter<{ panelId: string; settings: Partial<PanelSettings> }>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) setPanelTitle: EventEmitter<PanelTitlePayload>;
+
   overlayElm: HTMLDivElement;
   clearance = null;
 

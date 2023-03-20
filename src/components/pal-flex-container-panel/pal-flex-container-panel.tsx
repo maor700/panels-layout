@@ -61,7 +61,7 @@ export class PalFlexContainerPanel {
 
   render() {
     const hideHeader = this.panelData?.settings?.misc?.hideHeader;
-    
+
     return (
       <Host
         style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.flex + '' }}
@@ -80,6 +80,7 @@ export class PalFlexContainerPanel {
                 onClick={() => this.setActive(this.panelData.name)}
                 active={this.active === this.panelData.name}
                 title={this.panelData.name}
+                editablePanelName={this.panelData?.settings?.misc?.editableHeaderName}
               ></pal-panel-stack-header>
             </div>
           ) : null}

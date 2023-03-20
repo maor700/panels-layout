@@ -39,6 +39,7 @@ export class PalTabsPanel {
                   active={p.id === activeTab.id}
                   onClick={() => this.setActive(p)}
                   showSettingsBtn={false}
+                  editablePanelName={this.panelData?.settings?.misc?.editableHeaderName}
                 ></pal-panel-stack-header>
               );
             })}

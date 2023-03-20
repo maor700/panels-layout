@@ -84,6 +84,7 @@ export class PalFloatPanel {
                     panelTitle={p.name}
                     title={p.name}
                     active={p.id === activeTab.id}
+                    editablePanelName={this.panelData?.settings?.misc?.editableHeaderName}
                   />
                   {
                     <pal-resizable disabledResize={!p?.settings?.transform.resize} panelId={p.id} dimensions={p?.transform} style={{ display: 'block' }} slot="content">

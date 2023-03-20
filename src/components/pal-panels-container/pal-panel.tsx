@@ -31,7 +31,7 @@ export class PalPanel {
   render() {
     const isEmptyContainer = this.panels.length === 0 && this.panelData.type !== 'content';
     return (
-      <Host class={`panel ${isEmptyContainer ? 'isEmpty' : ''}`} style={{ 'flex': this.panelData?.flex + '', '--panel-bg': this.panelData?.color ?? 'initial' }}>
+      <Host tabIndex={1} class={`panel ${isEmptyContainer ? 'isEmpty' : ''}`} style={{ 'flex': this.panelData?.flex + '', '--panel-bg': this.panelData?.color ?? 'initial' }}>
         <pal-panel-settings panelId={this.panelId} settings={this.panelData?.settings}>
           {this.panelData?.type === PanelTypes.row || this.panelData?.type === PanelTypes.column ? (
             <pal-flex-container-panel panelData={this.panelData} panels={this.panels} flexDirection={this.panelData?.type}></pal-flex-container-panel>

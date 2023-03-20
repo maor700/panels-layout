@@ -9,7 +9,7 @@ export class PalEditInPlace {
   @Prop() textValue: string;
   @State() titleEditable = false;
   @State() fieldVal: string;
-  @State() fieldSize: number;
+  @State() fieldWidth: string;
   @Event() textChange: EventEmitter<string>;
   @Event() textSubmit: EventEmitter<string>;
 
@@ -20,14 +20,20 @@ export class PalEditInPlace {
     this.fieldVal = this.textValue;
   }
 
+  @Watch('fontSize')
   @Watch('fieldVal')
   fieldValChangedHandler() {
-    this.fieldSize = this.fieldVal.length;
-    this.textChange.emit(this.fieldVal);
+    this.fieldWidth = `calc(${this.fieldVal.length * 0.5}em + 2px)`;
+  }
+
+  componentWillLoad() {
+    this.syncVals();
+    this.fieldValChangedHandler();
   }
 
   inputHandler = ({ target }) => {
     this.fieldVal = target.value;
+    this.textChange.emit(target.value);
   };
 
   submitHandler = (ev: Event) => {
@@ -55,30 +61,29 @@ export class PalEditInPlace {
     this.titleEditable = false;
   };
 
-  componentWillLoad() {
-    this.syncVals();
-  }
-
   render() {
+    const inputStyle = { display: this.titleEditable ? 'block' : 'none', width: this.fieldWidth, maxWidth: this.fieldWidth };
+
+    console.log(inputStyle);
+
     return (
       <Host>
         <form onSubmit={this.submitHandler}>
-          {this.titleEditable ? (
-            <input
-              type="text"
-              style={{ width: this.fieldSize + 'em', maxWidth: this.fieldSize + 'em' }}
-              onInput={this.inputHandler}
-              onBlur={this.blurHandler}
-              onKeyDown={this.keyDownHandler}
-              ref={elm => {
-                this.fieldElm = elm;
-              }}
-              class={`title ${this.titleEditable ? '' : 'edit-disabled'}`}
-              value={this.fieldVal}
-            />
-          ) : (
+          <input
+            type="text"
+            style={inputStyle}
+            onInput={this.inputHandler}
+            onBlur={this.blurHandler}
+            onKeyDown={this.keyDownHandler}
+            ref={elm => {
+              this.fieldElm = elm;
+            }}
+            class={`title ${this.titleEditable ? '' : 'edit-disabled'}`}
+            value={this.fieldVal}
+          />
+          {!this.titleEditable && (
             <span>
-              <span>{this.fieldVal}</span>
+              {this.fieldVal}
               <div onDblClick={this.DClickHandler} class="click-blocker"></div>
             </span>
           )}

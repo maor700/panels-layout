@@ -25,6 +25,6 @@ export class PalDragDropSnap {
   };
 
   render() {
-    return <Host onMouseUp={this.mouseUpHandler} class={`trapeze ${this.direction}`}></Host>;
+    return <Host onMouseUp={this.mouseUpHandler} class={`snap-trapeze snap-${this.direction}`}></Host>;
   }
 }

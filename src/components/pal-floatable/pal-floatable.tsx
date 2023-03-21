@@ -9,6 +9,7 @@ const THRESHOLD = 0.8;
 @Component({
   tag: 'pal-floatable',
   styleUrl: 'pal-floatable.css',
+  scoped: true,
 })
 export class PalFloatable {
   @Prop() panelId: string;
@@ -52,7 +53,7 @@ export class PalFloatable {
   }
 
   componentWillLoad() {
-    this.container = this.floatableElm.closest('.main');
+    this.container = this.floatableElm.closest('.pal-grid-main');
   }
 
   componentDidLoad() {
@@ -62,7 +63,7 @@ export class PalFloatable {
     window.addEventListener('keydown', this.ctrlPrfessedHandler, false);
     window.addEventListener('keyup', this.ctrlPrfessedHandler, false);
     this.moverHeight = this.moverElm.clientHeight;
-    this.floatableElm.addEventListener('tabDrag', ev => {
+    this.moverElm.addEventListener('tabDrag', ev => {
       !this.ctrlPressed && ev.stopPropagation();
     });
   }
@@ -71,6 +72,9 @@ export class PalFloatable {
     this.intersectionObserver?.unobserve(this.floatableElm);
     this.floatableElm.removeEventListener('keydown', this.ctrlPrfessedHandler);
     this.floatableElm.removeEventListener('keyup', this.ctrlPrfessedHandler);
+    this.moverElm.removeEventListener('tabDrag', ev => {
+      !this.ctrlPressed && ev.stopPropagation();
+    });
     this.clearance();
   }
 
@@ -140,14 +144,14 @@ export class PalFloatable {
     const [x, y, containerWidth, floatedWidth] = this.movements;
     const style = this.elmDir === 'ltr' ? { top: y + 'px', left: x + 'px' } : { top: y + 'px', right: containerWidth - (x + floatedWidth) + 'px' };
     return (
-      <Host id="container" style={style}>
+      <Host style={style}>
         <pal-panel-settings panelId={this.panelId} settings={this.settings}>
           <div
             ref={el => {
               this.moverElm = el;
             }}
             onMouseDown={this.mouseDownHandler}
-            id="mover"
+            class="mover"
           >
             <slot name="draggable-header">Window</slot>
           </div>

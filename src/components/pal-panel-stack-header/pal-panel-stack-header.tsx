@@ -5,6 +5,7 @@ import { Panel } from '../../services/panelsConfig';
 @Component({
   tag: 'pal-panel-stack-header',
   styleUrl: 'pal-panel-stack-header.css',
+  scoped:true
 })
 export class PalPanelStackHeader {
   @Prop() panelTitle: string;

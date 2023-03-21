@@ -1,3 +1,15 @@
 :host {
-  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+:host.is-container .flex-container-content {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+:host.is-container.no-padding {
+  padding: 0;
 }

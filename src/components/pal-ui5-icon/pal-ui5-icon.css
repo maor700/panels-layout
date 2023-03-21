@@ -1,10 +1,11 @@
-.icon-div {
+:host.icon-div {
+  display: block;
   width: 1em;
   height: 1em;
   position: relative;
 }
 
-.icon-div::before {
+:host.icon-div::before {
   position: absolute;
   inset: 0;
   display: block;
@@ -17,19 +18,23 @@
   text-align: center;
 }
 
-.hover-style {
+:host.hover-style {
   opacity: 0.75;
 }
-.hover-style:hover {
+
+:host.hover-style:hover {
   opacity: 1;
 }
 
-.sap.icon-div {
+
+:host.sap.icon-div {
   font-family: ui5-icons;
 }
-.tnt.icon-div {
+
+:host .tnt.icon-div {
   font-family: ui5-tnt-icons;
 }
-.suite.icon-div {
+
+:host .suite.icon-div {
   font-family: ui5-suite-icons;
 }

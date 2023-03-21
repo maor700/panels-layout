@@ -150,7 +150,7 @@ export class AppRoot {
     return (
       <Host>
         <pal-drag-drop-context
-          class="grid-stick-layout"
+          class="pal-grid-stick-layout"
           onTabDroped={this.onDropHandler}
           onChangePanelDisplayMode={this.changeDisplayHandler}
           onTabClose={({ detail: apnelId }) => closeHandler(apnelId)}
@@ -161,11 +161,11 @@ export class AppRoot {
           <Router.Switch>
             <Route path={match('/window/:id')} render={({ id }) => <pal-window-panel panelId={id} />} />
             <Route path={match('/')}>
-              <header class="header">
+              <header class="pal-grid-header">
                 <h3>Layout System</h3>
               </header>
 
-              <main class="main" style={{ overflow: 'hidden' }}>
+              <main class="pal-grid-main" style={{ overflow: 'hidden' }}>
                 {this.mapRoot ? (
                   <div style={{ width: '100%', height: '100%' }}>
                     <pal-panel panelData={this.mapRoot} panelId={this.mapRoot.id} title={this.mapRoot.name} key={this.mapRoot.id}></pal-panel>
@@ -203,7 +203,7 @@ export class AppRoot {
                   {this.floatedRoot ? <pal-panel panelData={this.floatedRoot} panelId={this.floatedRoot.id} key={this.floatedRoot.id}></pal-panel> : null}
                 </div>
               </main>
-              <div class="footer">
+              <div class="pal-grid-footer">
                 <div class="minimized-con">
                   {this.minimizedPanels?.map((p: Panel) => {
                     return (
@@ -277,6 +277,11 @@ const dropHandler = async ({ detail }: PalDragDropContextCustomEvent<DragProcces
   treesDB.transaction('rw', 'trees', 'treesItems', async () => {
     // get ItemToTransfer
     let [ItemToTransfer, targetItem, targetLogicContainer] = await treesDB.treesItems.bulkGet([start?.panelId, end?.panelId, end?.logicContainer]);
+
+    const parents = await treesDB.getParents(targetItem);
+    const parentWantToBeChild = parents.findIndex(someParent => someParent.id === ItemToTransfer.id) !== -1;
+
+    if (parentWantToBeChild) return;
 
     if (targetLogicContainer.type === 'tabs' && end?.direction !== 'center') {
       targetLogicContainer = await treesDB.getParent(targetLogicContainer);

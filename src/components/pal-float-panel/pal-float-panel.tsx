@@ -9,6 +9,7 @@ type TransformEvent = { panelId: string; transform: Partial<PanelTransform> };
 @Component({
   tag: 'pal-float-panel',
   styleUrl: 'pal-float-panel.css',
+  scoped:true
 })
 export class PalFloatPanel {
   @Prop() panelId: string;
@@ -55,8 +56,8 @@ export class PalFloatPanel {
       }) ?? this.panels?.[0];
     return (
       <Host class={`panel ${this.panelData.type} `}>
-        <div class="grid-stick-layout">
-          <div class="main">
+        <div class="pal-grid-stick-layout">
+          <div class="pal-grid-main">
             <div
               ref={el => {
                 this.floatedPanelCon = el;
@@ -84,33 +85,18 @@ export class PalFloatPanel {
                     panelTitle={p.name}
                     title={p.name}
                     active={p.id === activeTab.id}
+                    class={`${this.panelData.type}-header`}
                     editablePanelName={this.panelData?.settings?.misc?.editableHeaderName}
                   />
                   {
                     <pal-resizable disabledResize={!p?.settings?.transform.resize} panelId={p.id} dimensions={p?.transform} style={{ display: 'block' }} slot="content">
-                      <pal-panel logicContainer={this.panelData?.id} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>
+                      <pal-panel class='content-floated-panel' logicContainer={this.panelData?.id} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>
                     </pal-resizable>
                   }
                 </pal-floatable>
               ))}
             </div>
           </div>
-          {/* <div class="footer panels-container-header">
-            {this.panels.map(p => {
-              return (
-                <pal-panel-stack-header
-                  logicContainer={this.panelData?.id}
-                  panelId={p.id}
-                  treeId={p?.treeId}
-                  key={p.id}
-                  panelTitle={p.name}
-                  title={p.name}
-                  active={p.id === activeTab.id}
-                  onClick={() => this.setActive(p)}
-                ></pal-panel-stack-header>
-              );
-            })}
-          </div> */}
         </div>
       </Host>
     );

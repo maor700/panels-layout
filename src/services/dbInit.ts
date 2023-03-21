@@ -24,9 +24,9 @@ export const ROOT_DEFAULT_SETTINGS = { ...DEFALTE_PANEL_SETTINGS, misc: { ...DEF
 // const HTML1 = `<div>TEST_1<div/>`;
 // const HTML2 = `<div>TEST_2<div/>`;
 // const HTML3 = `<div>TEST_3<div/>`;
-const HTML1 = `<iframe src='https://omny.fm/shows/kan-4240/4-12-2022/embed?style=cover&size=square&image=1&share=0&download=0&description=0&subscribe=0&foreground=6d4d8f&background=f7f7f7&highlight=000000&ttag=ad:ipbc&dist=kan' frameborder=0 />`;
-const HTML2 = `<iframe src='https://moridimtv.com/Movie/%D7%94%D7%A4%D7%A0%D7%AA%D7%A8-%D7%94%D7%A9%D7%97%D7%95%D7%A8-%D7%95%D7%95%D7%90%D7%A7%D7%A0%D7%93%D7%94-%D7%9C%D7%A0%D7%A6%D7%97_13195.html' frameborder=0 />`;
-const HTML3 = `<iframe height="100%" src='https://omny.fm/shows/kan-news/7551d8f3-99a1-4222-ab13-afb500740d67/embed?size=square&ttag=ad:ipbc&dist=kan&download=0' frameborder=0 />`;
+const HTML1 = `<iframe src='https://omny.fm/shows/kan-4240/4-12-2022/embed?style=cover&size=square&image=1&share=0&download=0&description=0&subscribe=0&foreground=6d4d8f&background=f7f7f7&highlight=000000&ttag=ad:ipbc&dist=kan' frameborder=0 height="100%" width="100%" />`;
+const HTML2 = `<iframe src='https://moridimtv.com/Movie/%D7%94%D7%A4%D7%A0%D7%AA%D7%A8-%D7%94%D7%A9%D7%97%D7%95%D7%A8-%D7%95%D7%95%D7%90%D7%A7%D7%A0%D7%93%D7%94-%D7%9C%D7%A0%D7%A6%D7%97_13195.html' frameborder=0 height="100%" width="100%" />`;
+const HTML3 = `<iframe src='https://omny.fm/shows/kan-news/7551d8f3-99a1-4222-ab13-afb500740d67/embed?size=square&ttag=ad:ipbc&dist=kan&download=0' frameborder=0 height="100%" width="100%" />`;
 const MAP_HTML = `<div style="direction:rtl" class="map-con">MAP</div>`;
 
 treesDB.on('populate', async () => {

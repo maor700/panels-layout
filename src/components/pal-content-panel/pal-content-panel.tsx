@@ -4,22 +4,24 @@ import { Panel } from '../../services/panelsConfig';
 @Component({
   tag: 'pal-content-panel',
   styleUrl: 'pal-content-panel.css',
+  scoped:true
 })
 export class PalContentPanel {
   @Prop() panelId: string;
   @Prop() panelData: Panel;
   @Prop() logicContainer: string;
   @Prop() index: number;
+  @Prop() forceHiddenHeader = false;
   @State() active = true;
 
   render() {
-    const hideHeader = Boolean(this.panelData?.settings?.misc?.hideHeader);
+    const hideHeader = Boolean(this.panelData?.settings?.misc?.hideHeader) || this.forceHiddenHeader;
 
     return (
       <Host>
-        <div class="grid-stick-layout">
+        <div class="pal-grid-stick-layout">
           {this.panelData && !hideHeader ? (
-            <div class="header panels-container-header">
+            <div class="pal-grid-header">
               <pal-panel-stack-header
                 panelData={this.panelData}
                 logicContainer={this.logicContainer}
@@ -29,14 +31,15 @@ export class PalContentPanel {
                 panelTitle={this.panelData.name}
                 active={this.active}
                 title={this.panelData.name}
+                class={`${this.panelData.type}-header`}
                 editablePanelName={this.panelData?.settings?.misc?.editableHeaderName}
               ></pal-panel-stack-header>
             </div>
           ) : null}
-          <div class="main">
-            <div class="content" style={{ height: '100%' }}>
+          <div class="pal-grid-main">
+            <div class="content" style={{ height: '100%', with:'100%' }}>
               <div class="panel-content" innerHTML={this.panelData.html}></div>
-              <div class="snaps">
+              <div class="pal-snaps">
                 {this.panelData?.settings?.flexDrop
                   ? Object.entries(this.panelData?.settings?.flexDrop).map(([direction, isOn]) => {
                       return isOn ? (
@@ -47,7 +50,7 @@ export class PalContentPanel {
               </div>
             </div>
           </div>
-          <div class="footer"></div>
+          <div class="pal-grid-footer"></div>
         </div>
       </Host>
     );

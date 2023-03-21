@@ -13,6 +13,7 @@ export namespace Components {
     interface AppRoot {
     }
     interface PalContentPanel {
+        "forceHiddenHeader": boolean;
         "index": number;
         "logicContainer": string;
         "panelData": Panel;
@@ -279,6 +280,7 @@ declare namespace LocalJSX {
     interface AppRoot {
     }
     interface PalContentPanel {
+        "forceHiddenHeader"?: boolean;
         "index"?: number;
         "logicContainer"?: string;
         "panelData"?: Panel;

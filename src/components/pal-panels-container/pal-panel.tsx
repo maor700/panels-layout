@@ -6,6 +6,7 @@ import { treesDB } from '../../services/tree/treesDB';
 @Component({
   tag: 'pal-panel',
   styleUrl: 'pal-panel.css',
+  scoped: true,
 })
 export class PalPanel {
   @Prop() panelId: string;
@@ -13,6 +14,8 @@ export class PalPanel {
   @Prop() index: number;
   @Prop() logicContainer: string;
   @State() panels: Panel[] = [];
+  @State() parent: Panel = null;
+
   @Element() elm: HTMLElement;
   private subscriptions: Subscription[] = [];
 
@@ -20,6 +23,9 @@ export class PalPanel {
     this.subscriptions.push(
       liveQuery(() => treesDB.getNodeAndChildren(this.panelId)).subscribe(([_, panels]) => {
         this.panels = panels.sort((a, b) => a?.order - b?.order);
+      }),
+      liveQuery(() => treesDB.getParent(this.panelData)).subscribe(parent => {
+        this.parent = parent;
       }),
     );
   }
@@ -29,6 +35,8 @@ export class PalPanel {
   }
 
   render() {
+    console.log(this.parent?.type, "123");
+    
     const isEmptyContainer = this.panels.length === 0 && this.panelData.type !== 'content';
     return (
       <Host tabIndex={1} class={`panel ${isEmptyContainer ? 'isEmpty' : ''}`} style={{ 'flex': this.panelData?.flex + '', '--panel-bg': this.panelData?.color ?? 'initial' }}>
@@ -39,11 +47,11 @@ export class PalPanel {
             <pal-tabs-panel panels={this.panels} panelData={this.panelData} panelId={this.panelId} index={this.index} />
           ) : this.panelData?.type === PanelTypes.float ? (
             <pal-float-panel panels={this.panels} panelData={this.panelData} panelId={this.panelId} index={this.index} />
-          ) : this.panelData?.type === PanelTypes.content ? (
-            <pal-content-panel logicContainer={this.logicContainer} panelData={this.panelData} panelId={this.panelId} index={this.index} />
+          ) : this.panelData?.type === PanelTypes.content && this.parent?.type ? (
+            <pal-content-panel forceHiddenHeader={this.parent?.type === PanelTypes.float } logicContainer={this.logicContainer} panelData={this.panelData} panelId={this.panelId} index={this.index} />
           ) : null}
           {this?.panelData && isEmptyContainer ? (
-            <div class="snaps">
+            <div class="pal-snaps">
               <pal-drag-drop-snap direction={'center'} treeId={this?.panelData?.treeId} panelId={this.panelId} logicContainer={this.panelId}></pal-drag-drop-snap>
             </div>
           ) : null}

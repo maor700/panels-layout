@@ -6,6 +6,7 @@ import { treesDB } from '../../services/tree/treesDB';
 @Component({
   tag: 'pal-window-panel',
   styleUrl: 'pal-window-panel.css',
+  scoped:true
 })
 export class PalWindowPanel {
   @Prop() panelId: string;

@@ -4,6 +4,7 @@ import { PanelSettings } from '../../services/panelsConfig';
 @Component({
   tag: 'pal-panel-header-menu',
   styleUrl: 'pal-panel-header-menu.css',
+  scoped:true
 })
 export class PalPanelHeaderMenu {
   @Prop() panelTitle: string;

@@ -5,6 +5,7 @@ import { treesDB } from '../../services/tree/treesDB';
 @Component({
   tag: 'pal-tabs-panel',
   styleUrl: 'pal-tabs-panel.css',
+  scoped:true
 })
 export class PalTabsPanel {
   @Prop() panelId: string;
@@ -24,8 +25,8 @@ export class PalTabsPanel {
 
     return (
       <Host class={`panel ${this.panelData.type} `}>
-        <div class="grid-stick-layout">
-          <div class="header panels-container-header">
+        <div class="pal-grid-stick-layout">
+          <div class="pal-grid-header panels-container-header">
             {this.panels.map(p => {
               return (
                 <pal-panel-stack-header
@@ -39,12 +40,13 @@ export class PalTabsPanel {
                   active={p.id === activeTab.id}
                   onClick={() => this.setActive(p)}
                   showSettingsBtn={false}
+                  class={`${this.panelData.type}-header`}
                   editablePanelName={this.panelData?.settings?.misc?.editableHeaderName}
                 ></pal-panel-stack-header>
               );
             })}
           </div>
-          <div class="main">
+          <div class="pal-grid-main">
             <div class="content">{activeTab ? <pal-panel logicContainer={this.panelData?.id} panelData={activeTab} panelId={activeTab?.id} /> : null}</div>
           </div>
         </div>

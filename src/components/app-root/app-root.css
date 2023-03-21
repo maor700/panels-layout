@@ -1,7 +1,7 @@
 :host {
   height: 100%;
 }
-main.main {
+main.pal-grid-main {
   position: relative;
   background: #222;
   height: 100%;
@@ -14,7 +14,7 @@ header {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 
-.header h3 {
+.pal-grid-header h3 {
   margin: 0;
 }
 

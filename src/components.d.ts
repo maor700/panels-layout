@@ -6,9 +6,9 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { Panel, PanelSettings as PanelSettings1, PanelTypes } from "./services/panelsConfig";
-import { PanelSettings } from "./components";
+import { Panel as Panel1, PanelSettings } from "./components";
 export { Panel, PanelSettings as PanelSettings1, PanelTypes } from "./services/panelsConfig";
-export { PanelSettings } from "./components";
+export { Panel as Panel1, PanelSettings } from "./components";
 export namespace Components {
     interface AppRoot {
     }
@@ -52,6 +52,15 @@ export namespace Components {
         "panelId": string;
         "position": PanelPosition;
         "settings": PanelSettings1;
+    }
+    interface PalLayoutTree {
+        "collapseTo"?: 'right' | 'left' | 'top' | 'bottom';
+        "isOpened"?: boolean;
+        "treeId": string;
+        "treesDb": InstanceType<typeof TreesDB<Panel>>;
+    }
+    interface PalLayoutTreeMinimized {
+        "panels": Panel1[];
     }
     interface PalOriginContext {
     }
@@ -125,6 +134,10 @@ export interface PalFloatPanelCustomEvent<T> extends CustomEvent<T> {
 export interface PalFloatableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalFloatableElement;
+}
+export interface PalLayoutTreeMinimizedCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalLayoutTreeMinimizedElement;
 }
 export interface PalOriginContextCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -201,6 +214,18 @@ declare global {
         prototype: HTMLPalFloatableElement;
         new (): HTMLPalFloatableElement;
     };
+    interface HTMLPalLayoutTreeElement extends Components.PalLayoutTree, HTMLStencilElement {
+    }
+    var HTMLPalLayoutTreeElement: {
+        prototype: HTMLPalLayoutTreeElement;
+        new (): HTMLPalLayoutTreeElement;
+    };
+    interface HTMLPalLayoutTreeMinimizedElement extends Components.PalLayoutTreeMinimized, HTMLStencilElement {
+    }
+    var HTMLPalLayoutTreeMinimizedElement: {
+        prototype: HTMLPalLayoutTreeMinimizedElement;
+        new (): HTMLPalLayoutTreeMinimizedElement;
+    };
     interface HTMLPalOriginContextElement extends Components.PalOriginContext, HTMLStencilElement {
     }
     var HTMLPalOriginContextElement: {
@@ -265,6 +290,8 @@ declare global {
         "pal-flex-container-panel": HTMLPalFlexContainerPanelElement;
         "pal-float-panel": HTMLPalFloatPanelElement;
         "pal-floatable": HTMLPalFloatableElement;
+        "pal-layout-tree": HTMLPalLayoutTreeElement;
+        "pal-layout-tree-minimized": HTMLPalLayoutTreeMinimizedElement;
         "pal-origin-context": HTMLPalOriginContextElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-header-menu": HTMLPalPanelHeaderMenuElement;
@@ -335,6 +362,16 @@ declare namespace LocalJSX {
         "panelId"?: string;
         "position"?: PanelPosition;
         "settings"?: PanelSettings1;
+    }
+    interface PalLayoutTree {
+        "collapseTo"?: 'right' | 'left' | 'top' | 'bottom';
+        "isOpened"?: boolean;
+        "treeId"?: string;
+        "treesDb"?: InstanceType<typeof TreesDB<Panel>>;
+    }
+    interface PalLayoutTreeMinimized {
+        "onMinimizedClick"?: (event: PalLayoutTreeMinimizedCustomEvent<Panel1>) => void;
+        "panels"?: Panel1[];
     }
     interface PalOriginContext {
         "onChangePanelDisplayMode"?: (event: PalOriginContextCustomEvent<DisplayModeChange>) => void;
@@ -408,6 +445,8 @@ declare namespace LocalJSX {
         "pal-flex-container-panel": PalFlexContainerPanel;
         "pal-float-panel": PalFloatPanel;
         "pal-floatable": PalFloatable;
+        "pal-layout-tree": PalLayoutTree;
+        "pal-layout-tree-minimized": PalLayoutTreeMinimized;
         "pal-origin-context": PalOriginContext;
         "pal-panel": PalPanel;
         "pal-panel-header-menu": PalPanelHeaderMenu;
@@ -432,6 +471,8 @@ declare module "@stencil/core" {
             "pal-flex-container-panel": LocalJSX.PalFlexContainerPanel & JSXBase.HTMLAttributes<HTMLPalFlexContainerPanelElement>;
             "pal-float-panel": LocalJSX.PalFloatPanel & JSXBase.HTMLAttributes<HTMLPalFloatPanelElement>;
             "pal-floatable": LocalJSX.PalFloatable & JSXBase.HTMLAttributes<HTMLPalFloatableElement>;
+            "pal-layout-tree": LocalJSX.PalLayoutTree & JSXBase.HTMLAttributes<HTMLPalLayoutTreeElement>;
+            "pal-layout-tree-minimized": LocalJSX.PalLayoutTreeMinimized & JSXBase.HTMLAttributes<HTMLPalLayoutTreeMinimizedElement>;
             "pal-origin-context": LocalJSX.PalOriginContext & JSXBase.HTMLAttributes<HTMLPalOriginContextElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-header-menu": LocalJSX.PalPanelHeaderMenu & JSXBase.HTMLAttributes<HTMLPalPanelHeaderMenuElement>;

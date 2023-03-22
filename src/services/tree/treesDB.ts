@@ -235,6 +235,14 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
     return [node, children];
   };
 
+  getChildren = async (node: TI): Promise<TI[] | null> => {
+    const { parentPath, treeId, id } = node;
+    return this.treesItems
+      .where(INDEXES.tp)
+      .equals([treeId, `${parentPath}${id}/`])
+      .toArray();
+  };
+
   getNodeChildrenCollection = async (nodeId: string) => {
     const { treeId, parentPath, id } = (await this.treesItems.get(nodeId)) ?? {};
     if (!(id ?? treeId ?? treeId)) return;
@@ -254,11 +262,12 @@ export class TreesDB<TI extends TreeItem> extends Dexie {
     const oldParentPath = `${itemToTransfer.parentPath}`;
     const newParentPath = `${tragetItem.parentPath}${tragetItem.id}/`;
     return this.transaction('rw', this.treesItems, async () => {
-      deep && (await this.getNodeDescendantsCollection(itemToTransfer.id)).modify((item, ref) => {
-        const parentPath = item.parentPath.replace(oldParentPath, newParentPath);
-        const treeId = tragetItem.treeId;
-        ref.value = { ...item, treeId, parentPath };
-      });
+      deep &&
+        (await this.getNodeDescendantsCollection(itemToTransfer.id)).modify((item, ref) => {
+          const parentPath = item.parentPath.replace(oldParentPath, newParentPath);
+          const treeId = tragetItem.treeId;
+          ref.value = { ...item, treeId, parentPath };
+        });
       await this.treesItems.update(itemToTransfer.id, { ...itemToTransfer, treeId: tragetItem.treeId, parentPath: newParentPath });
     });
   };

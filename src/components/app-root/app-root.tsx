@@ -19,12 +19,6 @@ console.log(treesDB);
   styleUrl: 'app-root.css',
 })
 export class AppRoot {
-  @State() root: TreeItem;
-  @State() secondRoot: TreeItem;
-  @State() mapRoot: TreeItem;
-  @State() firstShowBottomTree = true;
-  @State() scondShowBottomTree = false;
-  @State() floatedRoot: TreeItem;
   @State() minimizedPanels: TreeItem[];
   @State() windowPanels: TreeItem[];
 
@@ -70,18 +64,6 @@ export class AppRoot {
 
   componentWillLoad() {
     this.subscriptions.push(
-      liveQuery(() => treesDB.getRoot(MAIN_TREE)).subscribe(root => {
-        this.root = root;
-      }),
-      liveQuery(() => treesDB.getRoot(SECOND_TREE)).subscribe(secondRoot => {
-        this.secondRoot = secondRoot;
-      }),
-      liveQuery(() => treesDB.getRoot(MAP_TREE_ID)).subscribe(mapRoot => {
-        this.mapRoot = mapRoot;
-      }),
-      liveQuery(() => treesDB.getRoot(FLOATED_TREE_ID)).subscribe(floatedRoot => {
-        this.floatedRoot = floatedRoot;
-      }),
       liveQuery(async () => {
         const root = await treesDB.getRoot(MINI_TREE_ID);
         return (await treesDB.getNodeChildrenCollection(root?.id)).toArray();
@@ -166,42 +148,10 @@ export class AppRoot {
               </header>
 
               <main class="pal-grid-main" style={{ overflow: 'hidden' }}>
-                {this.mapRoot ? (
-                  <div style={{ width: '100%', height: '100%' }}>
-                    <pal-panel panelData={this.mapRoot} panelId={this.mapRoot.id} title={this.mapRoot.name} key={this.mapRoot.id}></pal-panel>
-                  </div>
-                ) : null}
-                {this.root ? (
-                  <div class={`first-tree-layout ${!this.firstShowBottomTree ? 'closed' : ''}`}>
-                    <div
-                      class="btn-expender"
-                      role="button"
-                      onClick={() => {
-                        this.firstShowBottomTree = !this.firstShowBottomTree;
-                      }}
-                    >
-                      <div class="chevron"></div>
-                    </div>
-                    <pal-panel panelData={this.root} panelId={this.root.id} key={this.root.id}></pal-panel>
-                  </div>
-                ) : null}
-                {this.secondRoot ? (
-                  <div class={`second-tree-layout ${!this.scondShowBottomTree ? 'closed' : ''}`}>
-                    <div
-                      class="btn-expender"
-                      role="button"
-                      onClick={() => {
-                        this.scondShowBottomTree = !this.scondShowBottomTree;
-                      }}
-                    >
-                      <div class="chevron"></div>
-                    </div>
-                    <pal-panel panelData={this.secondRoot} panelId={this.secondRoot.id} key={this.secondRoot.id}></pal-panel>
-                  </div>
-                ) : null}
-                <div class="floated-tree">
-                  {this.floatedRoot ? <pal-panel panelData={this.floatedRoot} panelId={this.floatedRoot.id} key={this.floatedRoot.id}></pal-panel> : null}
-                </div>
+                <pal-layout-tree style={{ width: '100%', height: '100%' }} treesDb={treesDB} treeId={MAP_TREE_ID} />
+                <pal-layout-tree collapseTo="bottom" treesDb={treesDB} treeId={MAIN_TREE} />
+                <pal-layout-tree collapseTo="right" treesDb={treesDB} treeId={SECOND_TREE} />
+                <pal-layout-tree treesDb={treesDB} treeId={FLOATED_TREE_ID} />
               </main>
               <div class="pal-grid-footer">
                 <div class="minimized-con">

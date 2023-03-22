@@ -21,7 +21,6 @@ export class PalEditInPlace {
     this.fieldVal = this.textValue;
   }
 
-  @Watch('fontSize')
   @Watch('fieldVal')
   fieldValChangedHandler() {
     this.fieldWidth = `calc(${this.fieldVal.length * 0.5}em + 2px)`;

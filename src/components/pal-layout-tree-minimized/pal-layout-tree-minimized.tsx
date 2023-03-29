@@ -4,7 +4,7 @@ import { Panel } from '../../components';
 @Component({
   tag: 'pal-layout-tree-minimized',
   styleUrl: 'pal-layout-tree-minimized.css',
-  shadow: true,
+  scoped: true,
 })
 export class PalLayoutTreeMinimized {
   @Prop() panels: Panel[];

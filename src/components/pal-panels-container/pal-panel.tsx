@@ -35,20 +35,25 @@ export class PalPanel {
   }
 
   render() {
-    console.log(this.parent?.type, "123");
-    
     const isEmptyContainer = this.panels.length === 0 && this.panelData.type !== 'content';
+    const { type } = this.panelData;
     return (
       <Host tabIndex={1} class={`panel ${isEmptyContainer ? 'isEmpty' : ''}`} style={{ 'flex': this.panelData?.flex + '', '--panel-bg': this.panelData?.color ?? 'initial' }}>
         <pal-panel-settings panelId={this.panelId} settings={this.panelData?.settings}>
-          {this.panelData?.type === PanelTypes.row || this.panelData?.type === PanelTypes.column ? (
-            <pal-flex-container-panel panelData={this.panelData} panels={this.panels} flexDirection={this.panelData?.type}></pal-flex-container-panel>
-          ) : this.panelData?.type === PanelTypes.tabs ? (
+          {type === PanelTypes.row || this.panelData?.type === PanelTypes.column ? (
+            <pal-flex-container-panel panelData={this.panelData} panels={this.panels} flexDirection={type as PanelTypes.column | PanelTypes.row}></pal-flex-container-panel>
+          ) : type === PanelTypes.tabs ? (
             <pal-tabs-panel panels={this.panels} panelData={this.panelData} panelId={this.panelId} index={this.index} />
-          ) : this.panelData?.type === PanelTypes.float ? (
+          ) : type === PanelTypes.float ? (
             <pal-float-panel panels={this.panels} panelData={this.panelData} panelId={this.panelId} index={this.index} />
-          ) : this.panelData?.type === PanelTypes.content && this.parent?.type ? (
-            <pal-content-panel forceHiddenHeader={this.parent?.type === PanelTypes.float } logicContainer={this.logicContainer} panelData={this.panelData} panelId={this.panelId} index={this.index} />
+          ) : type === PanelTypes.content && this.parent?.type ? (
+            <pal-content-panel
+              forceHiddenHeader={this.parent?.type === PanelTypes.float}
+              logicContainer={this.logicContainer}
+              panelData={this.panelData}
+              panelId={this.panelId}
+              index={this.index}
+            />
           ) : null}
           {this?.panelData && isEmptyContainer ? (
             <div class="pal-snaps">

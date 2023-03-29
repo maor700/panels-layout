@@ -1,4 +1,4 @@
-import { Component, Host, h, Event, EventEmitter, State } from '@stencil/core';
+import { Component, Host, h, Event, EventEmitter, State, Listen } from '@stencil/core';
 import { PanelSettings } from '../../components';
 
 @Component({
@@ -10,16 +10,28 @@ export class PalDragDropContext {
   @State() dragProccess: DragProccess = DRAG_PROCCESS_DEFAULT;
   @State() dragMode = false;
   @State() showOverlay = false;
-  @Event() tabDroped: EventEmitter<DragProccess>;
-  @Event() changePanelDisplayMode: EventEmitter<DisplayModeChange>;
+
   @Event() tabClose: EventEmitter<string>;
+  @Event() tabDroped: EventEmitter<DragProccess>;
   @Event() requestOverlay: EventEmitter<boolean>;
+  @Event() changePanelDisplayMode: EventEmitter<DisplayModeChange>;
   @Event() submitTransform: EventEmitter<{ panelId: string; transform: Partial<PanelTransform> }>;
   @Event() submitSettings: EventEmitter<{ panelId: string; settings: Partial<PanelSettings> }>;
   @Event({ bubbles: true, composed: true, cancelable: true }) setPanelTitle: EventEmitter<PanelTitlePayload>;
 
+  @Listen('changePanelDisplayMode_internal')
+  changePanelDisplayModeHandler(ev: CustomEvent<DisplayModeChange>) {
+    ev.stopPropagation();
+    const { detail } = ev;
+    this.changePanelDisplayMode.emit({ ...detail, lastFloatZindex: this.lastFloatZindex, increaseLastFloatZindex: this.increaseLastFloatZindex });
+  }
+  
   overlayElm: HTMLDivElement;
   clearance = null;
+  private lastFloatZindex = 0;
+  private increaseLastFloatZindex = () => {
+    this.lastFloatZindex++;
+  };
 
   render() {
     return (

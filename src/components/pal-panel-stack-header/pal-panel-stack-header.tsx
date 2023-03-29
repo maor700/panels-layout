@@ -22,7 +22,7 @@ export class PalPanelStackHeader {
 
   @Event({ bubbles: true, composed: true, cancelable: true }) tabDrag: EventEmitter<DragStage>;
   @Event({ bubbles: true, composed: true, cancelable: true }) tabClose: EventEmitter<string>;
-  @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode: EventEmitter<DisplayModeChange>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode_internal: EventEmitter<DisplayModeChange>;
   @Event({ bubbles: true, composed: true, cancelable: true }) showSettings: EventEmitter<boolean>;
   @Event({ bubbles: true, composed: true, cancelable: true }) setPanelTitle: EventEmitter<PanelTitlePayload>;
 
@@ -59,7 +59,7 @@ export class PalPanelStackHeader {
           <pal-ui5-icon
             hoverStyle
             onClick={() => {
-              this.changePanelDisplayMode.emit({ panelId: this.panelId, treeId: this.treeId, displayMode: 'close' });
+              this.changePanelDisplayMode_internal.emit({ panelId: this.panelId, treeId: this.treeId, displayMode: 'close' });
             }}
             class="close stack-head-btn"
             lib="sap"

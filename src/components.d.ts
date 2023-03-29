@@ -355,7 +355,7 @@ declare namespace LocalJSX {
     interface PalFloatable {
         "disableMove"?: boolean;
         "intresectionObserver"?: IntersectionObserver;
-        "onChangePanelDisplayMode"?: (event: PalFloatableCustomEvent<DisplayModeChange>) => void;
+        "onChangePanelDisplayMode_internal"?: (event: PalFloatableCustomEvent<DisplayModeChange>) => void;
         "onRequestOverlay"?: (event: PalFloatableCustomEvent<{ status: boolean; clearance?: () => void }>) => void;
         "onShowSettings"?: (event: PalFloatableCustomEvent<boolean>) => void;
         "onSubmitTransform"?: (event: PalFloatableCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
@@ -386,7 +386,7 @@ declare namespace LocalJSX {
     }
     interface PalPanelHeaderMenu {
         "displayModes"?: PanelSettings1['displayModes'];
-        "onChangePanelDisplayMode"?: (event: PalPanelHeaderMenuCustomEvent<DisplayModeChange>) => void;
+        "onChangePanelDisplayMode_internal"?: (event: PalPanelHeaderMenuCustomEvent<DisplayModeChange>) => void;
         "onShowSettings"?: (event: PalPanelHeaderMenuCustomEvent<boolean>) => void;
         "panelId"?: string;
         "panelTitle"?: string;
@@ -403,7 +403,7 @@ declare namespace LocalJSX {
         "active"?: boolean;
         "editablePanelName"?: boolean;
         "logicContainer"?: string;
-        "onChangePanelDisplayMode"?: (event: PalPanelStackHeaderCustomEvent<DisplayModeChange>) => void;
+        "onChangePanelDisplayMode_internal"?: (event: PalPanelStackHeaderCustomEvent<DisplayModeChange>) => void;
         "onSetPanelTitle"?: (event: PalPanelStackHeaderCustomEvent<PanelTitlePayload>) => void;
         "onShowSettings"?: (event: PalPanelStackHeaderCustomEvent<boolean>) => void;
         "onTabClose"?: (event: PalPanelStackHeaderCustomEvent<string>) => void;

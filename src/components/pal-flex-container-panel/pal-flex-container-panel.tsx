@@ -37,7 +37,6 @@ export class PalFlexContainerPanel {
       return sum;
     }, 0);
     this.flexFactor = sumOfFlex / this.conSize;
-    console.log(sumOfFlex, this.conSize);
   }
 
   dividerMoveHandler = async (event: CustomEvent<{ sibiling: string[]; movementX: number; movementY: number }>) => {

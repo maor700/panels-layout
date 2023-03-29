@@ -21,7 +21,7 @@ export class PalFloatable {
   @State() ctrlPressed: boolean = false;
   @Event({ bubbles: true, composed: true, cancelable: true }) requestOverlay: EventEmitter<{ status: boolean; clearance?: () => void }>;
   @Event({ bubbles: true, composed: true, cancelable: true }) submitTransform: EventEmitter<{ panelId: string; transform: Partial<PanelTransform> }>;
-  @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode: EventEmitter<DisplayModeChange>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode_internal: EventEmitter<DisplayModeChange>;
   @Event({ bubbles: true, composed: true, cancelable: true }) showSettings: EventEmitter<boolean>;
   @Element() floatableElm: HTMLDivElement;
   private isMouseDown: boolean;
@@ -32,7 +32,6 @@ export class PalFloatable {
   private overlayMovementService: OverlayMouseMovement;
   private intersectionObserver = new IntersectionObserver(
     entries => {
-      console.log(entries);
       entries.forEach(this.calcIntersectionCorrection);
     },
     { threshold: THRESHOLD },
@@ -101,7 +100,6 @@ export class PalFloatable {
       this.overlayMovementService.start();
       const moveSubs = this.overlayMovementService.movements$.subscribe(this.moveLogic);
       firstValueFrom(this.overlayMovementService.moveEnd$).then(() => {
-        console.log('end');
         this.mouseUpHandler();
         moveSubs.unsubscribe();
       });
@@ -137,7 +135,7 @@ export class PalFloatable {
     if (isIntersecting) return;
     const panelId = target.panelId;
     const panelData = await treesDB.treesItems.get(panelId);
-    this.changePanelDisplayMode.emit({ panelId, treeId: panelData.treeId, displayMode: 'minimize' });
+    this.changePanelDisplayMode_internal.emit({ panelId, treeId: panelData.treeId, displayMode: 'minimize' });
   };
 
   render() {

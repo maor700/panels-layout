@@ -13,7 +13,7 @@ export class PalPanelHeaderMenu {
   @Prop() showSettingsBtn: boolean = true;
   @Prop() displayModes: PanelSettings['displayModes'];
   @State() showMenu = false;
-  @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode: EventEmitter<DisplayModeChange>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode_internal: EventEmitter<DisplayModeChange>;
   @Event({ bubbles: true, composed: true, cancelable: true }) showSettings: EventEmitter<boolean>;
 
   menuToggle = () => {
@@ -21,7 +21,7 @@ export class PalPanelHeaderMenu {
   };
 
   changeDisplayMode = (displayMode: DisplayModes) => {
-    this.changePanelDisplayMode.emit({ panelId: this.panelId, treeId: this.treeId, displayMode });
+    this.changePanelDisplayMode_internal.emit({ panelId: this.panelId, treeId: this.treeId, displayMode });
   };
   showSettingsHandler = () => {
     this.showSettings.emit(true);

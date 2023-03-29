@@ -70,7 +70,6 @@ export class PalEditInPlace {
   render() {
     const inputStyle = { display: this.titleEditable ? 'inline-block' : 'none', width: this.fieldWidth, maxWidth: this.fieldWidth };
 
-    console.log(inputStyle);
 
     return (
       <Host>

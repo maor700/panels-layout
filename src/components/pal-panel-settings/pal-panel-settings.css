@@ -51,7 +51,7 @@
   color: white;
 }
 
-:host .grid-stick-layout {
+:host .pal-grid-stick-layout {
   height: 100%;
   display: grid;
   grid-template-columns: 1fr;
@@ -60,7 +60,7 @@
   overflow: auto;
 }
 
-:host .grid-stick-layout > .header {
+:host .pal-grid-stick-layout > .pal-grid-header {
   grid-area: header;
   position: relative;
   font-weight: 100;
@@ -71,12 +71,12 @@
   padding-bottom: 0.3em;
   justify-content: space-between;
 }
-:host .grid-stick-layout > .main {
+:host .pal-grid-stick-layout > .pal-grid-main {
   grid-area: main;
   overflow: auto;
 }
 
-:host .grid-stick-layout > .footer {
+:host .pal-grid-stick-layout > .pal-grid-footer {
   grid-area: footer;
   justify-content: center;
   display: flex;
@@ -85,7 +85,7 @@
   padding-top: 0.5em;
 }
 
-:host .footer .btn {
+:host .pal-grid-footer .btn {
   background: transparent;
   color: #aaa;
   border: 2px solid #474545;
@@ -95,24 +95,24 @@
   font-size: 0.9em;
 }
 
-:host .footer .btn.ghost {
+:host .pal-grid-footer .btn.ghost {
   border: 2px solid transparent;
   transition: all 0.3s ease;
 }
 
-:host .footer .btn.ghost:hover {
+:host .pal-grid-footer .btn.ghost:hover {
   border: 2px solid transparent;
   border: 2px solid #474545;
 }
 
-:host .footer .btn.primary {
+:host .pal-grid-footer .btn.primary {
   background: #00b3f6a1;
   color: white;
   border: 1px solid #0075ff;
   transition: all 0.3s ease;
 }
 
-:host .footer .btn.primary:hover {
+:host .pal-grid-footer .btn.primary:hover {
   background: #0075ff;
 }
 

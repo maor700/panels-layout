@@ -12,6 +12,7 @@ const LIBS_MAPS = {
 @Component({
   tag: 'pal-ui5-icon',
   styleUrl: 'pal-ui5-icon.css',
+  scoped:true
 })
 export class PalUi5Icon {
   @Prop() icon: string;

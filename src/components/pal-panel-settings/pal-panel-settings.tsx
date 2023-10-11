@@ -48,6 +48,7 @@ export class PalPanelSettings {
   };
 
   close = () => {
+    this.tempSettings = null;
     this.showSettingsModal = false;
   };
 
@@ -58,13 +59,13 @@ export class PalPanelSettings {
         {this.showSettingsModal && this.settings ? (
           <div class="modal-container">
             <form id="settings" onSubmit={this.submitHandler} style={{ width: '100%', height: '100%' }}>
-              <div class="grid-stick-layout">
-                <div class="header">
+              <div class="pal-grid-stick-layout">
+                <div class="pal-grid-header">
                   <div class="title">Panel Settings</div>
                   <pal-ui5-icon onClick={this.close} icon="decline" lib="sap" title="close" />
                 </div>
                 {this.tempSettings && (
-                  <div class="settings-form main">
+                  <div class="settings-form pal-grid-main">
                     {Object.entries(this.tempSettings).map(([section, props]) => {
                       if (isObject(props)) {
                         const displaySection = section.replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -86,7 +87,6 @@ export class PalPanelSettings {
                           </div>
                         );
                       } else {
-
                       }
                     })}
                     {/* <div class="section">
@@ -172,7 +172,7 @@ export class PalPanelSettings {
                     </div> */}
                   </div>
                 )}
-                <div class="footer">
+                <div class="pal-grid-footer">
                   <button type="submit" title="Save settings" class="btn primary">
                     Save
                   </button>

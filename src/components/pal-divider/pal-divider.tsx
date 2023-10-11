@@ -3,6 +3,7 @@ import { Component, h, Host, Event, EventEmitter, State, Element, Prop } from '@
 @Component({
   tag: 'pal-divider',
   styleUrl: 'pal-divider.css',
+  scoped:true
 })
 export class PalDivider {
   @Prop() sibiling?: string[] = [];

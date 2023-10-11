@@ -6,13 +6,14 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { Panel, PanelSettings as PanelSettings1, PanelTypes } from "./services/panelsConfig";
-import { PanelSettings } from "./components";
+import { Panel as Panel1, PanelSettings } from "./components";
 export { Panel, PanelSettings as PanelSettings1, PanelTypes } from "./services/panelsConfig";
-export { PanelSettings } from "./components";
+export { Panel as Panel1, PanelSettings } from "./components";
 export namespace Components {
     interface AppRoot {
     }
     interface PalContentPanel {
+        "forceHiddenHeader": boolean;
         "index": number;
         "logicContainer": string;
         "panelData": Panel;
@@ -29,6 +30,10 @@ export namespace Components {
         "logicContainer": string;
         "panelId": string;
         "treeId": string;
+    }
+    interface PalEditInPlace {
+        "disableEdit": boolean;
+        "textValue": string;
     }
     interface PalFlexContainerPanel {
         "flexDirection": PanelTypes.column | PanelTypes.row;
@@ -48,6 +53,15 @@ export namespace Components {
         "position": PanelPosition;
         "settings": PanelSettings1;
     }
+    interface PalLayoutTree {
+        "collapseTo"?: 'right' | 'left' | 'top' | 'bottom';
+        "isOpened"?: boolean;
+        "treeId": string;
+        "treesDb": InstanceType<typeof TreesDB<Panel>>;
+    }
+    interface PalLayoutTreeMinimized {
+        "panels": Panel1[];
+    }
     interface PalOriginContext {
     }
     interface PalPanel {
@@ -60,6 +74,7 @@ export namespace Components {
         "displayModes": PanelSettings1['displayModes'];
         "panelId": string;
         "panelTitle": string;
+        "showSettingsBtn": boolean;
         "treeId": string;
     }
     interface PalPanelSettings {
@@ -68,10 +83,12 @@ export namespace Components {
     }
     interface PalPanelStackHeader {
         "active": boolean;
+        "editablePanelName": boolean;
         "logicContainer": string;
         "panelData": Panel;
         "panelId": string;
         "panelTitle": string;
+        "showSettingsBtn": boolean;
         "treeId": string;
     }
     interface PalResizable {
@@ -106,6 +123,10 @@ export interface PalDragDropSnapCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalDragDropSnapElement;
 }
+export interface PalEditInPlaceCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalEditInPlaceElement;
+}
 export interface PalFloatPanelCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalFloatPanelElement;
@@ -113,6 +134,10 @@ export interface PalFloatPanelCustomEvent<T> extends CustomEvent<T> {
 export interface PalFloatableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPalFloatableElement;
+}
+export interface PalLayoutTreeMinimizedCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPalLayoutTreeMinimizedElement;
 }
 export interface PalOriginContextCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -165,6 +190,12 @@ declare global {
         prototype: HTMLPalDragDropSnapElement;
         new (): HTMLPalDragDropSnapElement;
     };
+    interface HTMLPalEditInPlaceElement extends Components.PalEditInPlace, HTMLStencilElement {
+    }
+    var HTMLPalEditInPlaceElement: {
+        prototype: HTMLPalEditInPlaceElement;
+        new (): HTMLPalEditInPlaceElement;
+    };
     interface HTMLPalFlexContainerPanelElement extends Components.PalFlexContainerPanel, HTMLStencilElement {
     }
     var HTMLPalFlexContainerPanelElement: {
@@ -182,6 +213,18 @@ declare global {
     var HTMLPalFloatableElement: {
         prototype: HTMLPalFloatableElement;
         new (): HTMLPalFloatableElement;
+    };
+    interface HTMLPalLayoutTreeElement extends Components.PalLayoutTree, HTMLStencilElement {
+    }
+    var HTMLPalLayoutTreeElement: {
+        prototype: HTMLPalLayoutTreeElement;
+        new (): HTMLPalLayoutTreeElement;
+    };
+    interface HTMLPalLayoutTreeMinimizedElement extends Components.PalLayoutTreeMinimized, HTMLStencilElement {
+    }
+    var HTMLPalLayoutTreeMinimizedElement: {
+        prototype: HTMLPalLayoutTreeMinimizedElement;
+        new (): HTMLPalLayoutTreeMinimizedElement;
     };
     interface HTMLPalOriginContextElement extends Components.PalOriginContext, HTMLStencilElement {
     }
@@ -243,9 +286,12 @@ declare global {
         "pal-divider": HTMLPalDividerElement;
         "pal-drag-drop-context": HTMLPalDragDropContextElement;
         "pal-drag-drop-snap": HTMLPalDragDropSnapElement;
+        "pal-edit-in-place": HTMLPalEditInPlaceElement;
         "pal-flex-container-panel": HTMLPalFlexContainerPanelElement;
         "pal-float-panel": HTMLPalFloatPanelElement;
         "pal-floatable": HTMLPalFloatableElement;
+        "pal-layout-tree": HTMLPalLayoutTreeElement;
+        "pal-layout-tree-minimized": HTMLPalLayoutTreeMinimizedElement;
         "pal-origin-context": HTMLPalOriginContextElement;
         "pal-panel": HTMLPalPanelElement;
         "pal-panel-header-menu": HTMLPalPanelHeaderMenuElement;
@@ -261,6 +307,7 @@ declare namespace LocalJSX {
     interface AppRoot {
     }
     interface PalContentPanel {
+        "forceHiddenHeader"?: boolean;
         "index"?: number;
         "logicContainer"?: string;
         "panelData"?: Panel;
@@ -274,6 +321,7 @@ declare namespace LocalJSX {
     interface PalDragDropContext {
         "onChangePanelDisplayMode"?: (event: PalDragDropContextCustomEvent<DisplayModeChange>) => void;
         "onRequestOverlay"?: (event: PalDragDropContextCustomEvent<boolean>) => void;
+        "onSetPanelTitle"?: (event: PalDragDropContextCustomEvent<PanelTitlePayload>) => void;
         "onSubmitSettings"?: (event: PalDragDropContextCustomEvent<{ panelId: string; settings: Partial<PanelSettings> }>) => void;
         "onSubmitTransform"?: (event: PalDragDropContextCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
         "onTabClose"?: (event: PalDragDropContextCustomEvent<string>) => void;
@@ -285,6 +333,12 @@ declare namespace LocalJSX {
         "onTabDrop"?: (event: PalDragDropSnapCustomEvent<DragStage>) => void;
         "panelId"?: string;
         "treeId"?: string;
+    }
+    interface PalEditInPlace {
+        "disableEdit"?: boolean;
+        "onTextChange"?: (event: PalEditInPlaceCustomEvent<string>) => void;
+        "onTextSubmit"?: (event: PalEditInPlaceCustomEvent<string>) => void;
+        "textValue"?: string;
     }
     interface PalFlexContainerPanel {
         "flexDirection"?: PanelTypes.column | PanelTypes.row;
@@ -301,13 +355,23 @@ declare namespace LocalJSX {
     interface PalFloatable {
         "disableMove"?: boolean;
         "intresectionObserver"?: IntersectionObserver;
-        "onChangePanelDisplayMode"?: (event: PalFloatableCustomEvent<DisplayModeChange>) => void;
+        "onChangePanelDisplayMode_internal"?: (event: PalFloatableCustomEvent<DisplayModeChange>) => void;
         "onRequestOverlay"?: (event: PalFloatableCustomEvent<{ status: boolean; clearance?: () => void }>) => void;
         "onShowSettings"?: (event: PalFloatableCustomEvent<boolean>) => void;
         "onSubmitTransform"?: (event: PalFloatableCustomEvent<{ panelId: string; transform: Partial<PanelTransform> }>) => void;
         "panelId"?: string;
         "position"?: PanelPosition;
         "settings"?: PanelSettings1;
+    }
+    interface PalLayoutTree {
+        "collapseTo"?: 'right' | 'left' | 'top' | 'bottom';
+        "isOpened"?: boolean;
+        "treeId"?: string;
+        "treesDb"?: InstanceType<typeof TreesDB<Panel>>;
+    }
+    interface PalLayoutTreeMinimized {
+        "onMinimizedClick"?: (event: PalLayoutTreeMinimizedCustomEvent<Panel1>) => void;
+        "panels"?: Panel1[];
     }
     interface PalOriginContext {
         "onChangePanelDisplayMode"?: (event: PalOriginContextCustomEvent<DisplayModeChange>) => void;
@@ -322,10 +386,11 @@ declare namespace LocalJSX {
     }
     interface PalPanelHeaderMenu {
         "displayModes"?: PanelSettings1['displayModes'];
-        "onChangePanelDisplayMode"?: (event: PalPanelHeaderMenuCustomEvent<DisplayModeChange>) => void;
+        "onChangePanelDisplayMode_internal"?: (event: PalPanelHeaderMenuCustomEvent<DisplayModeChange>) => void;
         "onShowSettings"?: (event: PalPanelHeaderMenuCustomEvent<boolean>) => void;
         "panelId"?: string;
         "panelTitle"?: string;
+        "showSettingsBtn"?: boolean;
         "treeId"?: string;
     }
     interface PalPanelSettings {
@@ -336,14 +401,17 @@ declare namespace LocalJSX {
     }
     interface PalPanelStackHeader {
         "active"?: boolean;
+        "editablePanelName"?: boolean;
         "logicContainer"?: string;
-        "onChangePanelDisplayMode"?: (event: PalPanelStackHeaderCustomEvent<DisplayModeChange>) => void;
+        "onChangePanelDisplayMode_internal"?: (event: PalPanelStackHeaderCustomEvent<DisplayModeChange>) => void;
+        "onSetPanelTitle"?: (event: PalPanelStackHeaderCustomEvent<PanelTitlePayload>) => void;
         "onShowSettings"?: (event: PalPanelStackHeaderCustomEvent<boolean>) => void;
         "onTabClose"?: (event: PalPanelStackHeaderCustomEvent<string>) => void;
         "onTabDrag"?: (event: PalPanelStackHeaderCustomEvent<DragStage>) => void;
         "panelData"?: Panel;
         "panelId"?: string;
         "panelTitle"?: string;
+        "showSettingsBtn"?: boolean;
         "treeId"?: string;
     }
     interface PalResizable {
@@ -373,9 +441,12 @@ declare namespace LocalJSX {
         "pal-divider": PalDivider;
         "pal-drag-drop-context": PalDragDropContext;
         "pal-drag-drop-snap": PalDragDropSnap;
+        "pal-edit-in-place": PalEditInPlace;
         "pal-flex-container-panel": PalFlexContainerPanel;
         "pal-float-panel": PalFloatPanel;
         "pal-floatable": PalFloatable;
+        "pal-layout-tree": PalLayoutTree;
+        "pal-layout-tree-minimized": PalLayoutTreeMinimized;
         "pal-origin-context": PalOriginContext;
         "pal-panel": PalPanel;
         "pal-panel-header-menu": PalPanelHeaderMenu;
@@ -396,9 +467,12 @@ declare module "@stencil/core" {
             "pal-divider": LocalJSX.PalDivider & JSXBase.HTMLAttributes<HTMLPalDividerElement>;
             "pal-drag-drop-context": LocalJSX.PalDragDropContext & JSXBase.HTMLAttributes<HTMLPalDragDropContextElement>;
             "pal-drag-drop-snap": LocalJSX.PalDragDropSnap & JSXBase.HTMLAttributes<HTMLPalDragDropSnapElement>;
+            "pal-edit-in-place": LocalJSX.PalEditInPlace & JSXBase.HTMLAttributes<HTMLPalEditInPlaceElement>;
             "pal-flex-container-panel": LocalJSX.PalFlexContainerPanel & JSXBase.HTMLAttributes<HTMLPalFlexContainerPanelElement>;
             "pal-float-panel": LocalJSX.PalFloatPanel & JSXBase.HTMLAttributes<HTMLPalFloatPanelElement>;
             "pal-floatable": LocalJSX.PalFloatable & JSXBase.HTMLAttributes<HTMLPalFloatableElement>;
+            "pal-layout-tree": LocalJSX.PalLayoutTree & JSXBase.HTMLAttributes<HTMLPalLayoutTreeElement>;
+            "pal-layout-tree-minimized": LocalJSX.PalLayoutTreeMinimized & JSXBase.HTMLAttributes<HTMLPalLayoutTreeMinimizedElement>;
             "pal-origin-context": LocalJSX.PalOriginContext & JSXBase.HTMLAttributes<HTMLPalOriginContextElement>;
             "pal-panel": LocalJSX.PalPanel & JSXBase.HTMLAttributes<HTMLPalPanelElement>;
             "pal-panel-header-menu": LocalJSX.PalPanelHeaderMenu & JSXBase.HTMLAttributes<HTMLPalPanelHeaderMenuElement>;

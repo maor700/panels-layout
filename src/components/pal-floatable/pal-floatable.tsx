@@ -9,6 +9,7 @@ const THRESHOLD = 0.8;
 @Component({
   tag: 'pal-floatable',
   styleUrl: 'pal-floatable.css',
+  scoped: true,
 })
 export class PalFloatable {
   @Prop() panelId: string;
@@ -20,7 +21,7 @@ export class PalFloatable {
   @State() ctrlPressed: boolean = false;
   @Event({ bubbles: true, composed: true, cancelable: true }) requestOverlay: EventEmitter<{ status: boolean; clearance?: () => void }>;
   @Event({ bubbles: true, composed: true, cancelable: true }) submitTransform: EventEmitter<{ panelId: string; transform: Partial<PanelTransform> }>;
-  @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode: EventEmitter<DisplayModeChange>;
+  @Event({ bubbles: true, composed: true, cancelable: true }) changePanelDisplayMode_internal: EventEmitter<DisplayModeChange>;
   @Event({ bubbles: true, composed: true, cancelable: true }) showSettings: EventEmitter<boolean>;
   @Element() floatableElm: HTMLDivElement;
   private isMouseDown: boolean;
@@ -31,7 +32,6 @@ export class PalFloatable {
   private overlayMovementService: OverlayMouseMovement;
   private intersectionObserver = new IntersectionObserver(
     entries => {
-      console.log(entries);
       entries.forEach(this.calcIntersectionCorrection);
     },
     { threshold: THRESHOLD },
@@ -52,7 +52,7 @@ export class PalFloatable {
   }
 
   componentWillLoad() {
-    this.container = this.floatableElm.closest('.main');
+    this.container = this.floatableElm.closest('.pal-grid-main');
   }
 
   componentDidLoad() {
@@ -62,7 +62,7 @@ export class PalFloatable {
     window.addEventListener('keydown', this.ctrlPrfessedHandler, false);
     window.addEventListener('keyup', this.ctrlPrfessedHandler, false);
     this.moverHeight = this.moverElm.clientHeight;
-    this.floatableElm.addEventListener('tabDrag', ev => {
+    this.moverElm.addEventListener('tabDrag', ev => {
       !this.ctrlPressed && ev.stopPropagation();
     });
   }
@@ -71,6 +71,9 @@ export class PalFloatable {
     this.intersectionObserver?.unobserve(this.floatableElm);
     this.floatableElm.removeEventListener('keydown', this.ctrlPrfessedHandler);
     this.floatableElm.removeEventListener('keyup', this.ctrlPrfessedHandler);
+    this.moverElm.removeEventListener('tabDrag', ev => {
+      !this.ctrlPressed && ev.stopPropagation();
+    });
     this.clearance();
   }
 
@@ -97,7 +100,6 @@ export class PalFloatable {
       this.overlayMovementService.start();
       const moveSubs = this.overlayMovementService.movements$.subscribe(this.moveLogic);
       firstValueFrom(this.overlayMovementService.moveEnd$).then(() => {
-        console.log('end');
         this.mouseUpHandler();
         moveSubs.unsubscribe();
       });
@@ -133,21 +135,21 @@ export class PalFloatable {
     if (isIntersecting) return;
     const panelId = target.panelId;
     const panelData = await treesDB.treesItems.get(panelId);
-    this.changePanelDisplayMode.emit({ panelId, treeId: panelData.treeId, displayMode: 'minimize' });
+    this.changePanelDisplayMode_internal.emit({ panelId, treeId: panelData.treeId, displayMode: 'minimize' });
   };
 
   render() {
     const [x, y, containerWidth, floatedWidth] = this.movements;
     const style = this.elmDir === 'ltr' ? { top: y + 'px', left: x + 'px' } : { top: y + 'px', right: containerWidth - (x + floatedWidth) + 'px' };
     return (
-      <Host id="container" style={style}>
+      <Host style={style}>
         <pal-panel-settings panelId={this.panelId} settings={this.settings}>
           <div
             ref={el => {
               this.moverElm = el;
             }}
             onMouseDown={this.mouseDownHandler}
-            id="mover"
+            class="mover"
           >
             <slot name="draggable-header">Window</slot>
           </div>

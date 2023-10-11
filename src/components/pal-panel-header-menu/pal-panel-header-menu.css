@@ -2,11 +2,11 @@
   display: inherit;
 }
 
-.menu-con {
+:host .menu-con {
   position: relative;
 }
 
-.menu {
+:host .menu {
   all: unset;
   position: absolute;
   top: 1.3em;
@@ -20,12 +20,12 @@
   z-index: 10;
 }
 
-.menu-item {
+:host .menu-item {
   padding: 0.5em 0.5em;
   font-weight: normal;
 }
 
-.menu-item:hover {
+:host .menu-item:hover {
   background: rgb(1, 140, 227, .4);
 }
 

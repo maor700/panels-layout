@@ -5,6 +5,7 @@ import { treesDB } from '../../services/tree/treesDB';
 @Component({
   tag: 'pal-flex-container-panel',
   styleUrl: 'pal-flex-container-panel.css',
+  scoped:true
 })
 export class PalFlexContainerPanel {
   @Prop() flexDirection: PanelTypes.column | PanelTypes.row;
@@ -36,7 +37,6 @@ export class PalFlexContainerPanel {
       return sum;
     }, 0);
     this.flexFactor = sumOfFlex / this.conSize;
-    console.log(sumOfFlex, this.conSize);
   }
 
   dividerMoveHandler = async (event: CustomEvent<{ sibiling: string[]; movementX: number; movementY: number }>) => {
@@ -60,16 +60,16 @@ export class PalFlexContainerPanel {
   };
 
   render() {
-    console.log({ logic: this.panelData?.id });
+    const hideHeader = this.panelData?.settings?.misc?.hideHeader;
 
     return (
       <Host
         style={{ '--flex-factor': this.flexFactor + '', 'flex': this.panelData?.flex + '' }}
-        class={`panel ${this.isContainer ? 'is-container' : ''} ${this.panelData?.hideHeader ? 'no-padding' : ''}`}
+        class={`panel ${this.isContainer ? 'is-container' : ''} ${hideHeader ? 'no-padding' : ''}`}
       >
-        <div class="grid-stick-layout">
-          {this.panelData && !this.panelData?.hideHeader ? (
-            <div class="header panels-container-header">
+        <div class="pal-grid-stick-layout">
+          {this.panelData && !hideHeader ? (
+            <div class="pal-grid-header panels-container-header">
               <pal-panel-stack-header
                 panelData={this.panelData}
                 logicContainer={this.panelData?.id}
@@ -80,11 +80,13 @@ export class PalFlexContainerPanel {
                 onClick={() => this.setActive(this.panelData.name)}
                 active={this.active === this.panelData.name}
                 title={this.panelData.name}
+                class={`${this.panelData.type}-header`}
+                editablePanelName={this.panelData?.settings?.misc?.editableHeaderName}
               ></pal-panel-stack-header>
             </div>
           ) : null}
-          <div class="main">
-            <div class="content" style={{ flexDirection: this.flexDirection }}>
+          <div class="pal-grid-main">
+            <div class="flex-container-content" style={{ flexDirection: this.flexDirection }}>
               {this.panels
                 ?.map((p, i) => [
                   <pal-panel logicContainer={this.panelData?.id} index={i} panelData={p} panelId={p.id} key={p.id}></pal-panel>,

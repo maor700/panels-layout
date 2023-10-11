@@ -7,8 +7,7 @@ width: 100vw;
 top: 0;
 left: 0;
 display:block;
-z-index: -100000000;
-display:none;
+z-index: 100000000;
 opacity: 0;
 `;
 
@@ -22,7 +21,6 @@ export class OverlayMouseMovement {
   isReady = false;
   started = false;
   subs: Subscription;
-  timeoutClearance: NodeJS.Timeout;
 
   constructor(containerId: string, targetWindow: Window = top) {
     this.containerId = containerId;
@@ -33,7 +31,7 @@ export class OverlayMouseMovement {
     const containerId = this.containerId;
     const targetWindow = this.targetWindow;
     const finalIdName = `${containerId}-overlay`;
-    const existElm = targetWindow.document.getElementById(`#${finalIdName}`);
+    const existElm = targetWindow.document.getElementById(finalIdName);
     let elm = existElm;
     if (!elm) {
       elm = targetWindow.document.createElement('div');
@@ -49,9 +47,9 @@ export class OverlayMouseMovement {
   }
 
   start = () => {
-      !this.isReady && this.init();
-      this.started = true;
-      this.toggleOverlay(true);
+    if (this.started) return;
+    !this.isReady && this.init();
+    this.started = true;
   };
 
   stop = () => {
@@ -60,7 +58,6 @@ export class OverlayMouseMovement {
     this.clearAllSideEffects();
     this.started = false;
     this.isReady = false;
-    this.toggleOverlay(false);
   };
 
   moveHandler = (event: MouseEvent) => {
@@ -69,13 +66,14 @@ export class OverlayMouseMovement {
   };
 
   mouseUpHandler = () => {
-    this.stop();
-    this.moveEnd$.next(this.lastEvent);
-    this.lastEvent = undefined;
+    setTimeout(()=>{
+      this.stop();
+      this.moveEnd$.next(this.lastEvent);
+      this.lastEvent = undefined;
+    }, 150);
   };
 
   clearAllSideEffects = () => {
-    this.timeoutClearance && clearTimeout(this.timeoutClearance);
     this.overlayElm.removeEventListener('mousemove', this.moveHandler);
     this.overlayElm.removeEventListener('mouseup', this.mouseUpHandler);
     this.overlayElm.remove();

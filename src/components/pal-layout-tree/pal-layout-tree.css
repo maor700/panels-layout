@@ -1,0 +1,138 @@
+:host {
+  display: block;
+  min-height: 100px;
+  min-width: 100px;
+  background: #333;
+}
+
+:host.layout-tree-con {
+  display: block;
+}
+
+:host .layout-tree-con {
+  height: 100%;
+}
+
+:host.absolute-tree {
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 30%;
+  position: absolute;
+  z-index: 20;
+}
+
+:host.absolute-bottom {
+  bottom: 0;
+  top: unset;
+}
+
+:host.absolute-bottom.closed {
+  transform: translateY(100%);
+  position: absolute;
+}
+
+:host .btn-expender {
+  width: 1em;
+  height: 1em;
+  background: #000000a1;
+  display: block;
+  padding: 0.5em;
+  border-radius: 50%;
+  position: absolute;
+  top: -2.3em;
+  left: 0.2em;
+  border: 2px solid #eee;
+  z-index: 10;
+  font-size: 0.8em;
+}
+
+:host .btn-expender .chevron {
+  width: 0.7em;
+  height: 0.7em;
+  border: 0.25em solid #00ffbe;
+  border-radius: 3px;
+  border-top: none;
+  border-right: none;
+  transform: rotate(-45deg);
+  transition: all 0.2s ease;
+}
+
+:host.closed .btn-expender .chevron {
+  transform: rotate(135deg);
+}
+
+:host.absolute-top {
+  top: 0;
+  left: 0;
+  bottom: unset;
+  right: unset;
+}
+
+:host.absolute-top .btn-expender {
+  top: calc(100% + 0.5em);
+  transform: rotate(180deg);
+}
+
+:host.absolute-top.closed {
+  transform: translateY(-100%);
+  position: absolute;
+}
+
+:host.absolute-left {
+  left: 0;
+  top: 0;
+  bottom: unset;
+  right: unset;
+  width: 30%;
+  height: 100%;
+}
+
+:host.absolute-left .btn-expender {
+  left: calc(100% + 0.5em);
+  top: 0;
+  bottom: unset;
+  right: unset;
+  transform: rotate(90deg);
+}
+
+:host.absolute-left.closed {
+  transform: translateX(-100%);
+}
+
+
+:host.absolute-right {
+  top: 0;
+  right: 0;
+  left: unset;
+  bottom: unset;
+  width: 30%;
+  height: 100%;
+}
+
+:host.absolute-right .btn-expender {
+  right: calc(100% + 0.5em);
+  top: 0;
+  bottom: unset;
+  left: unset;
+  transform: rotate(270deg);
+}
+
+:host.absolute-right.closed {
+  transform: translateX(100%);
+}
+
+
+:host.floated-tree {
+  top: 0;
+  left: 0;
+  position: absolute;
+  z-index: 100;
+  background: transparent;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.drag-mode :host.floated-tree {
+  pointer-events: none;
+}

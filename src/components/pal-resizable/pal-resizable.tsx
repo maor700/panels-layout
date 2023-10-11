@@ -1,11 +1,12 @@
-import { Component, h, Host, Element, State, Event, EventEmitter, Prop } from '@stencil/core';
+import { Component, h, Host, Element, State, Event, EventEmitter, Prop, Listen } from '@stencil/core';
 import { debounce } from 'lodash';
+import { Subscription } from 'rxjs';
 import { OverlayMouseMovement } from '../../services/overlayMovementService';
 
 @Component({
   styleUrl: 'pal-resizable.css',
   tag: 'pal-resizable',
-  scoped:true
+  scoped: true,
 })
 export class PalResizable {
   @Prop() panelId: string;
@@ -21,11 +22,21 @@ export class PalResizable {
   resizeObserv: ResizeObserver;
   timeoutClear: NodeJS.Timeout;
   overlayMovementService: OverlayMouseMovement;
+  subs: Subscription[] = [];
+
+  @Listen('mousedown')
+  mouseDownHandler(_) {
+    if (this.disabledResize) return;
+    this.isMouseDown = true;
+  }
+
+  @Listen('mouseup')
+  mouseUpHandler(_) {
+    this.isMouseDown = false;
+    this.overlayMovementService?.stop?.();
+  }
 
   componentDidLoad() {
-    this.el.addEventListener('mousedown', this.mouseDownHandler);
-    this.el.addEventListener('mouseup', this.mouseUpHandler);
-
     this.overlayMovementService = new OverlayMouseMovement(this.panelId);
 
     this.resizeObserv = new ResizeObserver(entries => {
@@ -36,22 +47,19 @@ export class PalResizable {
       this.saveTransform(entries);
     });
 
+    this.subs.push(
+      this.overlayMovementService.moveEnd$.subscribe(() => {
+        this.isMouseDown = false;
+      }),
+    );
+
     this.resizeObserv.observe(this.el);
   }
 
   disconnectedCallback() {
     this.resizeObserv.unobserve(this.el);
+    this.subs.forEach(sub=>sub?.unsubscribe());
   }
-
-  mouseDownHandler = _ => {
-    if (this.disabledResize) return;
-    this.isMouseDown = true;
-  };
-
-  mouseUpHandler = _ => {
-    this.isMouseDown = false;
-    this.overlayMovementService.stop();
-  };
 
   saveTransform = debounce((entries: ResizeObserverEntry[]) => {
     const [entry] = entries;
